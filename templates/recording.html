@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}Record Patient{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <div class="container-fluid">
+            <h2>Record Patient</h2>
+            <form method="POST" action="/recording" enctype="multipart/form-data">
+                <!-- Start first part -->
+            
+                <div>
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="patientId" class="form-label">Patient ID</label>
+                            <input type="text" class="form-control" id="patientId" name="patient_id" value="{{ patient_id or '' }}" readonly>
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="recordingType" class="form-label">Recording Type</label>
+                            <select class="form-select" id="recordingType" name="recording_type">
+                                <option value="overhydrated" {% if last_recording and last_recording.recording_type == 'overhydrated' %}selected{% endif %}>Overhydrated</option>
+                                <option value="medicated" {% if last_recording and last_recording.recording_type == 'medicated' %}selected{% endif %}>Medicated</option>
+                            </select>
+                        </div>
+
+
+            
+                    </div>
+
+                    <div class="row">
+
+                        <div class="mb-3 col-md-6">
+                            <label for="hospitalizationDay" class="form-label">Hospitalization Day</label>
+                            <input type="number" class="form-control" id="hospitalizationDay" name="hospitalization_day" min="1" required value="{{ hospitalization_day if hospitalization_day else 1 }}">
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="weight" class="form-label">Weight</label>
+                            <input type="number" class="form-control" id="weight" name="weight" min="0" step="0.1" required value="{{ last_recording.weight if last_recording else '' }}">
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="row">
+
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="systolicBP" class="form-label">Systolic BP</label>
+                            <input type="number" class="form-control" id="systolicBP" name="systolic_bp" min="0" value="{{ last_recording.systolic if last_recording else '' }}">
+                        </div>
+                        <div class="mb-3 col-md-6" id="diastolicBPContainer">
+                            <label for="diastolicBP" class="form-label">Diastolic BP</label>
+                            <input type="number" class="form-control" id="diastolicBP" name="diastolic_bp" value="{{ last_recording.diastolic if last_recording else '' }}">
+                        </div>
+
+
+
+
+                    </div>
+            
+            
+
+
+            
+            
+                </div>
+                     
+            
+
+            
+                <!-- End first part  -->
+
+                <!-- Voice Sample -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                    <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                    <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                        <i class="bi bi-mic-fill"></i> Start Recording
+                    </button>
+                   <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
+                    <input type="file" id="voiceSample" name="voice_sample" style="display: none;" required/>
+                    </div>
+                </div>
+                
+                <!-- Nocturnal Cough Sample -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                    <h5 class="card-title">Voice Sample (story telling) </h5>
+                    <button type="button" class="btn btn-danger" id="recordCoughBtn">
+                        <i class="bi bi-mic-fill"></i> Start Recording
+                    </button>
+                    <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
+                    <input type="file" id="coughSample" name="nocturnal_cough_sample" style="display: none;" required/>
+                    </div>
+                </div>
+                
+    
+
+                <h3>Symptom Assessment</h3>
+                <div class="mb-3">
+                    <label for="breathingDifficulty" class="form-label">Breathing Difficulty (0-10)</label>
+                    <input type="range" class="form-range" id="breathingDifficulty" name="breathing_difficulty" min="0" max="10" step="1" oninput="breathingDifficultyValue.value = this.value" value="{{ last_recording.breathing_difficulty if last_recording else '' }}">
+                    <output id="breathingDifficultyValue">{{ last_recording.breathing_difficulty if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="chestPain" class="form-label">Chest Pain (0-10)</label>
+                    <input type="range" class="form-range" id="chestPain" name="chest_pain" min="0" max="10" step="1" oninput="chestPainValue.value = this.value" value="{{ last_recording.chest_pain if last_recording else '' }}">
+                    <output id="chestPainValue" >{{ last_recording.chest_pain if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="fatigueLevel" class="form-label">Fatigue Level (0-10)</label>
+                    <input type="range" class="form-range" id="fatigueLevel" name="fatigue_level" min="0" max="10" step="1" oninput="fatigueLevelValue.value = this.value" value="{{ last_recording.fatigue_level if last_recording else '' }}">
+                    <output id="fatigueLevelValue">{{ last_recording.fatigue_level if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="sleepQuality" class="form-label">Sleep Quality (0-10)</label>
+                    <input type="range" class="form-range" id="sleepQuality" name="sleep_quality" min="0" max="10" step="1" oninput="sleepQualityValue.value = this.value" value="{{ last_recording.sleep_quality if last_recording else '' }}">
+                    <output id="sleepQualityValue">{{ last_recording.sleep_quality if last_recording else '' }}</output>
+                </div>
+                <div class="mb-3">
+                    <label for="additionalNotes" class="form-label">Additional Notes</label>
+                    <textarea class="form-control additional_notes" id="additionalNotes" name="additional_notes" rows="3" placeholder="Any additional symptoms or concerns..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Patient Data</button>
+            </form>
+
+
+
+
+
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    async function recordAudio(buttonId, audioId, inputId) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+  
+      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(blob);
+        const audioElement = document.getElementById(audioId);
+        audioElement.src = audioUrl;
+        audioElement.style.display = 'block';
+  
+        const fileInput = document.getElementById(inputId);
+        const file = new File([blob], `${inputId}.webm`, { type: 'audio/webm' });
+  
+        // Simulate file input population
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+      };
+  
+      recorder.start();
+      document.getElementById(buttonId).innerText = '🛑 Stop Recording';
+      document.getElementById(buttonId).onclick = () => {
+        recorder.stop();
+        stream.getTracks().forEach(track => track.stop());
+        document.getElementById(buttonId).innerText = '🎙 Start Recording';
+        document.getElementById(buttonId).onclick = () =>
+          recordAudio(buttonId, audioId, inputId);
+      };
+    }
+  
+    document.getElementById('recordVoiceBtn').onclick = () =>
+      recordAudio('recordVoiceBtn', 'voicePlayback', 'voiceSample');
+  
+    document.getElementById('recordCoughBtn').onclick = () =>
+      recordAudio('recordCoughBtn', 'coughPlayback', 'coughSample');
+  </script>
+  <script>
+function toggleDiastolicBP() {
+    const type = document.getElementById('recordingType').value;
+    const diastolicDiv = document.getElementById('diastolicBPContainer');
+    if (type === 'overhydrated') {
+        diastolicDiv.style.display = 'none';
+        document.getElementById('diastolicBP').value = '';
+    } else {
+        diastolicDiv.style.display = '';
+    }
+}
+
+// Run on page load and when selection changes
+document.addEventListener('DOMContentLoaded', function() {
+    toggleDiastolicBP();
+    document.getElementById('recordingType').addEventListener('change', toggleDiastolicBP);
+});
+</script>
+  
+
+{% endblock %}
