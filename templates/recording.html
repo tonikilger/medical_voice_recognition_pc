@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="mb-3 col-md-6">
                             <label for="patientId" class="form-label">Patient ID</label>
-                            <input type="text" class="form-control" id="patientId" name="patient_id" value="{{ patient_id or '' }}" readonly>
+                            <input type="text" class="form-control" id="patientId" name="patient_id" value="{{ patient_id or '' }}">
                         </div>
 
                         <div class="mb-3 col-md-6">
@@ -84,7 +84,7 @@
                         <i class="bi bi-mic-fill"></i> Start Recording
                     </button>
                    <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
-                    <input type="file" id="voiceSample" name="voice_sample" style="display: none;" required/>
+                    <input type="file" id="voiceSample" name="voice_sample" style="display: none;" />
                     </div>
                 </div>
                 
@@ -96,7 +96,7 @@
                         <i class="bi bi-mic-fill"></i> Start Recording
                     </button>
                     <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
-                    <input type="file" id="coughSample" name="nocturnal_cough_sample" style="display: none;" required/>
+                    <input type="file" id="coughSample" name="nocturnal_cough_sample" style="display: none;" />
                     </div>
                 </div>
                 
