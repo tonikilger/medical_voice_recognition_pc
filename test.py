@@ -22,6 +22,8 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
     migrate.init_app(app, db)  # Bind Flask-Migrate to the app and SQLAlchemy
     from views import views
 
