@@ -19,11 +19,10 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.secret_key = 'the random string'
+    import models
 
     # Initialize extensions
     db.init_app(app)
-    with app.app_context():
-        db.create_all()
     migrate.init_app(app, db)  # Bind Flask-Migrate to the app and SQLAlchemy
     from views import views
 
