@@ -44,8 +44,7 @@
                                                 <th>Type</th>
                                                 <th>Day</th>
                                                 <th>Weight</th>
-                                                <th>Systolic</th>              
-                                                <th>Diastolic</th>
+                                                <th>Aktion</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -54,9 +53,11 @@
                                                     <td>{{ record.recording_type|capitalize }}</td>
                                                     <td>{{ record.hospitalization_day }}</td>
                                                     <td>{{ record.weight }}</td>
-                                                    <td>{{ record.systolic }}</td>
-                                                    <td>{{ record.diastolic }}</td>
-                                                    
+                                                    <td>
+                                                        <form method="POST" action="{{ url_for('views.delete_recording', recording_id=record.id) }}" style="display:inline;">
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Wirklich löschen?');">Delete</button>
+                                                        </form>
+                                                    </td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
@@ -98,12 +99,22 @@
                                                 <th>Type</th>
                                                 <th>Day</th>
                                                 <th>Weight</th>
-                                                <th>Systolic</th>              
-                                                <th>Diastolic</th>
-                                                <th>Breathing Difficulty</th>
-                                                <th>Chest pain</th>
-                                                <th>Fatigue level</th>
-                                                <th>Sleep quality</th>                                               
+                                                <th>NT-proBNP</th>
+                                                <th>Kalium</th>
+                                                <th>Natrium</th>
+                                                <th>Kreatinin/GFR</th>
+                                                <th>Harnstoff</th>
+                                                <th>Hb</th>
+                                                <th>Initial Weight</th>
+                                                <th>Initial BP</th>
+                                                <th>Puls</th>
+                                                <th>Medikamentenänderung</th>
+                                                <th>Discharge Weight</th>
+                                                <th>Discharge Medication</th>
+                                                <th>KCCQ</th>
+                                                <th>KCCQ Discharge</th>
+                                                <th>Admission Date</th>
+                                                <th>Discharge Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -112,14 +123,22 @@
                                                     <td>{{ record.recording_type|capitalize }}</td>
                                                     <td>{{ record.hospitalization_day }}</td>
                                                     <td>{{ record.weight }}</td>
-                                                    <td>{{ record.systolic }}</td>
-                                                    <td>{{ record.diastolic }}</td>
-                                                    <td>{{ record.breathing_difficulty }}</td>
-                                                    <td>{{ record.chest_pain }}</td>
-                                                    <td>{{ record.fatigue_level }}</td>
-                                                    <td>{{ record.sleep_quality }}</td>
-                                                    
-                                                  
+                                                    <td>{{ record.ntprobnp or record.ntprobnp_daily }}</td>
+                                                    <td>{{ record.kalium or record.kalium_daily }}</td>
+                                                    <td>{{ record.natrium or record.natrium_daily }}</td>
+                                                    <td>{{ record.kreatinin_gfr or record.kreatinin_gfr_daily }}</td>
+                                                    <td>{{ record.harnstoff or record.harnstoff_daily }}</td>
+                                                    <td>{{ record.hb or record.hb_daily }}</td>
+                                                    <td>{{ record.initial_weight }}</td>
+                                                    <td>{{ record.initial_bp }}</td>
+                                                    <td>{{ record.pulse }}</td>
+                                                    <td>{{ record.medication_changes }}</td>
+                                                    <td>{{ record.current_weight }}</td>
+                                                    <td>{{ record.discharge_medication }}</td>
+                                                    <td>{{ record.kccq }}</td>
+                                                    <td>{{ record.kccq_discharge }}</td>
+                                                    <td>{{ record.admission_date }}</td>
+                                                    <td>{{ record.discharge_date }}</td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
@@ -147,13 +166,22 @@
                                                 <th>Type</th>
                                                 <th>Day</th>
                                                 <th>Weight</th>
-                                                <th>Systolic</th>              
-                                                <th>Diastolic</th>
-                                                <th>Breathing Difficulty</th>
-                                                <th>Chest pain</th>
-                                                <th>Fatigue level</th>
-                                                <th>Sleep quality</th>  
-
+                                                <th>NT-proBNP</th>
+                                                <th>Kalium</th>
+                                                <th>Natrium</th>
+                                                <th>Kreatinin/GFR</th>
+                                                <th>Harnstoff</th>
+                                                <th>Hb</th>
+                                                <th>Initial Weight</th>
+                                                <th>Initial BP</th>
+                                                <th>Puls</th>
+                                                <th>Medikamentenänderung</th>
+                                                <th>Discharge Weight</th>
+                                                <th>Discharge Medication</th>
+                                                <th>KCCQ</th>
+                                                <th>KCCQ Discharge</th>
+                                                <th>Admission Date</th>
+                                                <th>Discharge Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -162,12 +190,22 @@
                                                     <td>{{ record.recording_type|capitalize }}</td>
                                                     <td>{{ record.hospitalization_day }}</td>
                                                     <td>{{ record.weight }}</td>
-                                                    <td>{{ record.systolic }}</td>
-                                                    <td>{{ record.diastolic }}</td>
-                                                    <td>{{ record.breathing_difficulty }}</td>
-                                                    <td>{{ record.chest_pain }}</td>
-                                                    <td>{{ record.fatigue_level }}</td>
-                                                    <td>{{ record.sleep_quality }}</td>
+                                                    <td>{{ record.ntprobnp or record.ntprobnp_daily }}</td>
+                                                    <td>{{ record.kalium or record.kalium_daily }}</td>
+                                                    <td>{{ record.natrium or record.natrium_daily }}</td>
+                                                    <td>{{ record.kreatinin_gfr or record.kreatinin_gfr_daily }}</td>
+                                                    <td>{{ record.harnstoff or record.harnstoff_daily }}</td>
+                                                    <td>{{ record.hb or record.hb_daily }}</td>
+                                                    <td>{{ record.initial_weight }}</td>
+                                                    <td>{{ record.initial_bp }}</td>
+                                                    <td>{{ record.pulse }}</td>
+                                                    <td>{{ record.medication_changes }}</td>
+                                                    <td>{{ record.current_weight }}</td>
+                                                    <td>{{ record.discharge_medication }}</td>
+                                                    <td>{{ record.kccq }}</td>
+                                                    <td>{{ record.kccq_discharge }}</td>
+                                                    <td>{{ record.admission_date }}</td>
+                                                    <td>{{ record.discharge_date }}</td>
                                                 </tr>
                                             {% endfor %}
                                         </tbody>
