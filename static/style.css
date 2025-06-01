@@ -30,6 +30,8 @@ main {
 
 .card{
     --bs-card-height: ;
+    border-color: lightgray 1px;
+
 }
 
 .equal-cols th,
