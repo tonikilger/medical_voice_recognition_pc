@@ -41,3 +41,13 @@ main {
     vertical-align: middle;
     white-space: nowrap;
 }
+
+
+
+/* Select2 Mehrfachauswahl: Tags untereinander statt nebeneinander */
+.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px;
+}
+
