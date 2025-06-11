@@ -17,24 +17,23 @@ def dashboards():
     recordings_by_patient = {}
     complete_records_by_patient = {}
     incomplete_records_by_patient = {}
-
     required_fields_by_type = {
         "admission": [
             "recording_type", "hospitalization_day", "age", "gender", "height", "diagnosis", "medication", "comorbidities",
             "admission_date", "ntprobnp", "kalium", "natrium", "kreatinin_gfr", "harnstoff", "hb",
-            "initial_weight", "initial_bp", "voice_sample",
+            "initial_weight", "initial_bp", "voice_sample_standardized",
             # KCCQ-Fragen
             "kccq1a", "kccq1b", "kccq1c", "kccq1d", "kccq1e", "kccq1f",
             "kccq2", "kccq3", "kccq4", "kccq5", "kccq6", "kccq7", "kccq8", "kccq9", "kccq10", "kccq11",
             "kccq12", "kccq13", "kccq14", "kccq15a", "kccq15b", "kccq15c", "kccq15d", "kccq16"
         ],
         "daily": [
-            "recording_type", "hospitalization_day", "weight", "bp", "pulse", "voice_sample",
+            "recording_type", "hospitalization_day", "weight", "bp", "pulse", "voice_sample_standardized",
             "medication_changes", "kalium_daily", "natrium_daily", "kreatinin_gfr_daily", "harnstoff_daily", "hb_daily", "ntprobnp_daily"
         ],
         "discharge": [
             "recording_type", "hospitalization_day", "ntprobnp", "kalium", "natrium", "kreatinin_gfr", "harnstoff", "hb",
-            "current_weight", "discharge_medication", "discharge_date", "voice_sample",
+            "current_weight", "discharge_medication", "discharge_date", "voice_sample_standardized",
             # KCCQ-Fragen (ggf. mit anderem Prefix, falls du sie für Discharge separat speicherst)
             "kccq1a", "kccq1b", "kccq1c", "kccq1d", "kccq1e", "kccq1f",
             "kccq2", "kccq3", "kccq4", "kccq5", "kccq6", "kccq7", "kccq8", "kccq9", "kccq10", "kccq11",
@@ -44,7 +43,7 @@ def dashboards():
 
     for recording in recordings:
         rec_type = (recording.recording_type or "").lower()
-        required_fields = required_fields_by_type.get(rec_type, ["recording_type", "hospitalization_day", "voice_sample"])
+        required_fields = required_fields_by_type.get(rec_type, ["recording_type", "hospitalization_day", "voice_sample_standardized"])
         is_complete = True
         for field in required_fields:
             value = getattr(recording, field, None)
@@ -85,8 +84,11 @@ def recording():
             db.session.commit()
 
         # Voice sample
-        voice_file = request.files.get('voice_sample')
-        voice_sample = voice_file.read() if voice_file else None
+        voice_file = request.files.get('voice_sample_standardized')
+        voice_sample_standardized = voice_file.read() if voice_file else None
+
+        story_file = request.files.get('voice_sample_storytelling')
+        story_sample = story_file.read() if story_file else None
 
         # Score berechnen (Summe aller KCCQ-Items)
         kccq_fields = [
@@ -106,11 +108,20 @@ def recording():
         discharge_date_str = request.form.get('discharge_date') or None
         discharge_date = parse_date(discharge_date_str)
 
+        recordings = Recording.query.filter_by(patient_id=patient_id).order_by(Recording.date).all()
+        if recordings:
+            first_recording = recordings[0]
+            last_recording = recordings[-1]
+            hospitalization_day = (datetime.datetime.now().date() - first_recording.date.date()).days + 1
+        else:
+            hospitalization_day = 1    
+
+
         # Build the Recording object with all possible fields
         recording = Recording(
             patient_id=patient_id,
             recording_type=request.form.get('recording_type'),
-            hospitalization_day=request.form.get('hospitalization_day'),
+            hospitalization_day=hospitalization_day,
 
             # Admission fields
             age=request.form.get('age') or None,
@@ -174,7 +185,8 @@ def recording():
             discharge_date=discharge_date or None,
 
             # Voice sample
-            voice_sample=voice_sample,
+            voice_sample_standardized=voice_sample_standardized,
+            voice_sample_storytelling=story_sample,  # <-- add this field to your model as well!
 
             # Date of recording
             date=datetime.datetime.now(),
@@ -194,8 +206,14 @@ def recording():
         if recordings:
             first_recording = recordings[0]
             last_recording = recordings[-1]
-            hospitalization_day = (datetime.datetime.now().date() - first_recording.date.date()).days
-    return render_template('recording.html', last_recording=last_recording, hospitalization_day=hospitalization_day, patient_id=patient_id)
+            hospitalization_day = (datetime.datetime.now().date() - first_recording.date.date()).days + 1
+    return render_template(
+        'recording.html',
+        last_recording=last_recording,
+        hospitalization_day=hospitalization_day,
+        patient_id=patient_id,
+        datetime=datetime  # <--- hinzufügen
+    )
 
 @views.route('/search', methods=['GET'])
 def search():

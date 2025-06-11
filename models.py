@@ -70,7 +70,8 @@ class Recording(db.Model):
     discharge_date = db.Column(db.Date, nullable=True)
 
     # Voice sample (shared for all types)
-    voice_sample = db.Column(db.LargeBinary, nullable=True)
+    voice_sample_standardized = db.Column(db.LargeBinary, nullable=True)
+    voice_sample_storytelling = db.Column(db.LargeBinary, nullable=True)
 
     # Date of recording
     date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
