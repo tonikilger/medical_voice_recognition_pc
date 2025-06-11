@@ -74,6 +74,7 @@ class Recording(db.Model):
 
     # Date of recording
     date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    score = db.Column(db.Integer, nullable=True)
 
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)

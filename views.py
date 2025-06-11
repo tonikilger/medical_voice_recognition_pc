@@ -68,6 +68,14 @@ def dashboards():
 
 @views.route('/recording', methods=['GET', 'POST'])
 def recording():
+    def parse_date(date_str):
+        if date_str:
+            try:
+                return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return None
+        return None
+
     if request.method == 'POST':
         patient_id = request.form.get('patient_id')
         patient = Patient.query.filter_by(id=patient_id).first()
@@ -79,6 +87,24 @@ def recording():
         # Voice sample
         voice_file = request.files.get('voice_sample')
         voice_sample = voice_file.read() if voice_file else None
+
+        # Score berechnen (Summe aller KCCQ-Items)
+        kccq_fields = [
+            'kccq1a', 'kccq1b', 'kccq1c', 'kccq1d', 'kccq1e', 'kccq1f',
+            'kccq2', 'kccq3', 'kccq4', 'kccq5', 'kccq6', 'kccq7', 'kccq8', 'kccq9', 'kccq10', 'kccq11',
+            'kccq12', 'kccq13', 'kccq14', 'kccq15a', 'kccq15b', 'kccq15c', 'kccq15d', 'kccq16'
+        ]
+        score = 0
+        for field in kccq_fields:
+            value = request.form.get(field)
+            if value and value.isdigit():
+                score += int(value)
+
+        admission_date_str = request.form.get('admission_date') or None
+        admission_date = parse_date(admission_date_str)
+
+        discharge_date_str = request.form.get('discharge_date') or None
+        discharge_date = parse_date(discharge_date_str)
 
         # Build the Recording object with all possible fields
         recording = Recording(
@@ -93,7 +119,7 @@ def recording():
             diagnosis=request.form.get('diagnosis') or None,
             medication=request.form.get('medication') or None,
             comorbidities=request.form.get('comorbidities') or None,
-            admission_date=request.form.get('admission_date') or None,
+            admission_date=admission_date,
             ntprobnp=request.form.get('ntprobnp') or None,
             kalium=request.form.get('kalium') or None,
             natrium=request.form.get('natrium') or None,
@@ -145,13 +171,14 @@ def recording():
             abschluss_labor=request.form.get('abschluss_labor') or None,
             current_weight=request.form.get('current_weight') or None,
             discharge_medication=request.form.get('discharge_medication') or None,
-            discharge_date=request.form.get('discharge_date') or None,
+            discharge_date=discharge_date or None,
 
             # Voice sample
             voice_sample=voice_sample,
 
             # Date of recording
-            date=datetime.datetime.now()
+            date=datetime.datetime.now(),
+            score=score
         )
 
         db.session.add(recording)
