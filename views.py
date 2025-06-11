@@ -116,6 +116,8 @@ def recording():
         else:
             hospitalization_day = 1    
 
+        diagnosis = request.form.getlist('diagnosis')
+        diagnosis_str = ', '.join(diagnosis) if diagnosis else None
 
         # Build the Recording object with all possible fields
         recording = Recording(
@@ -127,7 +129,7 @@ def recording():
             age=request.form.get('age') or None,
             gender=request.form.get('gender') or None,
             height=request.form.get('height') or None,
-            diagnosis=request.form.get('diagnosis') or None,
+            diagnosis=diagnosis_str,
             medication=request.form.get('medication') or None,
             comorbidities=request.form.get('comorbidities') or None,
             admission_date=admission_date,

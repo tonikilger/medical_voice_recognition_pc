@@ -52,7 +52,7 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Diagnose / Grunderkrankung</label>
-                                <select class="form-select" id="diagnosis" name="diagnosis">
+                                <select class="form-select" id="diagnosis" name="diagnosis" multiple style="text-align: left;cursor: pointer;float: left;">
                                     <option></option>
                                     <option>Herzinsuffizienz mit hochgradig reduzierter Ejektionsfraktion (EF &lt; 30%)</option>
                                     <option>Herzinsuffizienz mit mittelgradig reduzierter Ejektionsfraktion (EF 30–40%)</option>
@@ -1219,10 +1219,20 @@
   </script>
   <script>
 $(document).ready(function() {
+    function updateDiagnosisHeight() {
+        var $select = $('#diagnosis');
+        var $container = $select.next('.select2-container');
+        var selected = $select.select2('data');
+        if (selected.length <= 1) {
+            $container.find('.select2-selection--multiple').addClass('single-height');
+        } else {
+            $container.find('.select2-selection--multiple').removeClass('single-height');
+        }
+    }
+
     $('#diagnosis').select2({
         theme: 'bootstrap4',
         tags: true,
-        placeholder: "Diagnose auswählen oder eingeben",
         allowClear: true,
         width: '100%',
         matcher: function(params, data) {
@@ -1231,7 +1241,10 @@ $(document).ready(function() {
             if (data.text.toLowerCase().startsWith(params.term.toLowerCase())) return data;
             return null;
         }
-    });
+    }).on('change', updateDiagnosisHeight);
+
+    // Initial setzen nach dem Laden
+    updateDiagnosisHeight();
 });
 </script>
  
