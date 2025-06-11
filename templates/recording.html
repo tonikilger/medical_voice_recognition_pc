@@ -51,7 +51,66 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Diagnose / Grunderkrankung</label>
-                                <input type="text" class="form-control" name="diagnosis">
+                                <select class="form-select" id="diagnosis" name="diagnosis">
+                                    <option></option>
+                                    <option>Herzinsuffizienz mit hochgradig reduzierter Ejektionsfraktion (EF &lt; 30%)</option>
+                                    <option>Herzinsuffizienz mit mittelgradig reduzierter Ejektionsfraktion (EF 30–40%)</option>
+                                    <option>Herzinsuffizienz mit leichtgradig reduzierter Ejektionsfraktion (EF 41–49%)</option>
+                                    <option>Herzinsuffizienz mit erhaltener Ejektionsfraktion (HFpEF, EF ≥ 50%)</option>
+                                    <option>akute Rechtsherzinsuffizienz</option>
+                                    <option>chronische Rechtsherzinsuffizienz</option>
+                                    <option>Ischämische Kardiomyopathie</option>
+                                    <option>Dilatative Kardiomyopathie (nicht-ischämisch)</option>
+                                    <option>Hypertrophe Kardiomyopathie</option>
+                                    <option>Restriktive Kardiomyopathie</option>
+                                    <option>Peripartale Kardiomyopathie</option>
+                                    <option>Tachykardieinduzierte Kardiomyopathie</option>
+                                    <option>Inflammatorische Kardiomyopathie (z.B. Myokarditis)</option>
+                                    <option>Amyloidkardiomyopathie</option>
+                                    <option>unklare Kardiomyopathie</option>
+                                    <option>Akutes Koronarsyndrom (STEMI, NSTEMI)</option>
+                                    <option>Chronisches Koronarsyndrom / stabile KHK</option>
+                                    <option>Vorhofflimmern</option>
+                                    <option>Vorhofflattern</option>
+                                    <option>sonstige Tachykarde supraventrikuläre Arrhythmien</option>
+                                    <option>sonstige Bradykarde Rhythmusstörungen (z.B. SSS, AV-Block)</option>
+                                    <option>Ventrikuläre Tachykardien</option>
+                                    <option>Hochgradige Aortenklappenstenose</option>
+                                    <option>Hochgradige Aortenklappeninsuffizienz</option>
+                                    <option>Hochgradige Mitralklappeninsuffizienz</option>
+                                    <option>Hochgradige Mitralklappenstenose</option>
+                                    <option>Hochgradige Trikuspidalklappeninsuffizienz</option>
+                                    <option>Hochgradige Trikuspidalklappenstenose</option>
+                                    <option>Hochgradige Pulmonalklappenstenose</option>
+                                    <option>Hochgradige Pulmonalklappeninsuffizienz</option>
+                                    <option>Z.n. Transfemoraler Aortenklappenersatz</option>
+                                    <option>Z.n. Aortenklappen Valvuloplastie</option>
+                                    <option>Z.n. biologischer Aortenklappenersatz</option>
+                                    <option>Z.n. mechanischer Aortenklappenersatz</option>
+                                    <option>Z.n. biologischer Mitralklappenersatz</option>
+                                    <option>Z.n. mechanischer Mitralklappenersatz</option>
+                                    <option>sonstiger Klappeneingriff</option>
+                                    <option>Perikarderguss</option>
+                                    <option>Konstriktive Perikarditis</option>
+                                    <option>Pulmonale Hypertonie</option>
+                                    <option>Cor pulmonale</option>
+                                    <option>Chronische Niereninsuffizienz</option>
+                                    <option>Akutes Nierenversagen</option>
+                                    <option>Nephrotisches Syndrom</option>
+                                    <option>Leberzirrhose</option>
+                                    <option>Akute Hepatitis / akutes Leberversagen</option>
+                                    <option>sonstiger Aszites</option>
+                                    <option>Myxödem</option>
+                                    <option>Hyperaldosteronismus</option>
+                                    <option>Cushing-Syndrom</option>
+                                    <option>Rheumatoide Arthritis mit kardialer Beteiligung</option>
+                                    <option>Spondylarthritis mit kardialer Beteiligung</option>
+                                    <option>Kollagenose mit kardialer Beteiligung</option>
+                                    <option>Vaskulitis mit kardialer Beteiligung</option>
+                                    <option>inflammatorische Myopathien mit kardialer Beteiligung</option>
+                                    <option>granulomatöse Entzündung mit kardialer Beteiligung</option>
+                                    <option>Malignome mit kardialer / paraneoplastischer Beteiligung</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -1117,6 +1176,23 @@
     document.getElementById('recordCoughBtn').onclick = () =>
       recordAudio('recordCoughBtn', 'coughPlayback', 'coughSample');
   </script>
+  <script>
+$(document).ready(function() {
+    $('#diagnosis').select2({
+        theme: 'bootstrap4',
+        tags: true,
+        placeholder: "Diagnose auswählen oder eingeben",
+        allowClear: true,
+        width: '100%',
+        matcher: function(params, data) {
+            if ($.trim(params.term) === '') return data;
+            if (typeof data.text === 'undefined') return null;
+            if (data.text.toLowerCase().startsWith(params.term.toLowerCase())) return data;
+            return null;
+        }
+    });
+});
+</script>
  
   
 
