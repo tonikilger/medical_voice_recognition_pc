@@ -12,31 +12,125 @@
     </div>
 </form>
 
+
+
+
 {% if patient %}
     <h3>Patient ID: {{ patient.id }}</h3>
-    <table class="table table-sm">
+
+    <h4>Admission</h4>
+    <div style="overflow-x:auto;">
+    <table class="table table-sm table-bordered">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Type</th>
                 <th>Day</th>
-                <th>Systolic</th>
-                <th>Weight</th>
                 <th>Date</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Height</th>
+                <th>Diagnosis</th>
+                <th>Medication</th>
+                <th>Comorbidities</th>
+                <th>Admission Date</th>
+                <th>NTproBNP</th>
+                <th>Kalium</th>
+                <th>Natrium</th>
+                <th>Kreatinin/GFR</th>
+                <th>Harnstoff</th>
+                <th>Hb</th>
+                <th>Initial Weight</th>
+                <th>Initial BP</th>
+                <th>KCCQ-Score</th>
+                <th>Voice Sample</th>
+                <th>Voice Story</th>
+    
             </tr>
         </thead>
         <tbody>
-            {% for record in records %}
+            {% for record in records if record.recording_type == 'admission' %}
                 <tr>
+                    <td>{{ record.id }}</td>
                     <td>{{ record.recording_type|capitalize }}</td>
                     <td>{{ record.hospitalization_day }}</td>
-                    <td>{{ record.systolic }}</td>
-                    <td>{{ record.weight }}</td>
-                    <td>{{ record.date.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
+                    <td>{{ record.age }}</td>
+                    <td>{{ record.gender }}</td>
+                    <td>{{ record.height }}</td>
+                    <td>{{ record.diagnosis }}</td>
+                    <td>{{ record.medication }}</td>
+                    <td>{{ record.comorbidities }}</td>
+                    <td>{{ record.admission_date.strftime('%d.%m.%Y') if record.admission_date else '' }}</td>
+                    <td>{{ record.ntprobnp }}</td>
+                    <td>{{ record.kalium }}</td>
+                    <td>{{ record.natrium }}</td>
+                    <td>{{ record.kreatinin_gfr }}</td>
+                    <td>{{ record.harnstoff }}</td>
+                    <td>{{ record.hb }}</td>
+                    <td>{{ record.initial_weight }}</td>
+                    <td>{{ record.initial_bp }}</td>
+                    <td>{{ record.score }}</td>
+                    <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
+                    <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
+                    
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    </div>
+
+    <h4>Daily</h4>
+    <div style="overflow-x:auto;">
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Day</th>
+                <th>Date</th>
+                <th>Weight</th>
+                <th>BP</th>
+                <th>Pulse</th>
+                <th>Medication Changes</th>
+                <th>Kalium</th>
+                <th>Natrium</th>
+                <th>Kreatinin/GFR</th>
+                <th>Harnstoff</th>
+                <th>Hb</th>
+                <th>NTproBNP</th>
+                <th>Voice Sample</th>
+                <th>Voice Story</th>
+              
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records if record.recording_type == 'daily' %}
+                <tr>
+                    <td>{{ record.id }}</td>
+                    <td>{{ record.recording_type|capitalize }}</td>
+                    <td>{{ record.hospitalization_day }}</td>
+                    <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
+                    <td>{{ record.weight }}</td>
+                    <td>{{ record.bp }}</td>
+                    <td>{{ record.pulse }}</td>
+                    <td>{{ record.medication_changes }}</td>
+                    <td>{{ record.kalium_daily }}</td>
+                    <td>{{ record.natrium_daily }}</td>
+                    <td>{{ record.kreatinin_gfr_daily }}</td>
+                    <td>{{ record.harnstoff_daily }}</td>
+                    <td>{{ record.hb_daily }}</td>
+                    <td>{{ record.ntprobnp_daily }}</td>
+                    <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
+                    <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
+               
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
 {% elif query %}
     <p class="text-danger">No patient found with ID {{ query }}.</p>
 {% endif %}
+
 {% endblock %}

@@ -43,6 +43,7 @@
                                             <tr>
                                                 <th>Type</th>
                                                 <th>Day</th>
+                                                <th>KCCQ-Score</th>
                                                 <th>Weight</th>
                                                 <th>Aktion</th>
                                             </tr>
@@ -52,6 +53,12 @@
                                                 <tr>
                                                     <td>{{ record.recording_type|capitalize }}</td>
                                                     <td>{{ record.hospitalization_day }}</td>
+                                                    {% if record.recording_type == "admission" %}
+                                                        <td>{{ record.score }}</td>
+                                                    {% else %}
+                                                    <td></td>
+                                                    {% endif %}
+                                               
                                                     <td>{{ record.weight }}</td>
                                                     <td>
                                                         <form method="POST" action="{{ url_for('views.delete_recording', recording_id=record.id) }}" style="display:inline;">
