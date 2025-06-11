@@ -117,7 +117,7 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Aktuelle Medikation (komplette Liste mit Dosierung)</label>
-                                <textarea class="form-control" name="medication"></textarea>
+                                <textarea class="form-control" name="medication" style="height: 38px; resize: none;"></textarea>
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Begleiterkrankungen</label>
@@ -174,7 +174,7 @@
                             </div>  
                         </div>
                         <div class="row">
-                            <div class="mb-3 ">
+                            <div class="mb-3 col-md-6">
                             <div class="card mb-3 ">
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
@@ -187,7 +187,7 @@
                             </div>
                             </div>
 
-                            <div class="mb-3 ">
+                            <div class="mb-3 col-md-6">
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
@@ -559,33 +559,7 @@
                                 <input type="text" class="form-control" name="bp">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
-                            <div class="card mb-3 ">
-                                <div class="card-body">
-                                <h5 class="card-title">Voice Sample (standardized sentence) </h5>
-                                <button type="button" class="btn btn-danger" id="recordVoiceBtn">
-                                    <i class="bi bi-mic-fill"></i> Start Recording
-                                </button>
-                                <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
-                                <input type="file" id="voiceSample" name="voice_sample_standardized" style="display: none;" />
-                                </div>
-                            </div>
-                            </div>
-
-                            <div class="mb-3 ">
-                                <div class="card mb-3 ">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Voice Sample (story telling)</h5>
-                                        <button type="button" class="btn btn-danger" id="recordCoughBtn">
-                                            <i class="bi bi-mic-fill"></i> Start Recording
-                                        </button>
-                                        <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="coughSample" name="voice_sample_storytelling" style="display: none;" />
-                                    </div>
-                                </div>
-                            </div>      
-                        </div>
+                       
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Puls</label>
@@ -593,7 +567,7 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Medikamentenanpassungen (falls relevant)</label>
-                                <textarea class="form-control" name="medication_changes"></textarea>
+                                <textarea class="form-control" name="medication_changes" style="height: 38px; resize: none;"></textarea>
                             </div>
 
                         </div>
@@ -629,6 +603,33 @@
                                 <input type="number" class="form-control" name="ntprobnp_daily">
                             </div>
 
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                            <div class="card mb-3 ">
+                                <div class="card-body">
+                                <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                                    <i class="bi bi-mic-fill"></i> Start Recording
+                                </button>
+                                <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSample" name="voice_sample_standardized" style="display: none;" />
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="mb-3 col-md-6 ">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (story telling)</h5>
+                                        <button type="button" class="btn btn-danger" id="recordCoughBtn">
+                                            <i class="bi bi-mic-fill"></i> Start Recording
+                                        </button>
+                                        <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="coughSample" name="voice_sample_storytelling" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>      
                         </div>
                     </div>
 
@@ -675,11 +676,17 @@
                 
                             <div class="mb-3 col-md-6">
                                 <label>Aktuelle Medikation bei Entlassung</label>
-                                <textarea class="form-control" name="discharge_medication"></textarea>
+                                <textarea class="form-control" name="discharge_medication" style="height: 38px; resize: none;"></textarea>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-3">
+                             <div class="mb-3 col-md-6">
+                                <label>Datum der Entlassung</label>
+                                <input type="date" class="form-control" name="discharge_date">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
                             <div class="card mb-3 ">
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
@@ -694,7 +701,7 @@
                             </div>
     
 
-                            <div class="mb-3 ">
+                            <div class="mb-3 col-md-6">
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
@@ -707,6 +714,7 @@
                                 </div>
                             </div>      
                         </div>
+
                         <div class="row">     
                         <div class="accordion mb-3" id="kccqAccordion">
                         <div class="accordion-item">
@@ -1048,10 +1056,7 @@
                             </div>
                         </div>
                         </div>                                               
-                            <div class="mb-3 col-md-6">
-                                <label>Datum der Entlassung</label>
-                                <input type="date" class="form-control" name="discharge_date">
-                            </div>
+                           
                         </div>
                     </div>
 
