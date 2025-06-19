@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from models import Recording, db, Patient
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required
+from models import Recording, db, Patient, User
 import datetime
 
 # Create a Blueprint
@@ -11,6 +12,7 @@ def home():
     return render_template('home.html')
 
 @views.route('/dashboards')
+@login_required
 def dashboards():
     patients = Patient.query.all()
     recordings = Recording.query.all()
@@ -246,3 +248,21 @@ def delete_recording(recording_id):
             db.session.delete(patient)
             db.session.commit()
     return redirect(request.referrer or url_for('views.dashboards'))
+
+login_blueprint = Blueprint('login', __name__)
+
+@login_blueprint.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=request.form['username']).first()
+        if user and user.check_password(request.form['password']):
+            login_user(user)
+            return redirect(url_for('views.dashboards'))
+        flash('Login fehlgeschlagen!')
+    return render_template('login.html')
+
+@login_blueprint.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login.login'))
