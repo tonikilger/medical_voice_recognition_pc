@@ -24,7 +24,11 @@
             <a href="/recording" class="navbutton btn btn-dark {% if request.path == '/recording' %}active{% endif %}">Record Patient</a>
             <a href="/search" class="navbutton btn btn-dark {% if request.path == '/search' %}active{% endif %}">Search Patient</a>
           </div>
-
+          {% if current_user.is_authenticated %}
+    <form action="{{ url_for('login.logout') }}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-secondary ml-2">Logout</button>
+    </form>
+{% endif %}
         </div>
       </nav>
 
