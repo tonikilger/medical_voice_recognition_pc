@@ -9,7 +9,7 @@
     <div class="col">
         <div class="container-fluid">
             <h2>Record Patient</h2>
-            <form method="POST" action="/recording" enctype="multipart/form-data">
+            <form method="POST" action="{% if last_recording %}{{ url_for('views.edit_recording', recording_id=last_recording.id) }}{% else %}{{ url_for('views.recording') }}{% endif %}" enctype="multipart/form-data">
                 <!-- Start first part -->
             
                 <div>
@@ -33,95 +33,266 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Alter</label>
-                                <input type="number" class="form-control" name="age">
+                                <input type="number" class="form-control" name="age"value="{{ last_recording.age if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Geschlecht</label>
                                 <select class="form-select" name="gender">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="m">Männlich</option>
-                                    <option value="f">Weiblich</option>
-                                    <option value="d">Divers</option>
+                                    <option value="" >Bitte wählen</option>
+                                    <option value="m"{% if last_recording and last_recording.gender == 'm' %}selected{% endif %}>Männlich</option>
+                                    <option value="f"{% if last_recording and last_recording.gender == 'f' %}selected{% endif %}>Weiblich</option>
+                                    <option value="d"{% if last_recording and last_recording.gender == 'd' %}selected{% endif %}>Divers</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Größe (cm)</label>
-                                <input type="number" class="form-control" name="height">
+                                <input type="number" class="form-control" name="height" value="{{ last_recording.height if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Diagnose / Grunderkrankung</label>
-                                <select class="form-select" id="diagnosis" name="diagnosis" multiple style="text-align: left;cursor: pointer;float: left;">
-                                    <option></option>
-                                    <option>Herzinsuffizienz mit hochgradig reduzierter Ejektionsfraktion (EF &lt; 30%)</option>
-                                    <option>Herzinsuffizienz mit mittelgradig reduzierter Ejektionsfraktion (EF 30–40%)</option>
-                                    <option>Herzinsuffizienz mit leichtgradig reduzierter Ejektionsfraktion (EF 41–49%)</option>
-                                    <option>Herzinsuffizienz mit erhaltener Ejektionsfraktion (HFpEF, EF ≥ 50%)</option>
-                                    <option>akute Rechtsherzinsuffizienz</option>
-                                    <option>chronische Rechtsherzinsuffizienz</option>
-                                    <option>Ischämische Kardiomyopathie</option>
-                                    <option>Dilatative Kardiomyopathie (nicht-ischämisch)</option>
-                                    <option>Hypertrophe Kardiomyopathie</option>
-                                    <option>Restriktive Kardiomyopathie</option>
-                                    <option>Peripartale Kardiomyopathie</option>
-                                    <option>Tachykardieinduzierte Kardiomyopathie</option>
-                                    <option>Inflammatorische Kardiomyopathie (z.B. Myokarditis)</option>
-                                    <option>Amyloidkardiomyopathie</option>
-                                    <option>unklare Kardiomyopathie</option>
-                                    <option>Akutes Koronarsyndrom (STEMI, NSTEMI)</option>
-                                    <option>Chronisches Koronarsyndrom / stabile KHK</option>
-                                    <option>Vorhofflimmern</option>
-                                    <option>Vorhofflattern</option>
-                                    <option>sonstige Tachykarde supraventrikuläre Arrhythmien</option>
-                                    <option>sonstige Bradykarde Rhythmusstörungen (z.B. SSS, AV-Block)</option>
-                                    <option>Ventrikuläre Tachykardien</option>
-                                    <option>Hochgradige Aortenklappenstenose</option>
-                                    <option>Hochgradige Aortenklappeninsuffizienz</option>
-                                    <option>Hochgradige Mitralklappeninsuffizienz</option>
-                                    <option>Hochgradige Mitralklappenstenose</option>
-                                    <option>Hochgradige Trikuspidalklappeninsuffizienz</option>
-                                    <option>Hochgradige Trikuspidalklappenstenose</option>
-                                    <option>Hochgradige Pulmonalklappenstenose</option>
-                                    <option>Hochgradige Pulmonalklappeninsuffizienz</option>
-                                    <option>Z.n. Transfemoraler Aortenklappenersatz</option>
-                                    <option>Z.n. Aortenklappen Valvuloplastie</option>
-                                    <option>Z.n. biologischer Aortenklappenersatz</option>
-                                    <option>Z.n. mechanischer Aortenklappenersatz</option>
-                                    <option>Z.n. biologischer Mitralklappenersatz</option>
-                                    <option>Z.n. mechanischer Mitralklappenersatz</option>
-                                    <option>sonstiger Klappeneingriff</option>
-                                    <option>Perikarderguss</option>
-                                    <option>Konstriktive Perikarditis</option>
-                                    <option>Pulmonale Hypertonie</option>
-                                    <option>Cor pulmonale</option>
-                                    <option>Chronische Niereninsuffizienz</option>
-                                    <option>Akutes Nierenversagen</option>
-                                    <option>Nephrotisches Syndrom</option>
-                                    <option>Leberzirrhose</option>
-                                    <option>Akute Hepatitis / akutes Leberversagen</option>
-                                    <option>sonstiger Aszites</option>
-                                    <option>Myxödem</option>
-                                    <option>Hyperaldosteronismus</option>
-                                    <option>Cushing-Syndrom</option>
-                                    <option>Rheumatoide Arthritis mit kardialer Beteiligung</option>
-                                    <option>Spondylarthritis mit kardialer Beteiligung</option>
-                                    <option>Kollagenose mit kardialer Beteiligung</option>
-                                    <option>Vaskulitis mit kardialer Beteiligung</option>
-                                    <option>inflammatorische Myopathien mit kardialer Beteiligung</option>
-                                    <option>granulomatöse Entzündung mit kardialer Beteiligung</option>
-                                    <option>Malignome mit kardialer / paraneoplastischer Beteiligung</option>
+                                <select class="form-select" id="diagnosis" name="diagnosis" multiple>
+                                    {% set selected_diagnoses = (last_recording.diagnosis.split(', ') if last_recording and last_recording.diagnosis else []) %}
+                                    <option value="Herzinsuffizienz mit hochgradig reduzierter Ejektionsfraktion (EF < 30%)"
+                                        {% if 'Herzinsuffizienz mit hochgradig reduzierter Ejektionsfraktion (EF < 30%)' in selected_diagnoses %}selected{% endif %}>
+                                        Herzinsuffizienz mit hochgradig reduzierter Ejektionsfraktion (EF &lt; 30%)
+                                    </option>
+                                    <option value="Herzinsuffizienz mit mittelgradig reduzierter Ejektionsfraktion (EF 30–40%)"
+                                        {% if 'Herzinsuffizienz mit mittelgradig reduzierter Ejektionsfraktion (EF 30–40%)' in selected_diagnoses %}selected{% endif %}>
+                                        Herzinsuffizienz mit mittelgradig reduzierter Ejektionsfraktion (EF 30–40%)
+                                    </option>
+                                    <option value="Herzinsuffizienz mit leichtgradig reduzierter Ejektionsfraktion (EF 41–49%)"
+                                        {% if 'Herzinsuffizienz mit leichtgradig reduzierter Ejektionsfraktion (EF 41–49%)' in selected_diagnoses %}selected{% endif %}>
+                                        Herzinsuffizienz mit leichtgradig reduzierter Ejektionsfraktion (EF 41–49%)
+                                    </option>
+                                    <option value="Herzinsuffizienz mit erhaltener Ejektionsfraktion (HFpEF, EF ≥ 50%)"
+                                        {% if 'Herzinsuffizienz mit erhaltener Ejektionsfraktion (HFpEF, EF ≥ 50%)' in selected_diagnoses %}selected{% endif %}>
+                                        Herzinsuffizienz mit erhaltener Ejektionsfraktion (HFpEF, EF ≥ 50%)
+                                    </option>
+                                    <option value="akute Rechtsherzinsuffizienz"
+                                        {% if 'akute Rechtsherzinsuffizienz' in selected_diagnoses %}selected{% endif %}>
+                                        akute Rechtsherzinsuffizienz
+                                    </option>
+                                    <option value="chronische Rechtsherzinsuffizienz"
+                                        {% if 'chronische Rechtsherzinsuffizienz' in selected_diagnoses %}selected{% endif %}>
+                                        chronische Rechtsherzinsuffizienz
+                                    </option>
+                                    <option value="Ischämische Kardiomyopathie"
+                                        {% if 'Ischämische Kardiomyopathie' in selected_diagnoses %}selected{% endif %}>
+                                        Ischämische Kardiomyopathie
+                                    </option>
+                                    <option value="Dilatative Kardiomyopathie (nicht-ischämisch)"
+                                        {% if 'Dilatative Kardiomyopathie (nicht-ischämisch)' in selected_diagnoses %}selected{% endif %}>
+                                        Dilatative Kardiomyopathie (nicht-ischämisch)
+                                    </option>
+                                    <option value="Hypertrophe Kardiomyopathie"
+                                        {% if 'Hypertrophe Kardiomyopathie' in selected_diagnoses %}selected{% endif %}>
+                                        Hypertrophe Kardiomyopathie
+                                    </option>
+                                    <option value="Restriktive Kardiomyopathie"
+                                        {% if 'Restriktive Kardiomyopathie' in selected_diagnoses %}selected{% endif %}>
+                                        Restriktive Kardiomyopathie
+                                    </option>
+                                    <option value="Peripartale Kardiomyopathie"
+                                        {% if 'Peripartale Kardiomyopathie' in selected_diagnoses %}selected{% endif %}>
+                                        Peripartale Kardiomyopathie
+                                    </option>
+                                    <option value="Tachykardieinduzierte Kardiomyopathie"
+                                        {% if 'Tachykardieinduzierte Kardiomyopathie' in selected_diagnoses %}selected{% endif %}>
+                                        Tachykardieinduzierte Kardiomyopathie
+                                    </option>
+                                    <option value="Inflammatorische Kardiomyopathie (z.B. Myokarditis)"
+                                        {% if 'Inflammatorische Kardiomyopathie (z.B. Myokarditis)' in selected_diagnoses %}selected{% endif %}>
+                                        Inflammatorische Kardiomyopathie (z.B. Myokarditis)
+                                    </option>
+                                    <option value="Amyloidkardiomyopathie"
+                                        {% if 'Amyloidkardiomyopathie' in selected_diagnoses %}selected{% endif %}>
+                                        Amyloidkardiomyopathie
+                                    </option>
+                                    <option value="unklare Kardiomyopathie"
+                                        {% if 'unklare Kardiomyopathie' in selected_diagnoses %}selected{% endif %}>
+                                        unklare Kardiomyopathie
+                                    </option>
+                                    <option value="Akutes Koronarsyndrom (STEMI, NSTEMI)"
+                                        {% if 'Akutes Koronarsyndrom (STEMI, NSTEMI)' in selected_diagnoses %}selected{% endif %}>
+                                        Akutes Koronarsyndrom (STEMI, NSTEMI)
+                                    </option>
+                                    <option value="Chronisches Koronarsyndrom / stabile KHK"
+                                        {% if 'Chronisches Koronarsyndrom / stabile KHK' in selected_diagnoses %}selected{% endif %}>
+                                        Chronisches Koronarsyndrom / stabile KHK
+                                    </option>
+                                    <option value="Vorhofflimmern"
+                                        {% if 'Vorhofflimmern' in selected_diagnoses %}selected{% endif %}>
+                                        Vorhofflimmern
+                                    </option>
+                                    <option value="Vorhofflattern"
+                                        {% if 'Vorhofflattern' in selected_diagnoses %}selected{% endif %}>
+                                        Vorhofflattern
+                                    </option>
+                                    <option value="sonstige Tachykarde supraventrikuläre Arrhythmien"
+                                        {% if 'sonstige Tachykarde supraventrikuläre Arrhythmien' in selected_diagnoses %}selected{% endif %}>
+                                        sonstige Tachykarde supraventrikuläre Arrhythmien
+                                    </option>
+                                    <option value="sonstige Bradykarde Rhythmusstörungen (z.B. SSS, AV-Block)"
+                                        {% if 'sonstige Bradykarde Rhythmusstörungen (z.B. SSS, AV-Block)' in selected_diagnoses %}selected{% endif %}>
+                                        sonstige Bradykarde Rhythmusstörungen (z.B. SSS, AV-Block)
+                                    </option>
+                                    <option value="Ventrikuläre Tachykardien"
+                                        {% if 'Ventrikuläre Tachykardien' in selected_diagnoses %}selected{% endif %}>
+                                        Ventrikuläre Tachykardien
+                                    </option>
+                                    <option value="Hochgradige Aortenklappenstenose"
+                                        {% if 'Hochgradige Aortenklappenstenose' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Aortenklappenstenose
+                                    </option>
+                                    <option value="Hochgradige Aortenklappeninsuffizienz"
+                                        {% if 'Hochgradige Aortenklappeninsuffizienz' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Aortenklappeninsuffizienz
+                                    </option>
+                                    <option value="Hochgradige Mitralklappeninsuffizienz"
+                                        {% if 'Hochgradige Mitralklappeninsuffizienz' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Mitralklappeninsuffizienz
+                                    </option>
+                                    <option value="Hochgradige Mitralklappenstenose"
+                                        {% if 'Hochgradige Mitralklappenstenose' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Mitralklappenstenose
+                                    </option>
+                                    <option value="Hochgradige Trikuspidalklappeninsuffizienz"
+                                        {% if 'Hochgradige Trikuspidalklappeninsuffizienz' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Trikuspidalklappeninsuffizienz
+                                    </option>
+                                    <option value="Hochgradige Trikuspidalklappenstenose"
+                                        {% if 'Hochgradige Trikuspidalklappenstenose' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Trikuspidalklappenstenose
+                                    </option>
+                                    <option value="Hochgradige Pulmonalklappenstenose"
+                                        {% if 'Hochgradige Pulmonalklappenstenose' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Pulmonalklappenstenose
+                                    </option>
+                                    <option value="Hochgradige Pulmonalklappeninsuffizienz"
+                                        {% if 'Hochgradige Pulmonalklappeninsuffizienz' in selected_diagnoses %}selected{% endif %}>
+                                        Hochgradige Pulmonalklappeninsuffizienz
+                                    </option>
+                                    <option value="Z.n. Transfemoraler Aortenklappenersatz"
+                                        {% if 'Z.n. Transfemoraler Aortenklappenersatz' in selected_diagnoses %}selected{% endif %}>
+                                        Z.n. Transfemoraler Aortenklappenersatz
+                                    </option>
+                                    <option value="Z.n. Aortenklappen Valvuloplastie"
+                                        {% if 'Z.n. Aortenklappen Valvuloplastie' in selected_diagnoses %}selected{% endif %}>
+                                        Z.n. Aortenklappen Valvuloplastie
+                                    </option>
+                                    <option value="Z.n. biologischer Aortenklappenersatz"
+                                        {% if 'Z.n. biologischer Aortenklappenersatz' in selected_diagnoses %}selected{% endif %}>
+                                        Z.n. biologischer Aortenklappenersatz
+                                    </option>
+                                    <option value="Z.n. mechanischer Aortenklappenersatz"
+                                        {% if 'Z.n. mechanischer Aortenklappenersatz' in selected_diagnoses %}selected{% endif %}>
+                                        Z.n. mechanischer Aortenklappenersatz
+                                    </option>
+                                    <option value="Z.n. biologischer Mitralklappenersatz"
+                                        {% if 'Z.n. biologischer Mitralklappenersatz' in selected_diagnoses %}selected{% endif %}>
+                                        Z.n. biologischer Mitralklappenersatz
+                                    </option>
+                                    <option value="Z.n. mechanischer Mitralklappenersatz"
+                                        {% if 'Z.n. mechanischer Mitralklappenersatz' in selected_diagnoses %}selected{% endif %}>
+                                        Z.n. mechanischer Mitralklappenersatz
+                                    </option>
+                                    <option value="sonstiger Klappeneingriff"
+                                        {% if 'sonstiger Klappeneingriff' in selected_diagnoses %}selected{% endif %}>
+                                        sonstiger Klappeneingriff
+                                    </option>
+                                    <option value="Perikarderguss"
+                                        {% if 'Perikarderguss' in selected_diagnoses %}selected{% endif %}>
+                                        Perikarderguss
+                                    </option>
+                                    <option value="Konstriktive Perikarditis"
+                                        {% if 'Konstriktive Perikarditis' in selected_diagnoses %}selected{% endif %}>
+                                        Konstriktive Perikarditis
+                                    </option>
+                                    <option value="Pulmonale Hypertonie"
+                                        {% if 'Pulmonale Hypertonie' in selected_diagnoses %}selected{% endif %}>
+                                        Pulmonale Hypertonie
+                                    </option>
+                                    <option value="Cor pulmonale"
+                                        {% if 'Cor pulmonale' in selected_diagnoses %}selected{% endif %}>
+                                        Cor pulmonale
+                                    </option>
+                                    <option value="Chronische Niereninsuffizienz"
+                                        {% if 'Chronische Niereninsuffizienz' in selected_diagnoses %}selected{% endif %}>
+                                        Chronische Niereninsuffizienz
+                                    </option>
+                                    <option value="Akutes Nierenversagen"
+                                        {% if 'Akutes Nierenversagen' in selected_diagnoses %}selected{% endif %}>
+                                        Akutes Nierenversagen
+                                    </option>
+                                    <option value="Nephrotisches Syndrom"
+                                        {% if 'Nephrotisches Syndrom' in selected_diagnoses %}selected{% endif %}>
+                                        Nephrotisches Syndrom
+                                    </option>
+                                    <option value="Leberzirrhose"
+                                        {% if 'Leberzirrhose' in selected_diagnoses %}selected{% endif %}>
+                                        Leberzirrhose
+                                    </option>
+                                    <option value="Akute Hepatitis / akutes Leberversagen"
+                                        {% if 'Akute Hepatitis / akutes Leberversagen' in selected_diagnoses %}selected{% endif %}>
+                                        Akute Hepatitis / akutes Leberversagen
+                                    </option>
+                                    <option value="sonstiger Aszites"
+                                        {% if 'sonstiger Aszites' in selected_diagnoses %}selected{% endif %}>
+                                        sonstiger Aszites
+                                    </option>
+                                    <option value="Myxödem"
+                                        {% if 'Myxödem' in selected_diagnoses %}selected{% endif %}>
+                                        Myxödem
+                                    </option>
+                                    <option value="Hyperaldosteronismus"
+                                        {% if 'Hyperaldosteronismus' in selected_diagnoses %}selected{% endif %}>
+                                        Hyperaldosteronismus
+                                    </option>
+                                    <option value="Cushing-Syndrom"
+                                        {% if 'Cushing-Syndrom' in selected_diagnoses %}selected{% endif %}>
+                                        Cushing-Syndrom
+                                    </option>
+                                    <option value="Rheumatoide Arthritis mit kardialer Beteiligung"
+                                        {% if 'Rheumatoide Arthritis mit kardialer Beteiligung' in selected_diagnoses %}selected{% endif %}>
+                                        Rheumatoide Arthritis mit kardialer Beteiligung
+                                    </option>
+                                    <option value="Spondylarthritis mit kardialer Beteiligung"
+                                        {% if 'Spondylarthritis mit kardialer Beteiligung' in selected_diagnoses %}selected{% endif %}>
+                                        Spondylarthritis mit kardialer Beteiligung
+                                    </option>
+                                    <option value="Kollagenose mit kardialer Beteiligung"
+                                        {% if 'Kollagenose mit kardialer Beteiligung' in selected_diagnoses %}selected{% endif %}>
+                                        Kollagenose mit kardialer Beteiligung
+                                    </option>
+                                    <option value="Vaskulitis mit kardialer Beteiligung"
+                                        {% if 'Vaskulitis mit kardialer Beteiligung' in selected_diagnoses %}selected{% endif %}>
+                                        Vaskulitis mit kardialer Beteiligung
+                                    </option>
+                                    <option value="inflammatorische Myopathien mit kardialer Beteiligung"
+                                        {% if 'inflammatorische Myopathien mit kardialer Beteiligung' in selected_diagnoses %}selected{% endif %}>
+                                        inflammatorische Myopathien mit kardialer Beteiligung
+                                    </option>
+                                    <option value="granulomatöse Entzündung mit kardialer Beteiligung"
+                                        {% if 'granulomatöse Entzündung mit kardialer Beteiligung' in selected_diagnoses %}selected{% endif %}>
+                                        granulomatöse Entzündung mit kardialer Beteiligung
+                                    </option>
+                                    <option value="Malignome mit kardialer / paraneoplastischer Beteiligung"
+                                        {% if 'Malignome mit kardialer / paraneoplastischer Beteiligung' in selected_diagnoses %}selected{% endif %}>
+                                        Malignome mit kardialer / paraneoplastischer Beteiligung
+                                    </option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Aktuelle Medikation (komplette Liste mit Dosierung)</label>
-                                <textarea class="form-control" name="medication" style="height: 38px; resize: none;"></textarea>
+                                <textarea class="form-control" name="medication" style="height: 38px; resize: none;">{{ last_recording.medication if last_recording else '' }}</textarea>
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Begleiterkrankungen</label>
-                                <input type="text" class="form-control" name="comorbidities">
+                                <input type="text" class="form-control" name="comorbidities" value="{{ last_recording.comorbidities if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
@@ -132,27 +303,27 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>NT- pro BNP</label>
-                                <input type="number" class="form-control" name="ntprobnp">
+                                <input type="number" class="form-control" name="ntprobnp" value="{{ last_recording.ntprobnp if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Kalium</label>
-                                <input type="number" class="form-control" name="kalium">
+                                <input type="number" class="form-control" name="kalium" value="{{ last_recording.kalium if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Natrium</label>
-                                <input type="number" class="form-control" name="natrium">
+                                <input type="number" class="form-control" name="natrium" value="{{ last_recording.natrium if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Kreatinin / GFR</label>
-                                <input type="text" class="form-control" name="kreatinin_gfr">
+                                <input type="text" class="form-control" name="kreatinin_gfr" value="{{ last_recording.kreatinin_gfr if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Harnstoff</label>
-                                <input type="number" class="form-control" name="harnstoff">
+                                <input type="number" class="form-control" name="harnstoff" value="{{ last_recording.harnstoff if last_recording else '' }}">
                             </div>
                         </div>
 
@@ -160,17 +331,17 @@
                         <div class="row">
                                 <div class="mb-3 col-md-6">
                                     <label>Körpergewicht (Initialwert)</label>
-                                    <input type="number" class="form-control" name="initial_weight">
+                                    <input type="number" class="form-control" name="initial_weight" value="{{ last_recording.initial_weight if last_recording else '' }}">
                                 </div>
                             <div class="mb-3 col-md-6">
                                 <label>Blutdruck (Initialwert)</label>
-                                <input type="text" class="form-control" name="initial_bp">
+                                <input type="text" class="form-control" name="initial_bp" value="{{ last_recording.initial_bp if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Hb (Hämoglobin)</label>
-                                <input type="number" class="form-control" name="hb">
+                                <input type="number" class="form-control" name="hb" value="{{ last_recording.hb if last_recording else '' }}">
                             </div>  
                         </div>
                         <div class="row">
@@ -218,24 +389,24 @@
                                         <label>Sich selbst ankleiden</label>
                                         <select class="form-select" name="kccq1a">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1a == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1a == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1a == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1a == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1a == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1a == 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label>Duschen / Baden</label>
                                         <select class="form-select" name="kccq1b">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1b == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1b == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1b == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1b == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1b == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1b == 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                         </select>
                                     </div>
                                     </div>
@@ -244,24 +415,24 @@
                                         <label>100–200 m auf ebener Strecke gehen</label>
                                         <select class="form-select" name="kccq1c">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1c == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1c == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1c == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1c == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1c == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1c == 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label>Garten-/Hausarbeit, Einkaufstaschen tragen</label>
                                         <select class="form-select" name="kccq1d">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1d == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1d == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1d == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1d == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1d == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1d == 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                         </select>
                                     </div>
                                     </div>
@@ -270,24 +441,24 @@
                                         <label>Ohne Pause eine Treppe hochsteigen</label>
                                         <select class="form-select" name="kccq1e">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1e == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1e == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1e == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1e == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1e == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1e == 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label>Laufen/Joggen (z.B. Bus erreichen)</label>
                                         <select class="form-select" name="kccq1f">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1f == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1f == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1f == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1f == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1f == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1f == 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                         </select>
                                     </div>
                                     </div>
@@ -297,12 +468,12 @@
                                     <label class="form-label fw-bold">2. Haben sich Ihre Beschwerden im Vergleich zu vor 2 Wochen geändert?</label>
                                     <select class="form-select" name="kccq2">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">viel schlechter</option>
-                                        <option value="2">etwas schlechter</option>
-                                        <option value="3">unverändert</option>
-                                        <option value="4">etwas besser</option>
-                                        <option value="5">viel besser</option>
-                                        <option value="6">keine Symptome</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq2 == 1 %} selected{% endif %}>viel schlechter</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq2 == 2 %} selected{% endif %}>etwas schlechter</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq2 == 3 %} selected{% endif %}>unverändert</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq2 == 4 %} selected{% endif %}>etwas besser</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq2 == 5 %} selected{% endif %}>viel besser</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq2 == 6 %} selected{% endif %}>keine Symptome</option>
                                     </select>
                                     </div>
 
@@ -311,11 +482,11 @@
                                     <label class="form-label fw-bold">3. Wie oft Schwellungen morgens beim Aufwachen?</label>
                                     <select class="form-select" name="kccq3">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">jeden Morgen</option>
-                                        <option value="2">3x/Woche oder öfter</option>
-                                        <option value="3">1-2x/Woche</option>
-                                        <option value="4">weniger als 1x/Woche</option>
-                                        <option value="5">niemals</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq3 == 1 %} selected{% endif %}>jeden Morgen</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq3 == 2 %} selected{% endif %}>3x/Woche oder öfter</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq3 == 3 %} selected{% endif %}>1-2x/Woche</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq3 == 4 %} selected{% endif %}>weniger als 1x/Woche</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq3 == 5 %} selected{% endif %}>niemals</option>
                                     </select>
                                     </div>
 
@@ -324,12 +495,12 @@
                                     <label class="form-label fw-bold">4. Wie beschwerlich waren die Schwellungen?</label>
                                     <select class="form-select" name="kccq4">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="6">keine Schwellungen</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq4 == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq4 == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq4 == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq4 == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq4 == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq4 == 6 %} selected{% endif %}>keine Schwellungen</option>
                                     </select>
                                     </div>
 
@@ -338,14 +509,13 @@
                                     <label class="form-label fw-bold">5. Wie oft hat zu schnelle Ermüdung Sie abgehalten?</label>
                                     <select class="form-select" name="kccq5">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">ständig </option>
-                                        <option value="2">mehrmals am Tag</option>
-                                        <option value="3">mind. 1x am Tag</option>
-                                        <option value="4">3x/Woche oder öfter aber nicht täglich</option>
-                                        <option value="5">1-2x/Woche</option>
-                                        <option value="6">weniger als 1x/Woche</option>
-                                        <option value="7">niemals</option>
-        
+                                        <option value="1"{% if last_recording and last_recording.kccq5 == 1 %} selected{% endif %}>ständig mehrmals am Tag</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq5 == 2 %} selected{% endif %}>mind. 1x/Tag</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq5 == 3 %} selected{% endif %}>3x/Woche oder öfter</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq5 == 4 %} selected{% endif %}>1-2x/Woche</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq5 == 5 %} selected{% endif %}>weniger als 1x/Woche</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq5 == 6 %} selected{% endif %}>niemals</option>
+                                        <option value="7"{% if last_recording and last_recording.kccq5 == 7 %} selected{% endif %}>keine Ermüdung</option>
                                     </select>
                                     </div>
 
@@ -354,12 +524,12 @@
                                     <label class="form-label fw-bold">6. Wie beschwerlich war Ihre Ermüdung?</label>
                                     <select class="form-select" name="kccq6">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="6">keine Ermüdung</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq6 == 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq6 == 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq6 == 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq6 == 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq6 == 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq6 == 6 %} selected{% endif %}>keine Ermüdung</option>
                                     </select>
                                     </div>
 
@@ -368,14 +538,13 @@
                                     <label class="form-label fw-bold">7. Wie oft hat Atemnot Sie abgehalten?</label>
                                     <select class="form-select" name="kccq7">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">ständig</option>
-                                        <option value="2">mehrmals am Tag</option>
-                                        <option value="3">mind. 1x/Tag</option>
-                                        <option value="4">3x/Woche oder öfter</option>
-                                        <option value="5">1-2x/Woche</option>
-                                        <option value="6">weniger als 1x/Woche</option>
-                                        <option value="7">niemals</option>
-                    
+                                        <option value="1"{% if last_recording and last_recording.kccq7 == 1 %} selected{% endif %}>ständig mehrmals am Tag</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq7 == 2 %} selected{% endif %}>mind. 1x/Tag</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq7 == 3 %} selected{% endif %}>3x/Woche oder öfter</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq7 == 4 %} selected{% endif %}>1-2x/Woche</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq7 == 5 %} selected{% endif %}>weniger als 1x/Woche</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq7 == 6 %} selected{% endif %}>niemals</option>
+                                        <option value="7"{% if last_recording and last_recording.kccq7 == 7 %} selected{% endif %}>keine Atemnot</option>
                                     </select>
                                     </div>
 
@@ -384,12 +553,12 @@
                                     <label class="form-label fw-bold">8. Wie beschwerlich war Ihre Atemnot?</label>
                                     <select class="form-select" name="kccq8">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="6">keine Atemnot</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq8== 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq8== 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq8== 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq8== 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq8== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq8== 6 %} selected{% endif %}>keine Atemnot</option>
                                     </select>
                                     </div>
 
@@ -398,11 +567,11 @@
                                     <label class="form-label fw-bold">9. Wie oft mussten Sie wegen Atemnot erhöht schlafen?</label>
                                     <select class="form-select" name="kccq9">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">jede Nacht</option>
-                                        <option value="2">3x/Woche oder öfter</option>
-                                        <option value="3">1-2x/Woche</option>
-                                        <option value="4">weniger als 1x/Woche</option>
-                                        <option value="5">niemals</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq9== 1 %} selected{% endif %}>jede Nacht</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq9== 2 %} selected{% endif %}>3x/Woche oder öfter</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq9== 3 %} selected{% endif %}>1-2x/Woche</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq9== 4 %} selected{% endif %}>weniger als 1x/Woche</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq9== 5 %} selected{% endif %}>niemals</option>
                                     </select>
                                     </div>
 
@@ -411,11 +580,11 @@
                                     <label class="form-label fw-bold">10. Wie sicher sind Sie, was zu tun ist, wenn sich Ihre Symptome verschlechtern?</label>
                                     <select class="form-select" name="kccq10">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">überhaupt nicht sicher</option>
-                                        <option value="2">nicht sehr sicher</option>
-                                        <option value="3">teilweise sicher</option>
-                                        <option value="4">ziemlich sicher</option>
-                                        <option value="5">vollkommen sicher</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq10== 1 %} selected{% endif %}>überhaupt nicht sicher</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq10== 2 %} selected{% endif %}>nicht sehr sicher</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq10== 3 %} selected{% endif %}>teilweise sicher</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq10== 4 %} selected{% endif %}>ziemlich sicher</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq10== 5 %} selected{% endif %}>vollkommen sicher</option>
                                     </select>
                                     </div>
 
@@ -424,11 +593,11 @@
                                     <label class="form-label fw-bold">11. Wie gut verstehen Sie, was Sie selbst tun können?</label>
                                     <select class="form-select" name="kccq11">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">überhaupt nicht</option>
-                                        <option value="2">nicht sehr gut</option>
-                                        <option value="3">teilweise</option>
-                                        <option value="4">größtenteils</option>
-                                        <option value="5">vollkommen</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq11== 1 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq11== 2 %} selected{% endif %}>nicht sehr gut</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq11== 3 %} selected{% endif %}>teilweise</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq11== 4 %} selected{% endif %}>größtenteils</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq11== 5 %} selected{% endif %}>vollkommen</option>
                                     </select>
                                     </div>
 
@@ -437,11 +606,11 @@
                                     <label class="form-label fw-bold">12. In welchem Ausmaß hat Ihre Herzinsuffizienz Ihre Lebensfreude beeinträchtigt?</label>
                                     <select class="form-select" name="kccq12">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq12== 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq12== 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq12== 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq12== 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq12== 5 %} selected{% endif %}>überhaupt nicht</option>
                                     </select>
                                     </div>
 
@@ -450,11 +619,11 @@
                                     <label class="form-label fw-bold">13. Wie würden Sie sich fühlen, wenn Sie im jetzigen Zustand bleiben?</label>
                                     <select class="form-select" name="kccq13">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">überhaupt nicht zufrieden</option>
-                                        <option value="2">größtenteils unzufrieden</option>
-                                        <option value="3">ziemlich zufrieden</option>
-                                        <option value="4">größtenteils zufrieden</option>
-                                        <option value="5">vollkommen zufrieden</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq13== 1 %} selected{% endif %}>überhaupt nicht zufrieden</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq13== 2 %} selected{% endif %}>größtenteils unzufrieden</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq13== 3 %} selected{% endif %}>ziemlich zufrieden</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq13== 4 %} selected{% endif %}>größtenteils zufrieden</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq13== 5 %} selected{% endif %}>vollkommen zufrieden</option>
                                     </select>
                                     </div>
 
@@ -463,11 +632,11 @@
                                     <label class="form-label fw-bold">14. Wie oft waren Sie entmutigt oder deprimiert?</label>
                                     <select class="form-select" name="kccq14">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">ständig</option>
-                                        <option value="2">die meiste Zeit</option>
-                                        <option value="3">gelegentlich</option>
-                                        <option value="4">selten</option>
-                                        <option value="5">niemals</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq14== 1 %} selected{% endif %}>ständig</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq14== 2 %} selected{% endif %}>die meiste Zeit</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq14== 3 %} selected{% endif %}>gelegentlich</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq14== 4 %} selected{% endif %}>selten</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq14== 5 %} selected{% endif %}>niemals</option>
                                     </select>
                                     </div>
 
@@ -478,24 +647,24 @@
                                         <label>Hobbies/Freizeitaktivitäten</label>
                                         <select class="form-select" name="kccq15a">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">nicht zutreffend</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15a== 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15a== 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15a== 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15a== 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15a== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15a== 9 %} selected{% endif %}>nicht zutreffend</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label>Intime Beziehungen</label>
                                         <select class="form-select" name="kccq15b">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">nicht zutreffend</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15b== 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15b== 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15b== 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15b== 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15b== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15b== 9 %} selected{% endif %}>nicht zutreffend</option>
                                         </select>
                                     </div>
                                     </div>
@@ -504,24 +673,24 @@
                                         <label>Besuche bei Familie/Freunden</label>
                                         <select class="form-select" name="kccq15c">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">nicht zutreffend</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15c== 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15c== 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15c== 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15c== 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15c== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15c== 9 %} selected{% endif %}>nicht zutreffend</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 col-md-6">
                                         <label>Arbeit/Hausarbeit</label>
                                         <select class="form-select" name="kccq15d">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">extrem</option>
-                                        <option value="2">sehr</option>
-                                        <option value="3">mäßig</option>
-                                        <option value="4">etwas</option>
-                                        <option value="5">überhaupt nicht</option>
-                                        <option value="9">nicht zutreffend</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15d== 1 %} selected{% endif %}>extrem</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15d== 2 %} selected{% endif %}>sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15d== 3 %} selected{% endif %}>mäßig</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15d== 4 %} selected{% endif %}>etwas</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15d== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15d== 9 %} selected{% endif %}>nicht zutreffend</option>
                                         </select>
                                     </div>
                                     </div>
@@ -531,11 +700,11 @@
                                     <label class="form-label fw-bold">16. Wie sehr haben Sie das Gefühl, Ihre Symptome beeinflussen zu können?</label>
                                     <select class="form-select" name="kccq16">
                                         <option value="">Bitte wählen</option>
-                                        <option value="1">überhaupt nicht</option>
-                                        <option value="2">nicht sehr</option>
-                                        <option value="3">teilweise</option>
-                                        <option value="4">ziemlich</option>
-                                        <option value="5">vollkommen</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq16== 1 %} selected{% endif %}>überhaupt nicht</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq16== 2 %} selected{% endif %}>nicht sehr</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq16== 3 %} selected{% endif %}>teilweise</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq16== 4 %} selected{% endif %}>ziemlich</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq16== 5 %} selected{% endif %}>vollkommen</option>
                                     </select>
                                     </div>
 
@@ -552,55 +721,55 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Gewicht</label>
-                                <input type="number" class="form-control" name="weight">
+                                <input type="number" class="form-control" name="weight" value="{{ last_recording.weight if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Blutdruck (systolisch/diastolisch)</label>
-                                <input type="text" class="form-control" name="bp">
+                                <input type="text" class="form-control" name="bp" value="{{ last_recording.bp if last_recording else '' }}">
                             </div>
                         </div>
                        
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Puls</label>
-                                <input type="number" class="form-control" name="pulse">
+                                <input type="number" class="form-control" name="pulse" value="{{ last_recording.pulse if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Medikamentenanpassungen (falls relevant)</label>
-                                <textarea class="form-control" name="medication_changes" style="height: 38px; resize: none;"></textarea>
+                                <textarea class="form-control" name="medication_changes" value="{{ last_recording.medication_changes if last_recording else '' }}" style="height: 38px; resize: none;"></textarea>
                             </div>
 
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Kalium</label>
-                                <input type="number" class="form-control" name="kalium_daily">
+                                <input type="number" class="form-control" name="kalium_daily" value="{{ last_recording.kalium_daily if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Natrium</label>
-                                <input type="number" class="form-control" name="natrium_daily">
+                                <input type="number" class="form-control" name="natrium_daily" value="{{ last_recording.natrium_daily if last_recording else '' }}">
                             </div>
 
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Kreatinin / GFR</label>
-                                <input type="text" class="form-control" name="kreatinin_gfr_daily">
+                                <input type="text" class="form-control" name="kreatinin_gfr_daily" value="{{ last_recording.kreatinin_gfr_daily if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Harnstoff</label>
-                                <input type="number" class="form-control" name="harnstoff_daily">
+                                <input type="number" class="form-control" name="harnstoff_daily" value="{{ last_recording.harnstoff_daily if last_recording else '' }}">
                             </div>
 
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Hb</label>
-                                <input type="number" class="form-control" name="hb_daily">
+                                <input type="number" class="form-control" name="hb_daily" value="{{ last_recording.hb_daily if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>NT-proBNP</label>
-                                <input type="number" class="form-control" name="ntprobnp_daily">
+                                <input type="number" class="form-control" name="ntprobnp_daily" value="{{ last_recording.ntprobnp_daily if last_recording else '' }}">
                             </div>
 
                         </div>
@@ -638,51 +807,51 @@
                         <div class="row">
                              <div class="mb-3 col-md-6">
                                 <label>NT- pro BNP</label>
-                                <input type="number" class="form-control" name="ntprobnp">
+                                <input type="number" class="form-control" name="ntprobnp" value="{{ last_recording.ntprobnp if last_recording else '' }}">
                             </div>    
                             <div class="mb-3 col-md-6">
                                 <label>Kalium</label>
-                                <input type="number" class="form-control" name="kalium">
+                                <input type="number" class="form-control" name="kalium" value="{{ last_recording.kalium if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Natrium</label>
-                                <input type="number" class="form-control" name="natrium">
+                                <input type="number" class="form-control" name="natrium" value="{{ last_recording.natrium if last_recording else '' }}">
                             </div>                       
                             <div class="mb-3 col-md-6">
                                 <label>Kreatinin / GFR</label>
-                                <input type="text" class="form-control" name="kreatinin_gfr">
+                                <input type="text" class="form-control" name="kreatinin_gfr" value="{{ last_recording.kreatinin_gfr if last_recording else '' }}">
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Harnstoff</label>
-                                <input type="number" class="form-control" name="harnstoff">
+                                <input type="number" class="form-control" name="harnstoff" value="{{ last_recording.harnstoff if last_recording else '' }}">
                             </div>
                         
                         
                             <div class="mb-3 col-md-6">
                                 <label>Hb (Hämoglobin)</label>
-                                <input type="number" class="form-control" name="hb">
+                                <input type="number" class="form-control" name="hb" value="{{ last_recording.hb if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Aktuelles Körpergewicht</label>
-                                <input type="number" class="form-control" name="current_weight">
+                                <input type="number" class="form-control" name="current_weight" value="{{ last_recording.current_weight if last_recording else '' }}">
                             </div>
                 
                             <div class="mb-3 col-md-6">
                                 <label>Aktuelle Medikation bei Entlassung</label>
-                                <textarea class="form-control" name="discharge_medication" style="height: 38px; resize: none;"></textarea>
+                                <textarea class="form-control" name="discharge_medication" value="{{ last_recording.discharge_medication if last_recording else '' }}" style="height: 38px; resize: none;">{{ last_recording.medication if last_recording else '' }}</textarea>
                             </div>
                         </div>
                         <div class="row">
                              <div class="mb-3 col-md-6">
                                 <label>Datum der Entlassung</label>
-                                <input type="date" class="form-control" name="discharge_date">
+                                <input type="date" class="form-control" name="discharge_date" value="{{ last_recording.discharge_date if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
@@ -733,24 +902,24 @@
                                     <label>Sich selbst ankleiden</label>
                                     <select class="form-select" name="kccq1a">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq1a== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq1a== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq1a== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq1a== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq1a== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq1a== 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label>Duschen / Baden</label>
                                     <select class="form-select" name="kccq1b">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq1b== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq1b== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq1b== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq1b== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq1b== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq1b== 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                     </select>
                                 </div>
                                 </div>
@@ -759,24 +928,24 @@
                                     <label>100–200 m auf ebener Strecke gehen</label>
                                     <select class="form-select" name="kccq1c">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq1c== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq1c== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq1c== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq1c== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq1c== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq1c== 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label>Garten-/Hausarbeit, Einkaufstaschen tragen</label>
                                     <select class="form-select" name="kccq1d">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq1d== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq1d== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq1d== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq1d== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq1d== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq1d== 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                     </select>
                                 </div>
                                 </div>
@@ -785,24 +954,24 @@
                                     <label>Ohne Pause eine Treppe hochsteigen</label>
                                     <select class="form-select" name="kccq1e">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq1e== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq1e== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq1e== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq1e== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq1e== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq1e== 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label>Laufen/Joggen (z.B. Bus erreichen)</label>
                                     <select class="form-select" name="kccq1f">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq1f== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq1f== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq1f== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq1f== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq1f== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq1f== 9 %} selected{% endif %}>aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
                                     </select>
                                 </div>
                                 </div>
@@ -812,177 +981,8 @@
                                 <label class="form-label fw-bold">2. Haben sich Ihre Beschwerden im Vergleich zu vor 2 Wochen geändert?</label>
                                 <select class="form-select" name="kccq2">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">viel schlechter</option>
-                                    <option value="2">etwas schlechter</option>
-                                    <option value="3">unverändert</option>
-                                    <option value="4">etwas besser</option>
-                                    <option value="5">viel besser</option>
-                                    <option value="6">keine Symptome</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 3 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">3. Wie oft Schwellungen morgens beim Aufwachen?</label>
-                                <select class="form-select" name="kccq3">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">jeden Morgen</option>
-                                    <option value="2">3x/Woche oder öfter</option>
-                                    <option value="3">1-2x/Woche</option>
-                                    <option value="4">weniger als 1x/Woche</option>
-                                    <option value="5">niemals</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 4 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">4. Wie beschwerlich waren die Schwellungen?</label>
-                                <select class="form-select" name="kccq4">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="6">keine Schwellungen</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 5 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">5. Wie oft hat zu schnelle Ermüdung Sie abgehalten?</label>
-                                <select class="form-select" name="kccq5">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">ständig mehrmals am Tag</option>
-                                    <option value="2">mind. 1x/Tag</option>
-                                    <option value="3">3x/Woche oder öfter</option>
-                                    <option value="4">1-2x/Woche</option>
-                                    <option value="5">weniger als 1x/Woche</option>
-                                    <option value="6">niemals</option>
-                                    <option value="7">keine Ermüdung</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 6 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">6. Wie beschwerlich war Ihre Ermüdung?</label>
-                                <select class="form-select" name="kccq6">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="6">keine Ermüdung</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 7 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">7. Wie oft hat Atemnot Sie abgehalten?</label>
-                                <select class="form-select" name="kccq7">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">ständig mehrmals am Tag</option>
-                                    <option value="2">mind. 1x/Tag</option>
-                                    <option value="3">3x/Woche oder öfter</option>
-                                    <option value="4">1-2x/Woche</option>
-                                    <option value="5">weniger als 1x/Woche</option>
-                                    <option value="6">niemals</option>
-                                    <option value="7">keine Atemnot</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 8 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">8. Wie beschwerlich war Ihre Atemnot?</label>
-                                <select class="form-select" name="kccq8">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="6">keine Atemnot</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 9 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">9. Wie oft mussten Sie wegen Atemnot erhöht schlafen?</label>
-                                <select class="form-select" name="kccq9">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">jede Nacht</option>
-                                    <option value="2">3x/Woche oder öfter</option>
-                                    <option value="3">1-2x/Woche</option>
-                                    <option value="4">weniger als 1x/Woche</option>
-                                    <option value="5">niemals</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 10 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">10. Wie sicher sind Sie, was zu tun ist, wenn sich Ihre Symptome verschlechtern?</label>
-                                <select class="form-select" name="kccq10">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">überhaupt nicht sicher</option>
-                                    <option value="2">nicht sehr sicher</option>
-                                    <option value="3">teilweise sicher</option>
-                                    <option value="4">ziemlich sicher</option>
-                                    <option value="5">vollkommen sicher</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 11 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">11. Wie gut verstehen Sie, was Sie selbst tun können?</label>
-                                <select class="form-select" name="kccq11">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">überhaupt nicht</option>
-                                    <option value="2">nicht sehr gut</option>
-                                    <option value="3">teilweise</option>
-                                    <option value="4">größtenteils</option>
-                                    <option value="5">vollkommen</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 12 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">12. In welchem Ausmaß hat Ihre Herzinsuffizienz Ihre Lebensfreude beeinträchtigt?</label>
-                                <select class="form-select" name="kccq12">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 13 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">13. Wie würden Sie sich fühlen, wenn Sie im jetzigen Zustand bleiben?</label>
-                                <select class="form-select" name="kccq13">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">überhaupt nicht zufrieden</option>
-                                    <option value="2">größtenteils unzufrieden</option>
-                                    <option value="3">ziemlich zufrieden</option>
-                                    <option value="4">größtenteils zufrieden</option>
-                                    <option value="5">vollkommen zufrieden</option>
-                                </select>
-                                </div>
-
-                                <!-- Frage 14 -->
-                                <div class="mb-3">
-                                <label class="form-label fw-bold">14. Wie oft waren Sie entmutigt oder deprimiert?</label>
-                                <select class="form-select" name="kccq14">
-                                    <option value="">Bitte wählen</option>
-                                    <option value="1">ständig</option>
-                                    <option value="2">die meiste Zeit</option>
-                                    <option value="3">gelegentlich</option>
-                                    <option value="4">selten</option>
-                                    <option value="5">niemals</option>
-                                </select>
-                                </div>
+                                    <option value="1"{% if last_recording and last_recording.kccq2== 1 %} selected{% endif %}>viel schlechter</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq2== 2 %} selected{% endif %}>etwas schlechter</option>
 
                                 <!-- Frage 15: Lebensweise -->
                                 <label class="form-label fw-bold">15. In welchem Ausmaß beeinflusst Ihre Herzinsuffizienz Ihre Lebensweise?</label>
@@ -991,24 +991,24 @@
                                     <label>Hobbies/Freizeitaktivitäten</label>
                                     <select class="form-select" name="kccq15a">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">nicht zutreffend</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq15a== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq15a== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq15a== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq15a== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq15a== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq15a== 9 %} selected{% endif %}>nicht zutreffend</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label>Intime Beziehungen</label>
                                     <select class="form-select" name="kccq15b">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">nicht zutreffend</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq15b== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq15b== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq15b== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq15b== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq15b== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq15b== 9 %} selected{% endif %}>nicht zutreffend</option>
                                     </select>
                                 </div>
                                 </div>
@@ -1017,24 +1017,24 @@
                                     <label>Besuche bei Familie/Freunden</label>
                                     <select class="form-select" name="kccq15c">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">nicht zutreffend</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq15c== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq15c== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq15c== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq15c== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq15c== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq15c== 9 %} selected{% endif %}>nicht zutreffend</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label>Arbeit/Hausarbeit</label>
                                     <select class="form-select" name="kccq15d">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">extrem</option>
-                                    <option value="2">sehr</option>
-                                    <option value="3">mäßig</option>
-                                    <option value="4">etwas</option>
-                                    <option value="5">überhaupt nicht</option>
-                                    <option value="9">nicht zutreffend</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq15d== 1 %} selected{% endif %}>extrem</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq15d== 2 %} selected{% endif %}>sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq15d== 3 %} selected{% endif %}>mäßig</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq15d== 4 %} selected{% endif %}>etwas</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq15d== 5 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="9"{% if last_recording and last_recording.kccq15d== 9 %} selected{% endif %}>nicht zutreffend</option>
                                     </select>
                                 </div>
                                 </div>
@@ -1044,11 +1044,11 @@
                                 <label class="form-label fw-bold">16. Wie sehr haben Sie das Gefühl, Ihre Symptome beeinflussen zu können?</label>
                                 <select class="form-select" name="kccq16">
                                     <option value="">Bitte wählen</option>
-                                    <option value="1">überhaupt nicht</option>
-                                    <option value="2">nicht sehr</option>
-                                    <option value="3">teilweise</option>
-                                    <option value="4">ziemlich</option>
-                                    <option value="5">vollkommen</option>
+                                    <option value="1"{% if last_recording and last_recording.kccq16== 1 %} selected{% endif %}>überhaupt nicht</option>
+                                    <option value="2"{% if last_recording and last_recording.kccq16== 2 %} selected{% endif %}>nicht sehr</option>
+                                    <option value="3"{% if last_recording and last_recording.kccq16== 3 %} selected{% endif %}>teilweise</option>
+                                    <option value="4"{% if last_recording and last_recording.kccq16== 4 %} selected{% endif %}>ziemlich</option>
+                                    <option value="5"{% if last_recording and last_recording.kccq16== 5 %} selected{% endif %}>vollkommen</option>
                                 </select>
                                 </div>
 

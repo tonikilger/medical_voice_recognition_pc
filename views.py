@@ -246,3 +246,90 @@ def delete_recording(recording_id):
             db.session.delete(patient)
             db.session.commit()
     return redirect(request.referrer or url_for('views.dashboards'))
+
+@views.route('/edit_recording/<int:recording_id>', methods=['GET', 'POST'])
+def edit_recording(recording_id):
+    recording = Recording.query.get_or_404(recording_id)
+    def parse_date(date_str):
+        if date_str:
+            try:
+                return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return None
+        return None
+
+    if request.method == 'POST':
+        # Admission fields
+        recording.age = request.form.get('age') or None
+        recording.gender = request.form.get('gender') or None
+        recording.height = request.form.get('height') or None
+        diagnosis = request.form.getlist('diagnosis')
+        recording.diagnosis = ', '.join(diagnosis) if diagnosis else None
+        recording.medication = request.form.get('medication') or None
+        recording.comorbidities = request.form.get('comorbidities') or None
+        recording.admission_date = parse_date(request.form.get('admission_date'))
+        recording.ntprobnp = request.form.get('ntprobnp') or None
+        recording.kalium = request.form.get('kalium') or None
+        recording.natrium = request.form.get('natrium') or None
+        recording.kreatinin_gfr = request.form.get('kreatinin_gfr') or None
+        recording.harnstoff = request.form.get('harnstoff') or None
+        recording.hb = request.form.get('hb') or None
+        recording.initial_weight = request.form.get('initial_weight') or None
+        recording.initial_bp = request.form.get('initial_bp') or None
+
+        # KCCQ fields
+        for field in [
+            'kccq1a', 'kccq1b', 'kccq1c', 'kccq1d', 'kccq1e', 'kccq1f',
+            'kccq2', 'kccq3', 'kccq4', 'kccq5', 'kccq6', 'kccq7', 'kccq8', 'kccq9', 'kccq10', 'kccq11',
+            'kccq12', 'kccq13', 'kccq14', 'kccq15a', 'kccq15b', 'kccq15c', 'kccq15d', 'kccq16'
+        ]:
+            setattr(recording, field, request.form.get(field) or None)
+
+        # Daily fields
+        recording.weight = request.form.get('weight') or None
+        recording.bp = request.form.get('bp') or None
+        recording.pulse = request.form.get('pulse') or None
+        recording.medication_changes = request.form.get('medication_changes') or None
+        recording.kalium_daily = request.form.get('kalium_daily') or None
+        recording.natrium_daily = request.form.get('natrium_daily') or None
+        recording.kreatinin_gfr_daily = request.form.get('kreatinin_gfr_daily') or None
+        recording.harnstoff_daily = request.form.get('harnstoff_daily') or None
+        recording.hb_daily = request.form.get('hb_daily') or None
+        recording.ntprobnp_daily = request.form.get('ntprobnp_daily') or None
+
+        # Discharge fields
+        recording.abschluss_labor = request.form.get('abschluss_labor') or None
+        recording.current_weight = request.form.get('current_weight') or None
+        recording.discharge_medication = request.form.get('discharge_medication') or None
+        recording.discharge_date = parse_date(request.form.get('discharge_date'))
+
+        # Voice samples (only update if a new file is uploaded)
+        voice_file = request.files.get('voice_sample_standardized')
+        if voice_file and voice_file.filename:
+            recording.voice_sample_standardized = voice_file.read()
+        story_file = request.files.get('voice_sample_storytelling')
+        if story_file and story_file.filename:
+            recording.voice_sample_storytelling = story_file.read()
+
+        # Score calculation
+        score = 0
+        for field in [
+            'kccq1a', 'kccq1b', 'kccq1c', 'kccq1d', 'kccq1e', 'kccq1f',
+            'kccq2', 'kccq3', 'kccq4', 'kccq5', 'kccq6', 'kccq7', 'kccq8', 'kccq9', 'kccq10', 'kccq11',
+            'kccq12', 'kccq13', 'kccq14', 'kccq15a', 'kccq15b', 'kccq15c', 'kccq15d', 'kccq16'
+        ]:
+            value = request.form.get(field)
+            if value and value.isdigit():
+                score += int(value)
+        recording.score = score
+
+        db.session.commit()
+        return redirect(url_for('views.search', query=recording.patient_id))
+    # GET: Render the form with prefilled values
+    return render_template(
+        'recording.html',
+        last_recording=recording,
+        hospitalization_day=recording.hospitalization_day,
+        patient_id=recording.patient_id,
+        datetime=datetime
+    )

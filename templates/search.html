@@ -45,6 +45,7 @@
                 <th>KCCQ-Score</th>
                 <th>Voice Sample</th>
                 <th>Voice Story</th>
+                <th>Actions</th>
     
             </tr>
         </thead>
@@ -73,7 +74,9 @@
                     <td>{{ record.score }}</td>
                     <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
                     <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
-                    
+                    <td>
+                        <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
