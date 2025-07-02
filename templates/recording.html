@@ -5,9 +5,9 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col">
-        <div class="container-fluid">
+<div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="container-fluid px-1 px-md-3">
             <h2>Record Patient</h2>
             <form method="POST" action="{% if last_recording %}{{ url_for('views.edit_recording', recording_id=last_recording.id) }}{% else %}{{ url_for('views.recording') }}{% endif %}" enctype="multipart/form-data">
                 <!-- Start first part -->
