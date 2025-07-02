@@ -68,6 +68,7 @@ def dashboards():
     )
 
 @views.route('/recording', methods=['GET', 'POST'])
+@login_required
 def recording():
     def parse_date(date_str):
         if date_str:
@@ -220,6 +221,7 @@ def recording():
     )
 
 @views.route('/search', methods=['GET'])
+@login_required
 def search():
     query = request.args.get('query', '').strip()  # Get the search query from the URL
     records = []
