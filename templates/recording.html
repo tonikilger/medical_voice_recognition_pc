@@ -1,25 +1,24 @@
 {% extends 'base.html' %}
 
-
 {% block title %}Record Patient{% endblock %}
 
 {% block content %}
 
 <div class="row">
     <div class="col">
-        <div class="container-fluid">
-            <h2>Record Patient</h2>
+        <div class="container-fluid px-0">
+            <h2 class="mb-4">Record Patient</h2>
             <form method="POST" action="{% if last_recording %}{{ url_for('views.edit_recording', recording_id=last_recording.id) }}{% else %}{{ url_for('views.recording') }}{% endif %}" enctype="multipart/form-data">
                 <!-- Start first part -->
             
                 <div>
-                    <div class="row">
-                        <div class="mb-3 col-md-6">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
                             <label for="patientId" class="form-label">Patient ID</label>
                             <input type="text" class="form-control" id="patientId" name="patient_id" value="{{ patient_id or '' }}" required>
                         </div>
 
-                        <div class="mb-3 col-md-6">
+                        <div class="col-12 col-md-6">
                             <label for="recordingType" class="form-label">Recording Type</label>
                             <select class="form-select" id="recordingType" name="recording_type">
                                 <option value="admission" {% if last_recording and last_recording.recording_type == 'admission' %}selected{% endif %}>Admission</option>
@@ -31,13 +30,13 @@
                     <!-- Admission Fields -->
                 <div>
                     <div id="admissionFields" style="display:none;">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label>Age</label>
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Age</label>
                                 <input type="number" class="form-control" name="age" value="{{ last_recording.age if last_recording else '' }}">
                             </div>
-                            <div class="col-md-6">
-                                <label>Gender</label>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Gender</label>
                                 <select class="form-select" name="gender">
                                     <option value="">Please select</option>
                                     <option value="m"{% if last_recording and last_recording.gender == 'm' %}selected{% endif %}>Male</option>
@@ -46,8 +45,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
                                 <label>Height (cm)</label>
                                 <input type="number" class="form-control" name="height" value="{{ last_recording.height if last_recording else '' }}">
                             </div>

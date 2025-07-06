@@ -1,23 +1,60 @@
 {% extends 'base.html' %}
 
-{% block title %}Home Page{% endblock %}
-{% block content %}
-    <h2>Home Page</h2>
-    <p>This is the home page of the website.</p>
-    <p>Welcome to my website! Here you can find various resources and information.</p>
-{% endblock %}
+{% block title %}Medical Voice Recorder{% endblock %}
 
-{% block styles %}
-    <style>
-        /* Add any additional styles specific to the home page here */
-        h2 {
-            color: #007bff;
-        }
-    </style>
-{% endblock %}
-{% block scripts %}
-    <script>
-        // Add any additional scripts specific to the home page here
-        console.log("Home page loaded");
-    </script>
+{% block content %}
+<div class="text-center">
+    <div class="mb-4">
+        <h1 class="display-4 mb-3">🎙️ Medical Voice Recorder</h1>
+        <p class="lead text-muted">Professional voice data collection for medical research</p>
+    </div>
+    
+    <div class="row g-4 mt-4">
+        <div class="col-12 col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-clipboard-data" style="font-size: 3rem; color: #0d6efd;"></i>
+                    </div>
+                    <h5 class="card-title">View Dashboard</h5>
+                    <p class="card-text">Monitor patient records and track completion status</p>
+                    <a href="/dashboards" class="btn btn-primary">Go to Dashboard</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12 col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-mic" style="font-size: 3rem; color: #dc3545;"></i>
+                    </div>
+                    <h5 class="card-title">Record Patient</h5>
+                    <p class="card-text">Create new patient recordings with voice samples</p>
+                    <a href="/recording" class="btn btn-danger">Start Recording</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12 col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-search" style="font-size: 3rem; color: #198754;"></i>
+                    </div>
+                    <h5 class="card-title">Search Patients</h5>
+                    <p class="card-text">Find and review existing patient records</p>
+                    <a href="/search" class="btn btn-success">Search Records</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-5">
+        <div class="alert alert-info" role="alert">
+            <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Getting Started</h6>
+            <p class="mb-0">Begin by recording patient data or view existing records in the dashboard. Each recording includes voice samples and clinical measurements.</p>
+        </div>
+    </div>
+</div>
 {% endblock %}

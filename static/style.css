@@ -4,16 +4,16 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    touch-action: manipulation;
 }
 main {
     flex: 1;
 }
 
-
 .btn-dark{
     --bs-btn-active-bg: #383C4B;
- 
-
 }
 .btn-dark:hover{
     background-color: #3f424490  !important;
@@ -22,7 +22,6 @@ main {
 .nav{
     --bs-nav-link-color: gray;
     --bs-nav-link-hover-color: black;
-
 }
 .additional_notes::placeholder{
     color: rgb(153, 151, 151);
@@ -31,7 +30,6 @@ main {
 .card{
     --bs-card-height: ;
     border-color: lightgray 1px;
-
 }
 
 .equal-cols th,
@@ -42,12 +40,119 @@ main {
     white-space: nowrap;
 }
 
-
-
 /* Select2 Mehrfachauswahl: Tags untereinander statt nebeneinander */
 .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered {
     display: flex !important;
     flex-direction: column !important;
     gap: 2px;
+}
+
+/* iOS Mobile Optimizations */
+@media (max-width: 768px) {
+    /* Better spacing on mobile */
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Improved form controls for touch */
+    .form-control, .form-select {
+        min-height: 44px;
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+    
+    /* Better button touch targets */
+    .btn {
+        min-height: 44px;
+        padding: 10px 16px;
+        font-size: 16px;
+    }
+    
+    /* Responsive table improvements */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem 0.25rem;
+        white-space: nowrap;
+    }
+    
+    /* Card improvements for mobile */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-header h4, .card-header h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Navigation improvements */
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .navbutton {
+        padding: 8px 10px;
+        margin: 2px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small screens */
+    .navbutton {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+    }
+    
+    .table {
+        font-size: 0.7rem;
+    }
+    
+    .btn-sm {
+        min-height: 38px;
+        font-size: 14px;
+    }
+}
+
+/* Fix for iOS Safari input zoom */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select, textarea, input[type="text"], input[type="password"], 
+    input[type="datetime"], input[type="datetime-local"], 
+    input[type="date"], input[type="month"], input[type="time"], 
+    input[type="week"], input[type="number"], input[type="email"], 
+    input[type="url"], input[type="search"], input[type="tel"], 
+    input[type="color"] {
+        font-size: 16px;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+}
+
+/* Prevent text selection on UI elements */
+.btn, .nav-link, .card-header {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+/* Improve touch targets */
+.accordion-button, .nav-link, .btn {
+    touch-action: manipulation;
+}
+
+/* Better accordion for mobile */
+@media (max-width: 768px) {
+    .accordion-button {
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .accordion-body {
+        padding: 1rem 0.75rem;
+    }
 }
 
