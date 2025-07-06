@@ -59,7 +59,7 @@
                 <tr>
                     <td>{{ record.patient_id }}</td>
                     <td>{{ record.hospitalization_day }}</td>
-                    <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
+                    <td>{{ record.calculated_date.strftime('%d.%m.%Y') if record.calculated_date else '' }}</td>
                     <td>{{ record.age }}</td>
                     <td>{{ record.gender }}</td>
                     <td>{{ record.height }}</td>
@@ -107,7 +107,7 @@
                             <td>{{ record.patient_id }}</td>
                             <td>{{ record.recording_type|capitalize }}</td>
                             <td>{{ record.hospitalization_day }}</td>
-                            <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
+                            <td>{{ record.calculated_date.strftime('%d.%m.%Y') if record.calculated_date else '' }}</td>
                             <td>{{ record.weight }}</td>
                             <td>{{ record.bp }}</td>
                             <td>{{ record.pulse }}</td>
@@ -156,7 +156,7 @@
                             <td>{{ record.patient_id }}</td>
                             <td>{{ record.recording_type|capitalize }}</td>
                             <td>{{ record.hospitalization_day }}</td>
-                            <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
+                            <td>{{ record.calculated_date.strftime('%d.%m.%Y') if record.calculated_date else '' }}</td>
                             <td>{{ record.current_weight }}</td>
                             <td>{{ record.discharge_date.strftime('%d.%m.%Y') if record.discharge_date else '' }}</td>
                             <td>{{ record.discharge_medication }}</td>
