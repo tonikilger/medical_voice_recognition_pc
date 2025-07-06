@@ -122,10 +122,43 @@ def recording():
         diagnosis = request.form.getlist('diagnosis')
         diagnosis_str = ', '.join(diagnosis) if diagnosis else None
 
+        # Get recording type first
+        recording_type = request.form.get('recording_type')
+        
+        # Only process KCCQ fields for admission and discharge recordings
+        kccq_fields = {}
+        if recording_type in ['admission', 'discharge']:
+            kccq_fields = {
+                'kccq1a': request.form.get('kccq1a') or None,
+                'kccq1b': request.form.get('kccq1b') or None,
+                'kccq1c': request.form.get('kccq1c') or None,
+                'kccq1d': request.form.get('kccq1d') or None,
+                'kccq1e': request.form.get('kccq1e') or None,
+                'kccq1f': request.form.get('kccq1f') or None,
+                'kccq2': request.form.get('kccq2') or None,
+                'kccq3': request.form.get('kccq3') or None,
+                'kccq4': request.form.get('kccq4') or None,
+                'kccq5': request.form.get('kccq5') or None,
+                'kccq6': request.form.get('kccq6') or None,
+                'kccq7': request.form.get('kccq7') or None,
+                'kccq8': request.form.get('kccq8') or None,
+                'kccq9': request.form.get('kccq9') or None,
+                'kccq10': request.form.get('kccq10') or None,
+                'kccq11': request.form.get('kccq11') or None,
+                'kccq12': request.form.get('kccq12') or None,
+                'kccq13': request.form.get('kccq13') or None,
+                'kccq14': request.form.get('kccq14') or None,
+                'kccq15a': request.form.get('kccq15a') or None,
+                'kccq15b': request.form.get('kccq15b') or None,
+                'kccq15c': request.form.get('kccq15c') or None,
+                'kccq15d': request.form.get('kccq15d') or None,
+                'kccq16': request.form.get('kccq16') or None,
+            }
+
         # Build the Recording object with all possible fields
         recording = Recording(
             patient_id=patient_id,
-            recording_type=request.form.get('recording_type'),
+            recording_type=recording_type,
             hospitalization_day=hospitalization_day,
 
             # Admission fields
@@ -145,31 +178,8 @@ def recording():
             initial_weight=request.form.get('initial_weight') or None,
             initial_bp=request.form.get('initial_bp') or None,
 
-            # KCCQ Einzelitems
-            kccq1a=request.form.get('kccq1a') or None,
-            kccq1b=request.form.get('kccq1b') or None,
-            kccq1c=request.form.get('kccq1c') or None,
-            kccq1d=request.form.get('kccq1d') or None,
-            kccq1e=request.form.get('kccq1e') or None,
-            kccq1f=request.form.get('kccq1f') or None,
-            kccq2=request.form.get('kccq2') or None,
-            kccq3=request.form.get('kccq3') or None,
-            kccq4=request.form.get('kccq4') or None,
-            kccq5=request.form.get('kccq5') or None,
-            kccq6=request.form.get('kccq6') or None,
-            kccq7=request.form.get('kccq7') or None,
-            kccq8=request.form.get('kccq8') or None,
-            kccq9=request.form.get('kccq9') or None,
-            kccq10=request.form.get('kccq10') or None,
-            kccq11=request.form.get('kccq11') or None,
-            kccq12=request.form.get('kccq12') or None,
-            kccq13=request.form.get('kccq13') or None,
-            kccq14=request.form.get('kccq14') or None,
-            kccq15a=request.form.get('kccq15a') or None,
-            kccq15b=request.form.get('kccq15b') or None,
-            kccq15c=request.form.get('kccq15c') or None,
-            kccq15d=request.form.get('kccq15d') or None,
-            kccq16=request.form.get('kccq16') or None,
+            # KCCQ fields (only for admission/discharge)
+            **kccq_fields,
 
             # Daily fields
             weight=request.form.get('weight') or None,
