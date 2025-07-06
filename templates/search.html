@@ -52,31 +52,16 @@
                                     <th style="font-size: 0.8rem;">Actions</th>
                                 </tr>
         </thead>
-        <tbody>
-            {% for record in records if record.recording_type == 'admission' %}
+        <tbody>                            {% for record in records if record.recording_type == 'admission' %}
                 <tr>
-                    <td>{{ record.id }}</td>
-                    <td>{{ record.recording_type|capitalize }}</td>
+                    <td>{{ record.patient_id }}</td>
                     <td>{{ record.hospitalization_day }}</td>
                     <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
                     <td>{{ record.age }}</td>
                     <td>{{ record.gender }}</td>
                     <td>{{ record.height }}</td>
                     <td>{{ record.diagnosis }}</td>
-                    <td>{{ record.medication }}</td>
-                    <td>{{ record.comorbidities }}</td>
-                    <td>{{ record.admission_date.strftime('%d.%m.%Y') if record.admission_date else '' }}</td>
-                    <td>{{ record.ntprobnp }}</td>
-                    <td>{{ record.kalium }}</td>
-                    <td>{{ record.natrium }}</td>
-                    <td>{{ record.kreatinin_gfr }}</td>
-                    <td>{{ record.harnstoff }}</td>
-                    <td>{{ record.hb }}</td>
-                    <td>{{ record.initial_weight }}</td>
-                    <td>{{ record.initial_bp }}</td>
                     <td>{{ record.score }}</td>
-                    <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
-                    <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
                     <td>
                         <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
                     </td>
@@ -85,59 +70,107 @@
         </tbody>
     </table>
     </div>
+    </div>
 
-    <h4>Daily</h4>
-    <div style="overflow-x:auto;">
-    <table class="table table-sm table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Day</th>
-                <th>Date</th>
-                <th>Weight</th>
-                <th>BP</th>
-                <th>Pulse</th>
-                <th>Medication Changes</th>
-                <th>Kalium</th>
-                <th>Natrium</th>
-                <th>Kreatinin/GFR</th>
-                <th>Harnstoff</th>
-                <th>Hb</th>
-                <th>NTproBNP</th>
-                <th>Voice Sample</th>
-                <th>Voice Story</th>
-                <th>Actions</th>
-              
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in records if record.recording_type == 'daily' %}
-                <tr>
-                    <td>{{ record.id }}</td>
-                    <td>{{ record.recording_type|capitalize }}</td>
-                    <td>{{ record.hospitalization_day }}</td>
-                    <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
-                    <td>{{ record.weight }}</td>
-                    <td>{{ record.bp }}</td>
-                    <td>{{ record.pulse }}</td>
-                    <td>{{ record.medication_changes }}</td>
-                    <td>{{ record.kalium_daily }}</td>
-                    <td>{{ record.natrium_daily }}</td>
-                    <td>{{ record.kreatinin_gfr_daily }}</td>
-                    <td>{{ record.harnstoff_daily }}</td>
-                    <td>{{ record.hb_daily }}</td>
-                    <td>{{ record.ntprobnp_daily }}</td>
-                    <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
-                    <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
-                    <td>
-                        <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                    </td>
-               
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Daily Records -->
+    <div class="tab-pane fade" id="daily" role="tabpanel">
+        <h5 class="mb-3">Daily Records</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="font-size: 0.8rem;">ID</th>
+                        <th style="font-size: 0.8rem;">Type</th>
+                        <th style="font-size: 0.8rem;">Day</th>
+                        <th style="font-size: 0.8rem;">Date</th>
+                        <th style="font-size: 0.8rem;">Weight</th>
+                        <th style="font-size: 0.8rem;">BP</th>
+                        <th style="font-size: 0.8rem;">Pulse</th>
+                        <th style="font-size: 0.8rem;">Medication Changes</th>
+                        <th style="font-size: 0.8rem;">Kalium</th>
+                        <th style="font-size: 0.8rem;">Natrium</th>
+                        <th style="font-size: 0.8rem;">Kreatinin/GFR</th>
+                        <th style="font-size: 0.8rem;">Harnstoff</th>
+                        <th style="font-size: 0.8rem;">Hb</th>
+                        <th style="font-size: 0.8rem;">NTproBNP</th>
+                        <th style="font-size: 0.8rem;">Voice Sample</th>
+                        <th style="font-size: 0.8rem;">Voice Story</th>
+                        <th style="font-size: 0.8rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records if record.recording_type == 'daily' %}
+                        <tr>
+                            <td>{{ record.patient_id }}</td>
+                            <td>{{ record.recording_type|capitalize }}</td>
+                            <td>{{ record.hospitalization_day }}</td>
+                            <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
+                            <td>{{ record.weight }}</td>
+                            <td>{{ record.bp }}</td>
+                            <td>{{ record.pulse }}</td>
+                            <td>{{ record.medication_changes }}</td>
+                            <td>{{ record.kalium_daily }}</td>
+                            <td>{{ record.natrium_daily }}</td>
+                            <td>{{ record.kreatinin_gfr_daily }}</td>
+                            <td>{{ record.harnstoff_daily }}</td>
+                            <td>{{ record.hb_daily }}</td>
+                            <td>{{ record.ntprobnp_daily }}</td>
+                            <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
+                            <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
+                            <td>
+                                <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Discharge Records -->
+    <div class="tab-pane fade" id="discharge" role="tabpanel">
+        <h5 class="mb-3">Discharge Records</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="font-size: 0.8rem;">ID</th>
+                        <th style="font-size: 0.8rem;">Type</th>
+                        <th style="font-size: 0.8rem;">Day</th>
+                        <th style="font-size: 0.8rem;">Date</th>
+                        <th style="font-size: 0.8rem;">Current Weight</th>
+                        <th style="font-size: 0.8rem;">Discharge Date</th>
+                        <th style="font-size: 0.8rem;">Discharge Medication</th>
+                        <th style="font-size: 0.8rem;">KCCQ Discharge</th>
+                        <th style="font-size: 0.8rem;">Voice Sample</th>
+                        <th style="font-size: 0.8rem;">Voice Story</th>
+                        <th style="font-size: 0.8rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records if record.recording_type == 'discharge' %}
+                        <tr>
+                            <td>{{ record.patient_id }}</td>
+                            <td>{{ record.recording_type|capitalize }}</td>
+                            <td>{{ record.hospitalization_day }}</td>
+                            <td>{{ record.date.strftime('%d.%m.%Y') if record.date else '' }}</td>
+                            <td>{{ record.current_weight }}</td>
+                            <td>{{ record.discharge_date.strftime('%d.%m.%Y') if record.discharge_date else '' }}</td>
+                            <td>{{ record.discharge_medication }}</td>
+                            <td>{{ record.kccq_discharge }}</td>
+                            <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
+                            <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
+                            <td>
+                                <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+        </div>
     </div>
 {% elif query %}
     <p class="text-danger">No patient found with ID {{ query }}.</p>
