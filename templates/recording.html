@@ -48,7 +48,7 @@
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <label>Height (cm)</label>
-                                <input type="number" class="form-control" name="height" value="{{ last_recording.height if last_recording else '' }}">
+                                <input type="number" class="form-control" name="height" step="0.1" min="0" value="{{ last_recording.height if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Diagnosis / Underlying Disease</label>
@@ -143,11 +143,11 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Potassium</label>
-                                <input type="number" class="form-control" name="kalium" value="{{ last_recording.kalium if last_recording else '' }}">
+                                <input type="number" class="form-control" name="kalium" step="0.01" min="0" value="{{ last_recording.kalium if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Sodium</label>
-                                <input type="number" class="form-control" name="natrium" value="{{ last_recording.natrium if last_recording else '' }}">
+                                <input type="number" class="form-control" name="natrium" step="0.01" min="0" value="{{ last_recording.natrium if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
@@ -157,13 +157,13 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Urea</label>
-                                <input type="number" class="form-control" name="harnstoff" value="{{ last_recording.harnstoff if last_recording else '' }}">
+                                <input type="number" class="form-control" name="harnstoff" step="0.01" min="0" value="{{ last_recording.harnstoff if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Body Weight (initial value)</label>
-                                <input type="number" class="form-control" name="initial_weight" value="{{ last_recording.initial_weight if last_recording else '' }}">
+                                <input type="number" class="form-control" name="initial_weight" step="0.1" min="0" value="{{ last_recording.initial_weight if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Blood Pressure (initial value)</label>
@@ -173,7 +173,7 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Hemoglobin (Hb)</label>
-                                <input type="number" class="form-control" name="hb" value="{{ last_recording.hb if last_recording else '' }}">
+                                <input type="number" class="form-control" name="hb" step="0.01" min="0" value="{{ last_recording.hb if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
@@ -539,9 +539,16 @@
                     <!-- Daily Fields -->
                     <div id="dailyFields" style="display:none;">
                         <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> <strong>Recording Date:</strong> This will be automatically calculated based on the admission date and hospitalization day.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Weight</label>
-                                <input type="number" class="form-control" name="weight" value="{{ last_recording.weight if last_recording else '' }}">
+                                <input type="number" class="form-control" name="weight" step="0.1" min="0" value="{{ last_recording.weight if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Blood Pressure (systolic/diastolic)</label>
@@ -563,11 +570,11 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Potassium</label>
-                                <input type="number" class="form-control" name="kalium_daily" value="{{ last_recording.kalium_daily if last_recording else '' }}">
+                                <input type="number" class="form-control" name="kalium_daily" step="0.01" min="0" value="{{ last_recording.kalium_daily if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Sodium</label>
-                                <input type="number" class="form-control" name="natrium_daily" value="{{ last_recording.natrium_daily if last_recording else '' }}">
+                                <input type="number" class="form-control" name="natrium_daily" step="0.01" min="0" value="{{ last_recording.natrium_daily if last_recording else '' }}">
                             </div>
 
                         </div>
@@ -578,18 +585,18 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Urea</label>
-                                <input type="number" class="form-control" name="harnstoff_daily" value="{{ last_recording.harnstoff_daily if last_recording else '' }}">
+                                <input type="number" class="form-control" name="harnstoff_daily" step="0.01" min="0" value="{{ last_recording.harnstoff_daily if last_recording else '' }}">
                             </div>
 
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Hemoglobin (Hb)</label>
-                                <input type="number" class="form-control" name="hb_daily" value="{{ last_recording.hb_daily if last_recording else '' }}">
+                                <input type="number" class="form-control" name="hb_daily" step="0.01" min="0" value="{{ last_recording.hb_daily if last_recording else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>NT-proBNP</label>
-                                <input type="number" class="form-control" name="ntprobnp_daily" value="{{ last_recording.ntprobnp_daily if last_recording else '' }}">
+                                <input type="number" class="form-control" name="ntprobnp_daily" step="0.01" min="0" value="{{ last_recording.ntprobnp_daily if last_recording else '' }}">
                             </div>
 
                         </div>
@@ -625,19 +632,26 @@
                     <!-- Discharge Fields -->
                     <div id="dischargeFields" style="display:none;">
                         <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> <strong>Recording Date:</strong> This will be automatically calculated based on the admission date and hospitalization day.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                              <div class="mb-3 col-md-6">
                                 <label>NT-proBNP</label>
-                                <input type="number" class="form-control" name="ntprobnp" value="{{ last_recording.ntprobnp if last_recording else '' }}">
+                                <input type="number" class="form-control" name="ntprobnp" step="0.01" min="0" value="{{ last_recording.ntprobnp if last_recording else '' }}">
                             </div>    
                             <div class="mb-3 col-md-6">
                                 <label>Potassium</label>
-                                <input type="number" class="form-control" name="kalium" value="{{ last_recording.kalium if last_recording else '' }}">
+                                <input type="number" class="form-control" name="kalium" step="0.01" min="0" value="{{ last_recording.kalium if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Sodium</label>
-                                <input type="number" class="form-control" name="natrium" value="{{ last_recording.natrium if last_recording else '' }}">
+                                <input type="number" class="form-control" name="natrium" step="0.01" min="0" value="{{ last_recording.natrium if last_recording else '' }}">
                             </div>                       
                             <div class="mb-3 col-md-6">
                                 <label>Creatinine / GFR</label>
@@ -648,19 +662,19 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Urea</label>
-                                <input type="number" class="form-control" name="harnstoff" value="{{ last_recording.harnstoff if last_recording else '' }}">
+                                <input type="number" class="form-control" name="harnstoff" step="0.01" min="0" value="{{ last_recording.harnstoff if last_recording else '' }}">
                             </div>
                         
                         
                             <div class="mb-3 col-md-6">
                                 <label>Hemoglobin (Hb)</label>
-                                <input type="number" class="form-control" name="hb" value="{{ last_recording.hb if last_recording else '' }}">
+                                <input type="number" class="form-control" name="hb" step="0.01" min="0" value="{{ last_recording.hb if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Current Body Weight</label>
-                                <input type="number" class="form-control" name="current_weight" value="{{ last_recording.current_weight if last_recording else '' }}">
+                                <input type="number" class="form-control" name="current_weight" step="0.1" min="0" value="{{ last_recording.current_weight if last_recording else '' }}">
                             </div>
                 
                             <div class="mb-3 col-md-6">
@@ -896,6 +910,16 @@ $(document).ready(function() {
 
     // Initial setzen nach dem Laden
     updateDiagnosisHeight();
+
+    // Ensure decimal separator is always a dot (American format)
+    document.querySelectorAll('input[type="number"]').forEach(function(input) {
+        input.addEventListener('input', function(e) {
+            // Replace comma with dot for decimal values
+            if (e.target.value.includes(',')) {
+                e.target.value = e.target.value.replace(/,/g, '.');
+            }
+        });
+    });
 });
 </script>
  

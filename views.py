@@ -86,6 +86,9 @@ def recording():
             db.session.add(new_patient)
             db.session.commit()
 
+        # Get recording type first
+        recording_type = request.form.get('recording_type')
+
         # Voice sample
         voice_file = request.files.get('voice_sample_standardized')
         voice_sample_standardized = voice_file.read() if voice_file else None
@@ -106,10 +109,10 @@ def recording():
                 score += int(value)
 
         admission_date_str = request.form.get('admission_date') or None
-        admission_date = parse_date(admission_date_str)
+        admission_date = parse_date(admission_date_str) if recording_type == 'admission' else None
 
         discharge_date_str = request.form.get('discharge_date') or None
-        discharge_date = parse_date(discharge_date_str)
+        discharge_date = parse_date(discharge_date_str) if recording_type == 'discharge' else None
 
         recordings = Recording.query.filter_by(patient_id=patient_id).order_by(Recording.date).all()
         if recordings:
@@ -122,9 +125,6 @@ def recording():
         diagnosis = request.form.getlist('diagnosis')
         diagnosis_str = ', '.join(diagnosis) if diagnosis else None
 
-        # Get recording type first
-        recording_type = request.form.get('recording_type')
-        
         # Only process KCCQ fields for admission and discharge recordings
         kccq_fields = {}
         if recording_type in ['admission', 'discharge']:

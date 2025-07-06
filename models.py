@@ -8,7 +8,7 @@ class Recording(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, nullable=False)
     recording_type = db.Column(db.String(100), nullable=False)
-    hospitalization_day = db.Column(db.Integer, nullable=True)
+    hospitalization_day = db.Column(db.Float, nullable=True)
 
     # Admission fields
     age = db.Column(db.Integer, nullable=True)
@@ -78,6 +78,34 @@ class Recording(db.Model):
     # Date of recording
     date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     score = db.Column(db.Integer, nullable=True)
+
+    @property
+    def calculated_date(self):
+        """Calculate the date based on admission date and hospitalization day"""
+        if self.recording_type == 'admission':
+            return self.admission_date
+        
+        # For daily and discharge recordings, calculate from admission date
+        if self.hospitalization_day is not None:
+            # Find the admission record for this patient to get the admission date
+            admission_record = Recording.query.filter_by(
+                patient_id=self.patient_id,
+                recording_type='admission'
+            ).first()
+            
+            if admission_record and admission_record.admission_date:
+                # Calculate date by adding hospitalization_day - 1 days to admission date
+                # (Day 1 = admission date, Day 2 = admission date + 1, etc.)
+                return admission_record.admission_date + datetime.timedelta(days=self.hospitalization_day - 1)
+        
+        # Fallback to the recorded date
+        return self.date.date() if self.date else None
+
+    @property
+    def formatted_calculated_date(self):
+        """Return the calculated date formatted as string"""
+        calc_date = self.calculated_date
+        return calc_date.strftime('%Y-%m-%d') if calc_date else None
 
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
