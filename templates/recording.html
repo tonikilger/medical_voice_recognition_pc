@@ -181,11 +181,11 @@
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (standardized sentence) </h5>
-                                        <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                                        <button type="button" class="btn btn-danger" id="recordVoiceBtnAdmission">
                                             <i class="bi bi-mic-fill"></i> Start Recording
                                         </button>
-                                        <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="voiceSample" name="voice_sample_standardized" style="display: none;" />
+                                        <audio id="voicePlaybackAdmission" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="voiceSampleAdmission" name="voice_sample_standardized" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
@@ -605,11 +605,11 @@
                             <div class="card mb-3 ">
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
-                                <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtnDaily">
                                     <i class="bi bi-mic-fill"></i> Start Recording
                                 </button>
-                                <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
-                                <input type="file" id="voiceSample" name="voice_sample_standardized" style="display: none;" />
+                                <audio id="voicePlaybackDaily" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSampleDaily" name="voice_sample_standardized" style="display: none;" />
                                 </div>
                             </div>
                             </div>
@@ -618,11 +618,11 @@
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
-                                        <button type="button" class="btn btn-danger" id="recordCoughBtn">
+                                        <button type="button" class="btn btn-danger" id="recordCoughBtnDaily">
                                             <i class="bi bi-mic-fill"></i> Start Recording
                                         </button>
-                                        <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="coughSample" name="voice_sample_storytelling" style="display: none;" />
+                                        <audio id="coughPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="coughSampleDaily" name="voice_sample_storytelling" style="display: none;" />
                                     </div>
                                 </div>
                             </div>      
@@ -693,11 +693,11 @@
                             <div class="card mb-3 ">
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
-                                <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtnDischarge">
                                     <i class="bi bi-mic-fill"></i> Start Recording
                                 </button>
-                                <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
-                                <input type="file" id="voiceSample" name="voice_sample_standardized" style="display: none;" />
+                                <audio id="voicePlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSampleDischarge" name="voice_sample_standardized" style="display: none;" />
                                 </div>
                             </div> 
 
@@ -708,11 +708,11 @@
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
-                                        <button type="button" class="btn btn-danger" id="recordCoughBtn">
+                                        <button type="button" class="btn btn-danger" id="recordCoughBtnDischarge">
                                             <i class="bi bi-mic-fill"></i> Start Recording
                                         </button>
-                                        <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="coughSample" name="voice_sample_storytelling" style="display: none;" />
+                                        <audio id="coughPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="coughSampleDischarge" name="voice_sample_storytelling" style="display: none;" />
                                     </div>
                                 </div>
                             </div>      
@@ -763,30 +763,6 @@
                 </div>
                      
             
-
-                <div class="card mb-3">
-                    <div class="card-body">
-                    <h5 class="card-title">Voice Sample (standardized sentence) </h5>
-                    <button type="button" class="btn btn-danger" id="recordVoiceBtn">
-                        <i class="bi bi-mic-fill"></i> Start Recording
-                    </button>
-                   <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
-                    <input type="file" id="voiceSample" name="voice_sample_standardized" style="display: none;" />
-                    </div>
-                </div>
-               
-                <div class="card mb-3">
-                    <div class="card-body">
-                    <h5 class="card-title">Voice Sample (story telling) </h5>
-                    <button type="button" class="btn btn-danger" id="recordCoughBtn">
-                        <i class="bi bi-mic-fill"></i> Start Recording
-                    </button>
-                    <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
-                    <input type="file" id="coughSample" name="voice_sample_storytelling" style="display: none;" />
-                    </div>
-                </div>
-                
-    
 
                 <h3>Symptom Assessment</h3>
                 <div class="mb-3">
@@ -842,7 +818,52 @@
     document.addEventListener('DOMContentLoaded', function() {
         updateFields();
         document.getElementById('recordingType').addEventListener('change', updateFields);
+        
+        // Voice recording button setup
+        setupVoiceRecordingButtons();
     });
+
+    function setupVoiceRecordingButtons() {
+        // Admission recording buttons
+        const admissionVoiceBtn = document.getElementById('recordVoiceBtnAdmission');
+        if (admissionVoiceBtn) {
+            admissionVoiceBtn.onclick = () =>
+                recordAudio('recordVoiceBtnAdmission', 'voicePlaybackAdmission', 'voiceSampleAdmission');
+        }
+      
+        const admissionCoughBtn = document.getElementById('recordCoughBtn');
+        if (admissionCoughBtn) {
+            admissionCoughBtn.onclick = () =>
+                recordAudio('recordCoughBtn', 'coughPlayback', 'coughSample');
+        }
+
+        // Daily recording buttons
+        const dailyVoiceBtn = document.getElementById('recordVoiceBtnDaily');
+        if (dailyVoiceBtn) {
+            dailyVoiceBtn.onclick = () =>
+                recordAudio('recordVoiceBtnDaily', 'voicePlaybackDaily', 'voiceSampleDaily');
+        }
+      
+        const dailyCoughBtn = document.getElementById('recordCoughBtnDaily');
+        if (dailyCoughBtn) {
+            dailyCoughBtn.onclick = () =>
+                recordAudio('recordCoughBtnDaily', 'coughPlaybackDaily', 'coughSampleDaily');
+        }
+
+        // Discharge recording buttons
+        const dischargeVoiceBtn = document.getElementById('recordVoiceBtnDischarge');
+        if (dischargeVoiceBtn) {
+            dischargeVoiceBtn.onclick = () =>
+                recordAudio('recordVoiceBtnDischarge', 'voicePlaybackDischarge', 'voiceSampleDischarge');
+        }
+      
+        const dischargeCoughBtn = document.getElementById('recordCoughBtnDischarge');
+        if (dischargeCoughBtn) {
+            dischargeCoughBtn.onclick = () =>
+                recordAudio('recordCoughBtnDischarge', 'coughPlaybackDischarge', 'coughSampleDischarge');
+        }
+    }
+
     async function recordAudio(buttonId, audioId, inputId) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
@@ -866,21 +887,16 @@
       };
   
       recorder.start();
-      document.getElementById(buttonId).innerText = '🛑 Stop Recording';
-      document.getElementById(buttonId).onclick = () => {
+      const button = document.getElementById(buttonId);
+      button.innerHTML = '<i class="bi bi-stop-fill"></i> Stop Recording';
+      button.onclick = () => {
         recorder.stop();
         stream.getTracks().forEach(track => track.stop());
-        document.getElementById(buttonId).innerText = '🎙 Start Recording';
-        document.getElementById(buttonId).onclick = () =>
+        button.innerHTML = '<i class="bi bi-mic-fill"></i> Start Recording';
+        button.onclick = () =>
           recordAudio(buttonId, audioId, inputId);
       };
     }
-  
-    document.getElementById('recordVoiceBtn').onclick = () =>
-      recordAudio('recordVoiceBtn', 'voicePlayback', 'voiceSample');
-  
-    document.getElementById('recordCoughBtn').onclick = () =>
-      recordAudio('recordCoughBtn', 'coughPlayback', 'coughSample');
   </script>
   <script>
 $(document).ready(function() {
