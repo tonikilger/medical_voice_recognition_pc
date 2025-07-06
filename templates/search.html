@@ -31,6 +31,9 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="discharge-tab" data-bs-toggle="tab" data-bs-target="#discharge" type="button" role="tab">Discharge</button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="weight-chart-tab" data-bs-toggle="tab" data-bs-target="#weight-chart" type="button" role="tab">Weight Chart</button>
+                </li>
             </ul>
 
             <div class="tab-content" id="recordTabsContent">
@@ -169,9 +172,102 @@
             </table>
         </div>
     </div>
+
+    <!-- Weight Chart -->
+    <div class="tab-pane fade" id="weight-chart" role="tabpanel">
+        <h5 class="mb-3">Weight Progression Chart</h5>
+        <div class="card">
+            <div class="card-body">
+                <div style="position: relative; height: 400px; width: 100%;">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
         </div>
     </div>
+
+    <!-- Chart.js Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prepare weight data for chart
+            const chartData = [];
+            
+            {% for record in records %}
+                {% if record.weight %}
+                    chartData.push({
+                        day: {{ record.hospitalization_day }},
+                        weight: {{ record.weight }},
+                        type: '{{ record.recording_type }}'
+                    });
+                {% endif %}
+                {% if record.recording_type == 'discharge' and record.current_weight %}
+                    chartData.push({
+                        day: {{ record.hospitalization_day }},
+                        weight: {{ record.current_weight }},
+                        type: 'discharge'
+                    });
+                {% endif %}
+            {% endfor %}
+            
+            // Sort by day
+            chartData.sort((a, b) => a.day - b.day);
+            
+            const labels = chartData.map(item => {
+                if (item.type === 'admission') return `Admission (Day ${item.day})`;
+                if (item.type === 'discharge') return `Discharge (Day ${item.day})`;
+                return `Day ${item.day}`;
+            });
+            
+            const weights = chartData.map(item => item.weight);
+            
+            // Create chart
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: weights,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Weight Progression - Patient {{ patient.id }}'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Weight (kg)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Hospitalization Period'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 {% elif query %}
     <p class="text-danger">No patient found with ID {{ query }}.</p>
 {% endif %}
