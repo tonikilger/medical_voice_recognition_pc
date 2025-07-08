@@ -176,6 +176,16 @@
     <!-- Weight Chart -->
     <div class="tab-pane fade" id="weight-chart" role="tabpanel">
         <h5 class="mb-3">Weight Progression Chart</h5>
+        
+        <!-- Legend -->
+        <div class="mb-3">
+            <small class="text-muted">
+                <span class="badge" style="background-color: #28a745; margin-right: 10px;">●</span> Admission Weight
+                <span class="badge" style="background-color: #007bff; margin-right: 10px;">●</span> Daily Weight
+                <span class="badge" style="background-color: #dc3545; margin-right: 10px;">●</span> Discharge Weight
+            </small>
+        </div>
+        
         <div class="card">
             <div class="card-body">
                 <div style="position: relative; height: 400px; width: 100%;">
@@ -196,14 +206,19 @@
             const chartData = [];
             
             {% for record in records %}
-                {% if record.weight %}
+                {% if record.recording_type == 'admission' and record.initial_weight %}
+                    chartData.push({
+                        day: {{ record.hospitalization_day }},
+                        weight: {{ record.initial_weight }},
+                        type: 'admission'
+                    });
+                {% elif record.recording_type == 'daily' and record.weight %}
                     chartData.push({
                         day: {{ record.hospitalization_day }},
                         weight: {{ record.weight }},
-                        type: '{{ record.recording_type }}'
+                        type: 'daily'
                     });
-                {% endif %}
-                {% if record.recording_type == 'discharge' and record.current_weight %}
+                {% elif record.recording_type == 'discharge' and record.current_weight %}
                     chartData.push({
                         day: {{ record.hospitalization_day }},
                         weight: {{ record.current_weight }},
@@ -223,6 +238,19 @@
             
             const weights = chartData.map(item => item.weight);
             
+            // Create point colors based on type
+            const pointColors = chartData.map(item => {
+                if (item.type === 'admission') return '#28a745'; // Green for admission
+                if (item.type === 'discharge') return '#dc3545'; // Red for discharge
+                return '#007bff'; // Blue for daily
+            });
+            
+            const pointBorderColors = chartData.map(item => {
+                if (item.type === 'admission') return '#1e7e34';
+                if (item.type === 'discharge') return '#c82333';
+                return '#0056b3';
+            });
+            
             // Create chart
             const ctx = document.getElementById('weightChart').getContext('2d');
             new Chart(ctx, {
@@ -236,8 +264,11 @@
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
                         borderWidth: 2,
                         fill: true,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: pointBorderColors,
+                        pointBorderWidth: 2
                     }]
                 },
                 options: {
