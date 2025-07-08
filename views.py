@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
 from flask_login import login_user, logout_user, login_required
 from models import Recording, db, Patient, User
 import datetime
@@ -95,6 +95,9 @@ def recording():
 
         story_file = request.files.get('voice_sample_storytelling')
         story_sample = story_file.read() if story_file else None
+
+        vocal_file = request.files.get('voice_sample_vocal')
+        vocal_sample = vocal_file.read() if vocal_file else None
 
         # Score berechnen (Summe aller KCCQ-Items)
         kccq_fields = [
@@ -201,7 +204,8 @@ def recording():
 
             # Voice sample
             voice_sample_standardized=voice_sample_standardized,
-            voice_sample_storytelling=story_sample,  # <-- add this field to your model as well!
+            voice_sample_storytelling=story_sample,
+            voice_sample_vocal=vocal_sample,
 
             # Date of recording
             date=datetime.datetime.now(),
@@ -321,9 +325,14 @@ def edit_recording(recording_id):
         voice_file = request.files.get('voice_sample_standardized')
         if voice_file and voice_file.filename:
             recording.voice_sample_standardized = voice_file.read()
+        
         story_file = request.files.get('voice_sample_storytelling')
         if story_file and story_file.filename:
             recording.voice_sample_storytelling = story_file.read()
+            
+        vocal_file = request.files.get('voice_sample_vocal')
+        if vocal_file and vocal_file.filename:
+            recording.voice_sample_vocal = vocal_file.read()
 
         # Score calculation
         score = 0
@@ -347,6 +356,50 @@ def edit_recording(recording_id):
         patient_id=recording.patient_id,
         datetime=datetime
     )
+
+@views.route('/voice_sample/<int:recording_id>/<sample_type>')
+@login_required
+def get_voice_sample(recording_id, sample_type):
+    """Serve voice sample files"""
+    recording = Recording.query.get_or_404(recording_id)
+    
+    if sample_type == 'standardized':
+        voice_data = recording.voice_sample_standardized
+    elif sample_type == 'storytelling':
+        voice_data = recording.voice_sample_storytelling
+    elif sample_type == 'vocal':
+        voice_data = recording.voice_sample_vocal
+    else:
+        return "Invalid sample type", 400
+    
+    if not voice_data:
+        return "No voice sample found", 404
+    
+    return Response(
+        voice_data,
+        mimetype='audio/webm',
+        headers={
+            'Content-Disposition': f'inline; filename="{sample_type}_sample.webm"'
+        }
+    )
+
+@views.route('/delete_voice_sample/<int:recording_id>/<sample_type>', methods=['POST'])
+@login_required
+def delete_voice_sample(recording_id, sample_type):
+    """Delete a specific voice sample"""
+    recording = Recording.query.get_or_404(recording_id)
+    
+    if sample_type == 'standardized':
+        recording.voice_sample_standardized = None
+    elif sample_type == 'storytelling':
+        recording.voice_sample_storytelling = None
+    elif sample_type == 'vocal':
+        recording.voice_sample_vocal = None
+    else:
+        return "Invalid sample type", 400
+    
+    db.session.commit()
+    return redirect(request.referrer or url_for('views.dashboards'))
 
 login_blueprint = Blueprint('login', __name__)
 

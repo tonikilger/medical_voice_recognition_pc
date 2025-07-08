@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\tniti\OneDrive\Dokumente\my_flask_projects\medical_voice_recognition_pc\venv
+set VIRTUAL_ENV=C:\Users\janab\OneDrive\Dokumente\Studium\Master\FluidCareAI\DataCollectionApp\medical_voice_recognition_pc\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
