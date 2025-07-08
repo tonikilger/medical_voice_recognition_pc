@@ -177,27 +177,78 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-4">
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_standardized %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'standardized')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
                                         <button type="button" class="btn btn-danger" id="recordVoiceBtnAdmission">
-                                            <i class="bi bi-mic-fill"></i> Start Recording
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="voicePlaybackAdmission" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="voiceSampleAdmission" name="voice_sample_standardized" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-4">
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_storytelling %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'storytelling')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
                                         <button type="button" class="btn btn-danger" id="recordCoughBtn">
-                                            <i class="bi bi-mic-fill"></i> Start Recording
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="coughSample" name="voice_sample_storytelling" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (vocal)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_vocal %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'vocal')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordVocalBtn">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="vocalPlayback" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="vocalSample" name="voice_sample_vocal" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
@@ -591,22 +642,24 @@
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
-                                <label>Hemoglobin (Hb)</label>
-                                <input type="number" class="form-control" name="hb_daily" step="0.01" min="0" value="{{ last_recording.hb_daily if last_recording else '' }}">
-                            </div>
-                            <div class="mb-3 col-md-6">
-                                <label>NT-proBNP</label>
-                                <input type="number" class="form-control" name="ntprobnp_daily" step="0.01" min="0" value="{{ last_recording.ntprobnp_daily if last_recording else '' }}">
-                            </div>
-
-                        </div>
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
                             <div class="card mb-3 ">
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                
+                                {% if last_recording and last_recording.voice_sample_standardized %}
+                                <div class="mb-2">
+                                    <audio controls class="form-control">
+                                        <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'standardized')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                                {% endif %}
+                                
                                 <button type="button" class="btn btn-danger" id="recordVoiceBtnDaily">
-                                    <i class="bi bi-mic-fill"></i> Start Recording
+                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized %}Re-record{% else %}Start Recording{% endif %}
                                 </button>
                                 <audio id="voicePlaybackDaily" controls class="mt-2" style="display: none;"></audio>
                                 <input type="file" id="voiceSampleDaily" name="voice_sample_standardized" style="display: none;" />
@@ -614,15 +667,54 @@
                             </div>
                             </div>
 
-                            <div class="mb-3 col-md-6 ">
+                            <div class="mb-3 col-md-4 ">
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_storytelling %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'storytelling')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
                                         <button type="button" class="btn btn-danger" id="recordCoughBtnDaily">
-                                            <i class="bi bi-mic-fill"></i> Start Recording
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="coughSampleDaily" name="voice_sample_storytelling" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (vocal)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_vocal %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'vocal')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordVocalBtnDaily">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="vocalPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="vocalSampleDaily" name="voice_sample_vocal" style="display: none;" />
                                     </div>
                                 </div>
                             </div>      
@@ -689,12 +781,25 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-4">
                             <div class="card mb-3 ">
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                
+                                {% if last_recording and last_recording.voice_sample_standardized %}
+                                <div class="mb-2">
+                                    <audio controls class="form-control">
+                                        <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'standardized')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                                {% endif %}
+                                
                                 <button type="button" class="btn btn-danger" id="recordVoiceBtnDischarge">
-                                    <i class="bi bi-mic-fill"></i> Start Recording
+                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized %}Re-record{% else %}Start Recording{% endif %}
                                 </button>
                                 <audio id="voicePlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
                                 <input type="file" id="voiceSampleDischarge" name="voice_sample_standardized" style="display: none;" />
@@ -704,15 +809,54 @@
                             </div>
     
 
-                            <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-4">
                                 <div class="card mb-3 ">
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_storytelling %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'storytelling')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
                                         <button type="button" class="btn btn-danger" id="recordCoughBtnDischarge">
-                                            <i class="bi bi-mic-fill"></i> Start Recording
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="coughSampleDischarge" name="voice_sample_storytelling" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (vocal)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_vocal %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'vocal')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordVocalBtnDischarge">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="vocalPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="vocalSampleDischarge" name="voice_sample_vocal" style="display: none;" />
                                     </div>
                                 </div>
                             </div>      
@@ -837,6 +981,12 @@
                 recordAudio('recordCoughBtn', 'coughPlayback', 'coughSample');
         }
 
+        const admissionVocalBtn = document.getElementById('recordVocalBtn');
+        if (admissionVocalBtn) {
+            admissionVocalBtn.onclick = () =>
+                recordAudio('recordVocalBtn', 'vocalPlayback', 'vocalSample');
+        }
+
         // Daily recording buttons
         const dailyVoiceBtn = document.getElementById('recordVoiceBtnDaily');
         if (dailyVoiceBtn) {
@@ -850,6 +1000,12 @@
                 recordAudio('recordCoughBtnDaily', 'coughPlaybackDaily', 'coughSampleDaily');
         }
 
+        const dailyVocalBtn = document.getElementById('recordVocalBtnDaily');
+        if (dailyVocalBtn) {
+            dailyVocalBtn.onclick = () =>
+                recordAudio('recordVocalBtnDaily', 'vocalPlaybackDaily', 'vocalSampleDaily');
+        }
+
         // Discharge recording buttons
         const dischargeVoiceBtn = document.getElementById('recordVoiceBtnDischarge');
         if (dischargeVoiceBtn) {
@@ -861,6 +1017,18 @@
         if (dischargeCoughBtn) {
             dischargeCoughBtn.onclick = () =>
                 recordAudio('recordCoughBtnDischarge', 'coughPlaybackDischarge', 'coughSampleDischarge');
+        }
+
+        const dischargeVocalBtnFinal = document.getElementById('recordVocalBtnDischarge');
+        if (dischargeVocalBtnFinal) {
+            dischargeVocalBtnFinal.onclick = () =>
+                recordAudio('recordVocalBtnDischarge', 'vocalPlaybackDischarge', 'vocalSampleDischarge');
+        }
+
+        const dischargeVocalBtn = document.getElementById('recordVocalBtnDischarge');
+        if (dischargeVocalBtn) {
+            dischargeVocalBtn.onclick = () =>
+                recordAudio('recordVocalBtnDischarge', 'vocalPlaybackDischarge', 'vocalSampleDischarge');
         }
     }
 
@@ -897,6 +1065,20 @@
           recordAudio(buttonId, audioId, inputId);
       };
     }
+
+    // Function to delete voice samples
+    function deleteVoiceSample(recordingId, sampleType) {
+        if (confirm('Are you sure you want to delete this voice sample?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delete_voice_sample/${recordingId}/${sampleType}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // Make the function globally available
+    window.deleteVoiceSample = deleteVoiceSample;
   </script>
   <script>
 $(document).ready(function() {
