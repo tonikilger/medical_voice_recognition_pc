@@ -646,7 +646,7 @@
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
                                 
-                                {% if last_recording and last_recording.voice_sample_standardized %}
+                                {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'daily' %}
                                 <div class="mb-2">
                                     <audio controls class="form-control">
                                         <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
@@ -659,7 +659,7 @@
                                 {% endif %}
                                 
                                 <button type="button" class="btn btn-danger" id="recordVoiceBtnDaily">
-                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized %}Re-record{% else %}Start Recording{% endif %}
+                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
                                 </button>
                                 <audio id="voicePlaybackDaily" controls class="mt-2" style="display: none;"></audio>
                                 <input type="file" id="voiceSampleDaily" name="voice_sample_standardized" style="display: none;" />
@@ -672,7 +672,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
                                         
-                                        {% if last_recording and last_recording.voice_sample_storytelling %}
+                                        {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'daily' %}
                                         <div class="mb-2">
                                             <audio controls class="form-control">
                                                 <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
@@ -685,7 +685,7 @@
                                         {% endif %}
                                         
                                         <button type="button" class="btn btn-danger" id="recordCoughBtnDaily">
-                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling %}Re-record{% else %}Start Recording{% endif %}
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="coughSampleDaily" name="voice_sample_storytelling" style="display: none;" />
@@ -698,7 +698,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (vocal)</h5>
                                         
-                                        {% if last_recording and last_recording.voice_sample_vocal %}
+                                        {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'daily' %}
                                         <div class="mb-2">
                                             <audio controls class="form-control">
                                                 <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
@@ -711,7 +711,7 @@
                                         {% endif %}
                                         
                                         <button type="button" class="btn btn-danger" id="recordVocalBtnDaily">
-                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal %}Re-record{% else %}Start Recording{% endif %}
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="vocalPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="vocalSampleDaily" name="voice_sample_vocal" style="display: none;" />
@@ -786,7 +786,7 @@
                                 <div class="card-body">
                                 <h5 class="card-title">Voice Sample (standardized sentence) </h5>
                                 
-                                {% if last_recording and last_recording.voice_sample_standardized %}
+                                {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'discharge' %}
                                 <div class="mb-2">
                                     <audio controls class="form-control">
                                         <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
@@ -799,7 +799,7 @@
                                 {% endif %}
                                 
                                 <button type="button" class="btn btn-danger" id="recordVoiceBtnDischarge">
-                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized %}Re-record{% else %}Start Recording{% endif %}
+                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
                                 </button>
                                 <audio id="voicePlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
                                 <input type="file" id="voiceSampleDischarge" name="voice_sample_standardized" style="display: none;" />
@@ -814,7 +814,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (story telling)</h5>
                                         
-                                        {% if last_recording and last_recording.voice_sample_storytelling %}
+                                        {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'discharge' %}
                                         <div class="mb-2">
                                             <audio controls class="form-control">
                                                 <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
@@ -827,7 +827,7 @@
                                         {% endif %}
                                         
                                         <button type="button" class="btn btn-danger" id="recordCoughBtnDischarge">
-                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling %}Re-record{% else %}Start Recording{% endif %}
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="coughSampleDischarge" name="voice_sample_storytelling" style="display: none;" />
@@ -840,7 +840,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">Voice Sample (vocal)</h5>
                                         
-                                        {% if last_recording and last_recording.voice_sample_vocal %}
+                                        {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'discharge' %}
                                         <div class="mb-2">
                                             <audio controls class="form-control">
                                                 <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
@@ -853,7 +853,7 @@
                                         {% endif %}
                                         
                                         <button type="button" class="btn btn-danger" id="recordVocalBtnDischarge">
-                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal %}Re-record{% else %}Start Recording{% endif %}
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="vocalPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
                                         <input type="file" id="vocalSampleDischarge" name="voice_sample_vocal" style="display: none;" />
@@ -1052,6 +1052,9 @@
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
         fileInput.files = dataTransfer.files;
+        
+        // Add delete button after recording
+        addDeleteButtonAfterRecording(buttonId, audioId, inputId);
       };
   
       recorder.start();
@@ -1060,10 +1063,62 @@
       button.onclick = () => {
         recorder.stop();
         stream.getTracks().forEach(track => track.stop());
-        button.innerHTML = '<i class="bi bi-mic-fill"></i> Start Recording';
+        button.innerHTML = '<i class="bi bi-mic-fill"></i> Re-record';
         button.onclick = () =>
           recordAudio(buttonId, audioId, inputId);
       };
+    }
+    
+    function addDeleteButtonAfterRecording(buttonId, audioId, inputId) {
+        const audioElement = document.getElementById(audioId);
+        const button = document.getElementById(buttonId);
+        
+        // Update button text to "Re-record"
+        button.innerHTML = '<i class="bi bi-mic-fill"></i> Re-record';
+        
+        // Check if delete button already exists
+        const existingDeleteContainer = audioElement.parentNode.querySelector('.new-recording-controls');
+        if (existingDeleteContainer) {
+            existingDeleteContainer.remove();
+        }
+        
+        // Create delete button container
+        const deleteContainer = document.createElement('div');
+        deleteContainer.className = 'new-recording-controls mt-2';
+        deleteContainer.innerHTML = `
+            <button type="button" class="btn btn-sm btn-outline-danger me-2" onclick="deleteNewRecording('${buttonId}', '${audioId}', '${inputId}')">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+            <small class="text-muted">Note: Save the form to permanently store this recording</small>
+        `;
+        
+        // Insert after audio element
+        audioElement.parentNode.insertBefore(deleteContainer, audioElement.nextSibling);
+    }
+    
+    function deleteNewRecording(buttonId, audioId, inputId) {
+        if (confirm('Are you sure you want to delete this recording?')) {
+            const audioElement = document.getElementById(audioId);
+            const fileInput = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            
+            // Clear the audio element
+            audioElement.src = '';
+            audioElement.style.display = 'none';
+            
+            // Clear the file input
+            fileInput.value = '';
+            
+            // Remove delete button container
+            const deleteContainer = audioElement.parentNode.querySelector('.new-recording-controls');
+            if (deleteContainer) {
+                deleteContainer.remove();
+            }
+            
+            // Reset button text and functionality
+            button.innerHTML = '<i class="bi bi-mic-fill"></i> Start Recording';
+            button.onclick = () => recordAudio(buttonId, audioId, inputId);
+        }
     }
 
     // Function to delete voice samples
@@ -1077,8 +1132,9 @@
         }
     }
 
-    // Make the function globally available
+    // Make the functions globally available
     window.deleteVoiceSample = deleteVoiceSample;
+    window.deleteNewRecording = deleteNewRecording;
   </script>
   <script>
 $(document).ready(function() {
