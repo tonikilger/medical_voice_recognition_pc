@@ -58,6 +58,7 @@
                                                     <th class="p-1" style="font-size: 0.8rem;">Day</th>
                                                     <th class="p-1" style="font-size: 0.8rem;">Score</th>
                                                     <th class="p-1" style="font-size: 0.8rem;">Weight</th>
+                                                    <th class="p-1" style="font-size: 0.8rem;">Estimated Dryweight</th>
                                                     <th class="p-1" style="font-size: 0.8rem;">Action</th>
                                                 </tr>
                                             </thead>
@@ -80,6 +81,7 @@
                                                                 {{ record.current_weight }}
                                                             {% endif %}
                                                         </td>
+                                                        <td>{{ record.estimated_dryweight }}</td>
                                                         <td>
                                                             <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                                                             <form method="POST" action="{{ url_for('views.delete_recording', recording_id=record.id) }}" style="display:inline;">

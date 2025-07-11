@@ -160,6 +160,7 @@ def export_patient_data_for_ai(patient_id):
                     'current_weight': recording.current_weight,
                     'discharge_medication': recording.discharge_medication,
                     'discharge_date': recording.discharge_date.isoformat() if recording.discharge_date else None,
+                    'estimated_dryweight': recording.estimated_dryweight,
                     'abschluss_labor': recording.abschluss_labor
                 },
                 'lab_values': {
@@ -440,6 +441,7 @@ def recording():
             current_weight=request.form.get('current_weight') or None,
             discharge_medication=request.form.get('discharge_medication') or None,
             discharge_date=discharge_date or None,
+            estimated_dryweight=request.form.get('estimated_dryweight') or None,
 
             # Voice sample
             voice_sample_standardized=voice_sample_standardized,
@@ -559,6 +561,7 @@ def edit_recording(recording_id):
         recording.current_weight = request.form.get('current_weight') or None
         recording.discharge_medication = request.form.get('discharge_medication') or None
         recording.discharge_date = parse_date(request.form.get('discharge_date'))
+        recording.estimated_dryweight = request.form.get('estimated_dryweight') or None
 
         # Voice samples (only update if a new file is uploaded)
         voice_file = request.files.get('voice_sample_standardized')
@@ -862,7 +865,7 @@ def export_patient_csv(patient_id):
         'ntprobnp', 'kalium', 'natrium', 'kreatinin_gfr', 'harnstoff', 'hb',
         'ntprobnp_daily', 'kalium_daily', 'natrium_daily', 'kreatinin_gfr_daily', 
         'harnstoff_daily', 'hb_daily', 'medication_changes',
-        'admission_date', 'discharge_date', 'discharge_medication', 'abschluss_labor',
+        'admission_date', 'discharge_date', 'discharge_medication', 'estimated_dryweight', 'abschluss_labor',
         'kccq_total_score', 'kccq1a', 'kccq1b', 'kccq1c', 'kccq1d', 'kccq1e', 'kccq1f',
         'kccq2', 'kccq3', 'kccq4', 'kccq5', 'kccq6', 'kccq7', 'kccq8', 'kccq9',
         'kccq10', 'kccq11', 'kccq12', 'kccq13', 'kccq14', 'kccq15a', 'kccq15b',
