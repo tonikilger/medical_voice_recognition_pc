@@ -7,8 +7,6 @@ import os
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-migrate = Migrate()
-
 def create_app():
     app = Flask(__name__)
 
@@ -19,7 +17,9 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
-    migrate.init_app(app, db)
+    
+    # Initialize Flask-Migrate with app and db
+    migrate = Migrate(app, db)
 
     # Flask-Login initialisieren
     login_manager = LoginManager()
@@ -42,6 +42,8 @@ def create_app():
 
     return app
 
+# Create the app instance for Flask CLI
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True)

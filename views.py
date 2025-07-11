@@ -1,10 +1,229 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
-from flask_login import login_user, logout_user, login_required
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, jsonify, send_file
+from flask_login import login_user, logout_user, login_required, current_user
 from models import Recording, db, Patient, User
 import datetime
+import json
+import csv
+import io
+import os
+import zipfile
+import tempfile
+import base64
+from functools import wraps
 
 # Create a Blueprint
 views = Blueprint('views', __name__)
+
+# Admin decorator
+def admin_required(f):
+    """Decorator to require admin privileges"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('Admin privileges required.')
+            return redirect(url_for('login.login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Audio format detection utilities
+def detect_audio_format(audio_data):
+    """Detect audio format based on file header"""
+    if not audio_data or len(audio_data) < 12:
+        return 'webm'
+    
+    header = audio_data[:12]
+    if b'matroska' in header.lower() or audio_data.startswith(b'\x1a\x45\xdf\xa3'):
+        return 'webm'
+    elif header.startswith(b'OggS'):
+        return 'ogg'
+    elif header.startswith(b'ID3') or header.startswith(b'\xff\xfb'):
+        return 'mp3'
+    elif header.startswith(b'RIFF') and b'WAVE' in header:
+        return 'wav'
+    elif b'ftyp' in header:
+        return 'm4a'
+    return 'webm'
+
+def export_patient_data_for_ai(patient_id):
+    """Export patient data in AI-friendly format with metadata"""
+    recordings = Recording.query.filter_by(patient_id=patient_id).order_by(Recording.hospitalization_day).all()
+    
+    if not recordings:
+        return None
+    
+    # Structure data for AI processing
+    patient_data = {
+        'patient_id': patient_id,
+        'admission_data': {},
+        'daily_data': [],
+        'discharge_data': {},
+        'audio_files': {},
+        'metadata': {
+            'total_recordings': len(recordings),
+            'hospitalization_days': [],
+            'export_timestamp': datetime.datetime.now().isoformat(),
+            'data_format_version': '1.0'
+        }
+    }
+    
+    for recording in recordings:
+        patient_data['metadata']['hospitalization_days'].append(recording.hospitalization_day)
+        
+        # Common fields for all recording types
+        common_data = {
+            'recording_id': recording.id,
+            'hospitalization_day': recording.hospitalization_day,
+            'date': recording.formatted_calculated_date,
+            'kccq_total_score': recording.score,
+            'voice_samples_available': {
+                'standardized': recording.voice_sample_standardized is not None,
+                'storytelling': recording.voice_sample_storytelling is not None,
+                'vocal': recording.voice_sample_vocal is not None
+            }
+        }
+        
+        if recording.recording_type == 'admission':
+            patient_data['admission_data'] = {
+                **common_data,
+                'demographics': {
+                    'age': recording.age,
+                    'gender': recording.gender,
+                    'height': recording.height
+                },
+                'clinical_data': {
+                    'diagnosis': recording.diagnosis,
+                    'medication': recording.medication,
+                    'comorbidities': recording.comorbidities,
+                    'admission_date': recording.admission_date.isoformat() if recording.admission_date else None,
+                    'initial_weight': recording.initial_weight,
+                    'initial_bp': recording.initial_bp
+                },
+                'lab_values': {
+                    'ntprobnp': recording.ntprobnp,
+                    'kalium': recording.kalium,
+                    'natrium': recording.natrium,
+                    'kreatinin_gfr': recording.kreatinin_gfr,
+                    'harnstoff': recording.harnstoff,
+                    'hb': recording.hb
+                },
+                'kccq_scores': {
+                    'physical_limitation': {
+                        'kccq1a': recording.kccq1a, 'kccq1b': recording.kccq1b,
+                        'kccq1c': recording.kccq1c, 'kccq1d': recording.kccq1d,
+                        'kccq1e': recording.kccq1e, 'kccq1f': recording.kccq1f
+                    },
+                    'symptom_stability': {'kccq2': recording.kccq2},
+                    'symptom_frequency': {
+                        'kccq3': recording.kccq3, 'kccq4': recording.kccq4,
+                        'kccq5': recording.kccq5, 'kccq6': recording.kccq6,
+                        'kccq7': recording.kccq7, 'kccq8': recording.kccq8
+                    },
+                    'symptom_burden': {
+                        'kccq9': recording.kccq9, 'kccq10': recording.kccq10,
+                        'kccq11': recording.kccq11, 'kccq12': recording.kccq12
+                    },
+                    'self_efficacy': {'kccq13': recording.kccq13, 'kccq14': recording.kccq14},
+                    'quality_of_life': {
+                        'kccq15a': recording.kccq15a, 'kccq15b': recording.kccq15b,
+                        'kccq15c': recording.kccq15c, 'kccq15d': recording.kccq15d
+                    },
+                    'social_limitation': {'kccq16': recording.kccq16}
+                }
+            }
+            
+        elif recording.recording_type == 'daily':
+            daily_entry = {
+                **common_data,
+                'vitals': {
+                    'weight': recording.weight,
+                    'bp': recording.bp,
+                    'pulse': recording.pulse
+                },
+                'treatment': {
+                    'medication_changes': recording.medication_changes
+                },
+                'lab_values': {
+                    'kalium_daily': recording.kalium_daily,
+                    'natrium_daily': recording.natrium_daily,
+                    'kreatinin_gfr_daily': recording.kreatinin_gfr_daily,
+                    'harnstoff_daily': recording.harnstoff_daily,
+                    'hb_daily': recording.hb_daily,
+                    'ntprobnp_daily': recording.ntprobnp_daily
+                }
+            }
+            patient_data['daily_data'].append(daily_entry)
+            
+        elif recording.recording_type == 'discharge':
+            patient_data['discharge_data'] = {
+                **common_data,
+                'clinical_data': {
+                    'current_weight': recording.current_weight,
+                    'discharge_medication': recording.discharge_medication,
+                    'discharge_date': recording.discharge_date.isoformat() if recording.discharge_date else None,
+                    'abschluss_labor': recording.abschluss_labor
+                },
+                'lab_values': {
+                    'ntprobnp': recording.ntprobnp,
+                    'kalium': recording.kalium,
+                    'natrium': recording.natrium,
+                    'kreatinin_gfr': recording.kreatinin_gfr,
+                    'harnstoff': recording.harnstoff,
+                    'hb': recording.hb
+                },
+                'kccq_scores': {
+                    'physical_limitation': {
+                        'kccq1a': recording.kccq1a, 'kccq1b': recording.kccq1b,
+                        'kccq1c': recording.kccq1c, 'kccq1d': recording.kccq1d,
+                        'kccq1e': recording.kccq1e, 'kccq1f': recording.kccq1f
+                    },
+                    'symptom_stability': {'kccq2': recording.kccq2},
+                    'symptom_frequency': {
+                        'kccq3': recording.kccq3, 'kccq4': recording.kccq4,
+                        'kccq5': recording.kccq5, 'kccq6': recording.kccq6,
+                        'kccq7': recording.kccq7, 'kccq8': recording.kccq8
+                    },
+                    'symptom_burden': {
+                        'kccq9': recording.kccq9, 'kccq10': recording.kccq10,
+                        'kccq11': recording.kccq11, 'kccq12': recording.kccq12
+                    },
+                    'self_efficacy': {'kccq13': recording.kccq13, 'kccq14': recording.kccq14},
+                    'quality_of_life': {
+                        'kccq15a': recording.kccq15a, 'kccq15b': recording.kccq15b,
+                        'kccq15c': recording.kccq15c, 'kccq15d': recording.kccq15d
+                    },
+                    'social_limitation': {'kccq16': recording.kccq16}
+                }
+            }
+        
+        # Audio file metadata (files will be included separately in zip)
+        audio_key = f"{recording.recording_type}_day_{recording.hospitalization_day}"
+        patient_data['audio_files'][audio_key] = {}
+        
+        if recording.voice_sample_standardized:
+            format_ext = detect_audio_format(recording.voice_sample_standardized)
+            patient_data['audio_files'][audio_key]['standardized'] = {
+                'filename': f"patient_{patient_id}_{audio_key}_standardized.{format_ext}",
+                'size_bytes': len(recording.voice_sample_standardized),
+                'format': format_ext
+            }
+        
+        if recording.voice_sample_storytelling:
+            format_ext = detect_audio_format(recording.voice_sample_storytelling)
+            patient_data['audio_files'][audio_key]['storytelling'] = {
+                'filename': f"patient_{patient_id}_{audio_key}_storytelling.{format_ext}",
+                'size_bytes': len(recording.voice_sample_storytelling),
+                'format': format_ext
+            }
+        
+        if recording.voice_sample_vocal:
+            format_ext = detect_audio_format(recording.voice_sample_vocal)
+            patient_data['audio_files'][audio_key]['vocal'] = {
+                'filename': f"patient_{patient_id}_{audio_key}_vocal.{format_ext}",
+                'size_bytes': len(recording.voice_sample_vocal),
+                'format': format_ext
+            }
+    
+    return patient_data
 
 # Define routes
 @views.route('/')
@@ -418,3 +637,249 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login.login'))
+
+@views.route('/admin/export/patient/<int:patient_id>')
+@login_required
+@admin_required
+def export_patient_ai_data(patient_id):
+    """Export single patient data with audio files as ZIP for AI development"""
+    data = export_patient_data_for_ai(patient_id)
+    if not data:
+        flash('Patient not found or has no recordings.')
+        return redirect(url_for('views.dashboards'))
+    
+    # Create ZIP in memory
+    import io
+    zip_buffer = io.BytesIO()
+    
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        # Add JSON metadata
+        json_data = json.dumps(data, indent=2, ensure_ascii=False)
+        zipf.writestr(f'patient_{patient_id}_metadata.json', json_data)
+        
+        # Add audio files
+        recordings = Recording.query.filter_by(patient_id=patient_id).all()
+        for recording in recordings:
+            audio_key = f"{recording.recording_type}_day_{recording.hospitalization_day}"
+            
+            if recording.voice_sample_standardized:
+                format_ext = detect_audio_format(recording.voice_sample_standardized)
+                filename = f"audio/patient_{patient_id}_{audio_key}_standardized.{format_ext}"
+                zipf.writestr(filename, recording.voice_sample_standardized)
+            
+            if recording.voice_sample_storytelling:
+                format_ext = detect_audio_format(recording.voice_sample_storytelling)
+                filename = f"audio/patient_{patient_id}_{audio_key}_storytelling.{format_ext}"
+                zipf.writestr(filename, recording.voice_sample_storytelling)
+            
+            if recording.voice_sample_vocal:
+                format_ext = detect_audio_format(recording.voice_sample_vocal)
+                filename = f"audio/patient_{patient_id}_{audio_key}_vocal.{format_ext}"
+                zipf.writestr(filename, recording.voice_sample_vocal)
+        
+        # Add README for AI developers
+        readme_content = f"""# Patient {patient_id} - AI Development Dataset
+
+## Structure
+- `patient_{patient_id}_metadata.json`: Complete patient data in structured format
+- `audio/`: Raw audio files organized by recording type and day
+
+## Audio File Naming Convention
+- Format: `patient_{{id}}_{{type}}_day_{{day}}_{{sample_type}}.{{extension}}`
+- Types: admission, daily, discharge
+- Sample types: standardized, storytelling, vocal
+
+## Metadata Structure
+- `admission_data`: Demographics, clinical data, lab values, KCCQ scores
+- `daily_data`: Daily vitals, medication changes, lab values (array of days)
+- `discharge_data`: Discharge information, final lab values, KCCQ scores
+- `audio_files`: Metadata about available audio files
+
+## KCCQ Score Categories
+- Physical Limitation (kccq1a-1f)
+- Symptom Stability (kccq2)
+- Symptom Frequency (kccq3-8)
+- Symptom Burden (kccq9-12)
+- Self Efficacy (kccq13-14)
+- Quality of Life (kccq15a-15d)
+- Social Limitation (kccq16)
+
+## Export Information
+- Export Date: {datetime.datetime.now().isoformat()}
+- Total Recordings: {data['metadata']['total_recordings']}
+- Hospitalization Days: {data['metadata']['hospitalization_days']}
+"""
+        zipf.writestr('README.md', readme_content)
+    
+    zip_buffer.seek(0)
+    
+    return Response(
+        zip_buffer.getvalue(),
+        mimetype='application/zip',
+        headers={
+            'Content-Disposition': f'attachment; filename=patient_{patient_id}_ai_dataset.zip'
+        }
+    )
+
+@views.route('/admin/export/all_patients')
+@login_required
+@admin_required
+def export_all_patients_ai_data():
+    """Export all patients data with audio files as ZIP for AI development"""
+    patients = Patient.query.all()
+    
+    if not patients:
+        flash('No patients found.')
+        return redirect(url_for('views.dashboards'))
+    
+    # Create ZIP in memory
+    import io
+    zip_buffer = io.BytesIO()
+    
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        all_patients_data = {
+            'export_timestamp': datetime.datetime.now().isoformat(),
+            'total_patients': len(patients),
+            'patients': {}
+        }
+        
+        total_audio_files = 0
+        
+        for patient in patients:
+            patient_data = export_patient_data_for_ai(patient.id)
+            if patient_data:
+                all_patients_data['patients'][str(patient.id)] = patient_data
+                
+                # Add audio files for this patient
+                recordings = Recording.query.filter_by(patient_id=patient.id).all()
+                for recording in recordings:
+                    audio_key = f"{recording.recording_type}_day_{recording.hospitalization_day}"
+                    
+                    if recording.voice_sample_standardized:
+                        format_ext = detect_audio_format(recording.voice_sample_standardized)
+                        filename = f"audio/patient_{patient.id}/{audio_key}_standardized.{format_ext}"
+                        zipf.writestr(filename, recording.voice_sample_standardized)
+                        total_audio_files += 1
+                    
+                    if recording.voice_sample_storytelling:
+                        format_ext = detect_audio_format(recording.voice_sample_storytelling)
+                        filename = f"audio/patient_{patient.id}/{audio_key}_storytelling.{format_ext}"
+                        zipf.writestr(filename, recording.voice_sample_storytelling)
+                        total_audio_files += 1
+                    
+                    if recording.voice_sample_vocal:
+                        format_ext = detect_audio_format(recording.voice_sample_vocal)
+                        filename = f"audio/patient_{patient.id}/{audio_key}_vocal.{format_ext}"
+                        zipf.writestr(filename, recording.voice_sample_vocal)
+                        total_audio_files += 1
+        
+        # Add master JSON metadata
+        json_data = json.dumps(all_patients_data, indent=2, ensure_ascii=False)
+        zipf.writestr('all_patients_metadata.json', json_data)
+        
+        # Add comprehensive README
+        readme_content = f"""# Complete AI Development Dataset - All Patients
+
+## Overview
+This dataset contains complete medical and voice data from {len(patients)} patients for AI/ML development.
+
+## Structure
+- `all_patients_metadata.json`: Master metadata file with all patient data
+- `audio/patient_{{id}}/`: Audio files organized by patient ID
+- Each patient folder contains audio files named: `{{type}}_day_{{day}}_{{sample_type}}.{{extension}}`
+
+## Dataset Statistics
+- Total Patients: {len(patients)}
+- Total Audio Files: {total_audio_files}
+- Export Date: {datetime.datetime.now().isoformat()}
+
+## File Formats
+Audio files are stored in their original format (WebM, OGG, MP3, WAV, M4A).
+
+## Data Privacy
+This dataset is for authorized AI development only. Ensure compliance with data protection regulations.
+
+## Usage Guidelines
+1. Load `all_patients_metadata.json` for structured data access
+2. Audio files can be loaded using standard audio processing libraries
+3. KCCQ scores are organized by clinical categories for easy analysis
+4. Longitudinal data is available through daily recordings
+
+## Contact
+For questions about this dataset, contact the system administrator.
+"""
+        zipf.writestr('README.md', readme_content)
+    
+    zip_buffer.seek(0)
+    
+    return Response(
+        zip_buffer.getvalue(),
+        mimetype='application/zip',
+        headers={
+            'Content-Disposition': f'attachment; filename=all_patients_ai_dataset_{datetime.datetime.now().strftime("%Y%m%d_%H%M%S")}.zip'
+        }
+    )
+
+@views.route('/admin/export/csv/<int:patient_id>')
+@login_required
+@admin_required
+def export_patient_csv(patient_id):
+    """Export patient data as CSV (without audio files) for quick analysis"""
+    recordings = Recording.query.filter_by(patient_id=patient_id).order_by(Recording.hospitalization_day).all()
+    
+    if not recordings:
+        flash('Patient not found or has no recordings.')
+        return redirect(url_for('views.dashboards'))
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # CSV Headers
+    headers = [
+        'patient_id', 'recording_id', 'recording_type', 'hospitalization_day', 'date',
+        'age', 'gender', 'height', 'diagnosis', 'medication', 'comorbidities',
+        'weight', 'current_weight', 'initial_weight', 'bp', 'initial_bp', 'pulse',
+        'ntprobnp', 'kalium', 'natrium', 'kreatinin_gfr', 'harnstoff', 'hb',
+        'ntprobnp_daily', 'kalium_daily', 'natrium_daily', 'kreatinin_gfr_daily', 
+        'harnstoff_daily', 'hb_daily', 'medication_changes',
+        'admission_date', 'discharge_date', 'discharge_medication', 'abschluss_labor',
+        'kccq_total_score', 'kccq1a', 'kccq1b', 'kccq1c', 'kccq1d', 'kccq1e', 'kccq1f',
+        'kccq2', 'kccq3', 'kccq4', 'kccq5', 'kccq6', 'kccq7', 'kccq8', 'kccq9',
+        'kccq10', 'kccq11', 'kccq12', 'kccq13', 'kccq14', 'kccq15a', 'kccq15b',
+        'kccq15c', 'kccq15d', 'kccq16', 'has_audio_standardized', 'has_audio_storytelling', 'has_audio_vocal'
+    ]
+    writer.writerow(headers)
+    
+    # Data rows
+    for recording in recordings:
+        row = [
+            recording.patient_id, recording.id, recording.recording_type, 
+            recording.hospitalization_day, recording.formatted_calculated_date,
+            recording.age, recording.gender, recording.height, recording.diagnosis,
+            recording.medication, recording.comorbidities, recording.weight,
+            recording.current_weight, recording.initial_weight, recording.bp,
+            recording.initial_bp, recording.pulse, recording.ntprobnp,
+            recording.kalium, recording.natrium, recording.kreatinin_gfr,
+            recording.harnstoff, recording.hb, recording.ntprobnp_daily,
+            recording.kalium_daily, recording.natrium_daily, recording.kreatinin_gfr_daily,
+            recording.harnstoff_daily, recording.hb_daily, recording.medication_changes,
+            recording.admission_date, recording.discharge_date, recording.discharge_medication,
+            recording.abschluss_labor, recording.score, recording.kccq1a, recording.kccq1b,
+            recording.kccq1c, recording.kccq1d, recording.kccq1e, recording.kccq1f,
+            recording.kccq2, recording.kccq3, recording.kccq4, recording.kccq5,
+            recording.kccq6, recording.kccq7, recording.kccq8, recording.kccq9,
+            recording.kccq10, recording.kccq11, recording.kccq12, recording.kccq13,
+            recording.kccq14, recording.kccq15a, recording.kccq15b, recording.kccq15c,
+            recording.kccq15d, recording.kccq16,
+            recording.voice_sample_standardized is not None,
+            recording.voice_sample_storytelling is not None,
+            recording.voice_sample_vocal is not None
+        ]
+        writer.writerow(row)
+    
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': f'attachment; filename=patient_{patient_id}_data.csv'}
+    )
