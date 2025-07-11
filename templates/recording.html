@@ -790,6 +790,10 @@
                                 <label>Discharge Date</label>
                                 <input type="date" class="form-control" name="discharge_date" value="{{ last_recording.discharge_date if last_recording else '' }}">
                             </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Estimated Dryweight (Doc)</label>
+                                <input type="number" class="form-control" name="estimated_dryweight" step="0.1" min="0" value="{{ last_recording.estimated_dryweight if last_recording else '' }}">
+                            </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-4">
