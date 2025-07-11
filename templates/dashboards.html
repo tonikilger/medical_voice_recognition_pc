@@ -71,7 +71,15 @@
                                                         {% else %}
                                                             <td></td>
                                                         {% endif %}
-                                                        <td>{{ record.weight }}</td>
+                                                        <td>
+                                                            {% if record.recording_type == 'admission' %}
+                                                                {{ record.initial_weight }}
+                                                            {% elif record.recording_type == 'daily' %}
+                                                                {{ record.weight }}
+                                                            {% elif record.recording_type == 'discharge' %}
+                                                                {{ record.current_weight }}
+                                                            {% endif %}
+                                                        </td>
                                                         <td>
                                                             <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
                                                             <form method="POST" action="{{ url_for('views.delete_recording', recording_id=record.id) }}" style="display:inline;">
@@ -162,7 +170,15 @@
                                                 <tr>
                                                     <td>{{ record.recording_type|capitalize }}</td>
                                                     <td>{{ record.hospitalization_day }}</td>
-                                                    <td>{{ record.weight }}</td>
+                                                    <td>
+                                                        {% if record.recording_type == 'admission' %}
+                                                            {{ record.initial_weight }}
+                                                        {% elif record.recording_type == 'daily' %}
+                                                            {{ record.weight }}
+                                                        {% elif record.recording_type == 'discharge' %}
+                                                            {{ record.current_weight }}
+                                                        {% endif %}
+                                                    </td>
                                                     <td>{{ record.ntprobnp or record.ntprobnp_daily }}</td>
                                                     <td>{{ record.kalium or record.kalium_daily }}</td>
                                                     <td>{{ record.natrium or record.natrium_daily }}</td>
@@ -252,7 +268,15 @@
                                                 <tr>
                                                     <td>{{ record.recording_type|capitalize }}</td>
                                                     <td>{{ record.hospitalization_day }}</td>
-                                                    <td>{{ record.weight }}</td>
+                                                    <td>
+                                                        {% if record.recording_type == 'admission' %}
+                                                            {{ record.initial_weight }}
+                                                        {% elif record.recording_type == 'daily' %}
+                                                            {{ record.weight }}
+                                                        {% elif record.recording_type == 'discharge' %}
+                                                            {{ record.current_weight }}
+                                                        {% endif %}
+                                                    </td>
                                                     <td>{{ record.ntprobnp or record.ntprobnp_daily }}</td>
                                                     <td>{{ record.kalium or record.kalium_daily }}</td>
                                                     <td>{{ record.natrium or record.natrium_daily }}</td>

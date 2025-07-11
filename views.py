@@ -262,6 +262,16 @@ def dashboards():
         ]
     }
 
+    # First, create a mapping of patient_id to admission records to get initial_weight
+    admission_data_by_patient = {}
+    for recording in recordings:
+        if recording.recording_type == 'admission':
+            admission_data_by_patient[recording.patient_id] = {
+                'initial_weight': recording.initial_weight,
+                'initial_bp': recording.initial_bp,
+                'admission_date': recording.admission_date
+            }
+
     for recording in recordings:
         rec_type = (recording.recording_type or "").lower()
         required_fields = required_fields_by_type.get(rec_type, ["recording_type", "hospitalization_day", "voice_sample_standardized"])
@@ -271,6 +281,16 @@ def dashboards():
             if value in (None, '', 0):
                 is_complete = False
                 break
+
+        # Add initial_weight from admission record if this is a daily or discharge record
+        if recording.recording_type in ['daily', 'discharge'] and recording.patient_id in admission_data_by_patient:
+            admission_data = admission_data_by_patient[recording.patient_id]
+            if not recording.initial_weight:
+                recording.initial_weight = admission_data['initial_weight']
+            if not recording.initial_bp:
+                recording.initial_bp = admission_data['initial_bp']
+            if not recording.admission_date:
+                recording.admission_date = admission_data['admission_date']
 
         recordings_by_patient.setdefault(recording.patient_id, []).append(recording)
         if is_complete:

@@ -70,6 +70,7 @@ class Recording(db.Model):
     current_weight = db.Column(db.Float, nullable=True)
     discharge_medication = db.Column(db.String(2000), nullable=True)
     discharge_date = db.Column(db.Date, nullable=True)
+    estimated_dryweight = db.Column(db.Float, nullable=True)
 
     # Voice sample (shared for all types)
     voice_sample_standardized = db.Column(db.LargeBinary, nullable=True)
