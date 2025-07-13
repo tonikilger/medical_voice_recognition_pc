@@ -198,7 +198,7 @@
                                             <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="voicePlaybackAdmission" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="voiceSampleAdmission" name="voice_sample_standardized" style="display: none;" />
+                                        <input type="file" id="voiceSampleAdmission" name="admission_voice_sample_standardized" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +223,7 @@
                                             <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="coughSample" name="voice_sample_storytelling" style="display: none;" />
+                                        <input type="file" id="coughSample" name="admission_voice_sample_storytelling" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
                                             <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="vocalPlayback" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="vocalSample" name="voice_sample_vocal" style="display: none;" />
+                                        <input type="file" id="vocalSample" name="admission_voice_sample_vocal" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
@@ -673,7 +673,7 @@
                                     <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
                                 </button>
                                 <audio id="voicePlaybackDaily" controls class="mt-2" style="display: none;"></audio>
-                                <input type="file" id="voiceSampleDaily" name="voice_sample_standardized" style="display: none;" />
+                                <input type="file" id="voiceSampleDaily" name="daily_voice_sample_standardized" style="display: none;" />
                                 </div>
                             </div>
                             </div>
@@ -699,7 +699,7 @@
                                             <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="coughSampleDaily" name="voice_sample_storytelling" style="display: none;" />
+                                        <input type="file" id="coughSampleDaily" name="daily_voice_sample_storytelling" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
@@ -725,7 +725,7 @@
                                             <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="vocalPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="vocalSampleDaily" name="voice_sample_vocal" style="display: none;" />
+                                        <input type="file" id="vocalSampleDaily" name="daily_voice_sample_vocal" style="display: none;" />
                                     </div>
                                 </div>
                             </div>      
@@ -817,7 +817,7 @@
                                     <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
                                 </button>
                                 <audio id="voicePlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
-                                <input type="file" id="voiceSampleDischarge" name="voice_sample_standardized" style="display: none;" />
+                                <input type="file" id="voiceSampleDischarge" name="discharge_voice_sample_standardized" style="display: none;" />
                                 </div>
                             </div> 
 
@@ -845,7 +845,7 @@
                                             <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="coughPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="coughSampleDischarge" name="voice_sample_storytelling" style="display: none;" />
+                                        <input type="file" id="coughSampleDischarge" name="discharge_voice_sample_storytelling" style="display: none;" />
                                     </div>
                                 </div>
                             </div>
@@ -871,7 +871,7 @@
                                             <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
                                         </button>
                                         <audio id="vocalPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
-                                        <input type="file" id="vocalSampleDischarge" name="voice_sample_vocal" style="display: none;" />
+                                        <input type="file" id="vocalSampleDischarge" name="discharge_voice_sample_vocal" style="display: none;" />
                                     </div>
                                 </div>
                             </div>      

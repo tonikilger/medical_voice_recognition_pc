@@ -329,15 +329,17 @@ def recording():
         # Get recording type first
         recording_type = request.form.get('recording_type')
 
-        # Voice sample
-        voice_file = request.files.get('voice_sample_standardized')
-        voice_sample_standardized = voice_file.read() if voice_file else None
+        # Voice sample names are now prefixed based on recording type
+        prefix = f"{recording_type}_" if recording_type else ""
+        
+        voice_file = request.files.get(f'{prefix}voice_sample_standardized')
+        voice_sample_standardized = voice_file.read() if voice_file and voice_file.filename else None
 
-        story_file = request.files.get('voice_sample_storytelling')
-        story_sample = story_file.read() if story_file else None
+        story_file = request.files.get(f'{prefix}voice_sample_storytelling')
+        story_sample = story_file.read() if story_file and story_file.filename else None
 
-        vocal_file = request.files.get('voice_sample_vocal')
-        vocal_sample = vocal_file.read() if vocal_file else None
+        vocal_file = request.files.get(f'{prefix}voice_sample_vocal')
+        vocal_sample = vocal_file.read() if vocal_file and vocal_file.filename else None
 
         # Score berechnen (Summe aller KCCQ-Items)
         kccq_fields = [
@@ -564,15 +566,18 @@ def edit_recording(recording_id):
         recording.estimated_dryweight = request.form.get('estimated_dryweight') or None
 
         # Voice samples (only update if a new file is uploaded)
-        voice_file = request.files.get('voice_sample_standardized')
+        # Voice sample names are prefixed based on recording type
+        prefix = f"{recording.recording_type}_" if recording.recording_type else ""
+
+        voice_file = request.files.get(f'{prefix}voice_sample_standardized')
         if voice_file and voice_file.filename:
             recording.voice_sample_standardized = voice_file.read()
         
-        story_file = request.files.get('voice_sample_storytelling')
+        story_file = request.files.get(f'{prefix}voice_sample_storytelling')
         if story_file and story_file.filename:
             recording.voice_sample_storytelling = story_file.read()
             
-        vocal_file = request.files.get('voice_sample_vocal')
+        vocal_file = request.files.get(f'{prefix}voice_sample_vocal')
         if vocal_file and vocal_file.filename:
             recording.voice_sample_vocal = vocal_file.read()
 
