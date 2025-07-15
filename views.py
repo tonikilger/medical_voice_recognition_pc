@@ -328,6 +328,23 @@ def recording():
 
         # Get recording type first
         recording_type = request.form.get('recording_type')
+        
+        # Check if a recording of this type already exists for this patient
+        existing_recording = Recording.query.filter_by(
+            patient_id=patient_id,
+            recording_type=recording_type
+        ).first()
+        
+        if existing_recording:
+            # Update existing recording instead of creating new one
+            recording = existing_recording
+        else:
+            # Create new recording
+            recording = Recording(
+                patient_id=patient_id,
+                recording_type=recording_type,
+                date=datetime.datetime.now()
+            )
 
         # Voice sample names are now prefixed based on recording type
         prefix = f"{recording_type}_" if recording_type else ""
@@ -359,13 +376,31 @@ def recording():
         discharge_date_str = request.form.get('discharge_date') or None
         discharge_date = parse_date(discharge_date_str) if recording_type == 'discharge' else None
 
+        # Calculate hospitalization_day properly for each recording type
         recordings = Recording.query.filter_by(patient_id=patient_id).order_by(Recording.date).all()
-        if recordings:
-            first_recording = recordings[0]
-            last_recording = recordings[-1]
-            hospitalization_day = (datetime.datetime.now().date() - first_recording.date.date()).days + 1
-        else:
-            hospitalization_day = 1    
+        
+        if recording_type == 'admission':
+            hospitalization_day = 1
+        elif recording_type == 'discharge':
+            # For discharge, use the form value or calculate from admission date
+            hospitalization_day_form = request.form.get('hospitalization_day')
+            if hospitalization_day_form:
+                hospitalization_day = int(hospitalization_day_form)
+            else:
+                # Find admission record to calculate discharge day
+                admission_record = Recording.query.filter_by(
+                    patient_id=patient_id,
+                    recording_type='admission'
+                ).first()
+                if admission_record and admission_record.admission_date and discharge_date:
+                    hospitalization_day = (discharge_date - admission_record.admission_date).days + 1
+                else:
+                    hospitalization_day = len(recordings) + 1
+        else:  # daily
+            if recordings:
+                hospitalization_day = len(recordings) + 1
+            else:
+                hospitalization_day = 1    
 
         diagnosis = request.form.getlist('diagnosis')
         diagnosis_str = ', '.join(diagnosis) if diagnosis else None
@@ -400,62 +435,73 @@ def recording():
                 'kccq16': request.form.get('kccq16') or None,
             }
 
-        # Build the Recording object with all possible fields
-        recording = Recording(
-            patient_id=patient_id,
-            recording_type=recording_type,
-            hospitalization_day=hospitalization_day,
+        # Update the Recording object with all possible fields
+        recording.hospitalization_day = hospitalization_day
 
-            # Admission fields
-            age=request.form.get('age') or None,
-            gender=request.form.get('gender') or None,
-            height=request.form.get('height') or None,
-            diagnosis=diagnosis_str,
-            medication=request.form.get('medication') or None,
-            comorbidities=request.form.get('comorbidities') or None,
-            admission_date=admission_date,
-            ntprobnp=request.form.get('ntprobnp') or None,
-            kalium=request.form.get('kalium') or None,
-            natrium=request.form.get('natrium') or None,
-            kreatinin_gfr=request.form.get('kreatinin_gfr') or None,
-            harnstoff=request.form.get('harnstoff') or None,
-            hb=request.form.get('hb') or None,
-            initial_weight=request.form.get('initial_weight') or None,
-            initial_bp=request.form.get('initial_bp') or None,
+        # Admission fields
+        recording.age = request.form.get('age') or None
+        recording.gender = request.form.get('gender') or None
+        recording.height = request.form.get('height') or None
+        recording.diagnosis = diagnosis_str
+        recording.medication = request.form.get('medication') or None
+        recording.comorbidities = request.form.get('comorbidities') or None
+        recording.admission_date = admission_date
+        recording.ntprobnp = request.form.get('ntprobnp') or None
+        recording.kalium = request.form.get('kalium') or None
+        recording.natrium = request.form.get('natrium') or None
+        recording.kreatinin_gfr = request.form.get('kreatinin_gfr') or None
+        recording.harnstoff = request.form.get('harnstoff') or None
+        recording.hb = request.form.get('hb') or None
+        recording.initial_weight = request.form.get('initial_weight') or None
+        recording.initial_bp = request.form.get('initial_bp') or None
 
-            # KCCQ fields (only for admission/discharge)
-            **kccq_fields,
+        # KCCQ fields (only for admission/discharge)
+        if recording_type in ['admission', 'discharge']:
+            for field, value in kccq_fields.items():
+                setattr(recording, field, value)
 
-            # Daily fields
-            weight=request.form.get('weight') or None,
-            bp=request.form.get('bp') or None,
-            pulse=request.form.get('pulse') or None,
-            medication_changes=request.form.get('medication_changes') or None,
-            kalium_daily=request.form.get('kalium_daily') or None,
-            natrium_daily=request.form.get('natrium_daily') or None,
-            kreatinin_gfr_daily=request.form.get('kreatinin_gfr_daily') or None,
-            harnstoff_daily=request.form.get('harnstoff_daily') or None,
-            hb_daily=request.form.get('hb_daily') or None,
-            ntprobnp_daily=request.form.get('ntprobnp_daily') or None,
+        # Daily fields
+        recording.weight = request.form.get('weight') or None
+        recording.bp = request.form.get('bp') or None
+        recording.pulse = request.form.get('pulse') or None
+        recording.medication_changes = request.form.get('medication_changes') or None
+        recording.kalium_daily = request.form.get('kalium_daily') or None
+        recording.natrium_daily = request.form.get('natrium_daily') or None
+        recording.kreatinin_gfr_daily = request.form.get('kreatinin_gfr_daily') or None
+        recording.harnstoff_daily = request.form.get('harnstoff_daily') or None
+        recording.hb_daily = request.form.get('hb_daily') or None
+        recording.ntprobnp_daily = request.form.get('ntprobnp_daily') or None
 
-            # Discharge fields
-            abschluss_labor=request.form.get('abschluss_labor') or None,
-            current_weight=request.form.get('current_weight') or None,
-            discharge_medication=request.form.get('discharge_medication') or None,
-            discharge_date=discharge_date or None,
-            estimated_dryweight=request.form.get('estimated_dryweight') or None,
+        # Discharge fields
+        recording.abschluss_labor = request.form.get('abschluss_labor') or None
+        recording.current_weight = request.form.get('current_weight') or None
+        recording.discharge_medication = request.form.get('discharge_medication') or None
+        recording.discharge_date = discharge_date or None
+        recording.estimated_dryweight = request.form.get('estimated_dryweight') or None
+        
+        # Discharge-specific lab values (separate from admission values)
+        if recording_type == 'discharge':
+            recording.discharge_ntprobnp = request.form.get('discharge_ntprobnp') or None
+            recording.discharge_kalium = request.form.get('discharge_kalium') or None
+            recording.discharge_natrium = request.form.get('discharge_natrium') or None
+            recording.discharge_kreatinin_gfr = request.form.get('discharge_kreatinin_gfr') or None
+            recording.discharge_harnstoff = request.form.get('discharge_harnstoff') or None
+            recording.discharge_hb = request.form.get('discharge_hb') or None
 
-            # Voice sample
-            voice_sample_standardized=voice_sample_standardized,
-            voice_sample_storytelling=story_sample,
-            voice_sample_vocal=vocal_sample,
+        # Voice sample (only update if new files are uploaded)
+        if voice_sample_standardized:
+            recording.voice_sample_standardized = voice_sample_standardized
+        if story_sample:
+            recording.voice_sample_storytelling = story_sample
+        if vocal_sample:
+            recording.voice_sample_vocal = vocal_sample
 
-            # Date of recording
-            date=datetime.datetime.now(),
-            score=score
-        )
+        # Score
+        recording.score = score
 
-        db.session.add(recording)
+        # Only add to session if it's a new recording
+        if not existing_recording:
+            db.session.add(recording)
         db.session.commit()
         return redirect(url_for('views.dashboards'))
 
@@ -564,6 +610,15 @@ def edit_recording(recording_id):
         recording.discharge_medication = request.form.get('discharge_medication') or None
         recording.discharge_date = parse_date(request.form.get('discharge_date'))
         recording.estimated_dryweight = request.form.get('estimated_dryweight') or None
+        
+        # Discharge-specific lab values (separate from admission values)
+        if recording.recording_type == 'discharge':
+            recording.discharge_ntprobnp = request.form.get('discharge_ntprobnp') or None
+            recording.discharge_kalium = request.form.get('discharge_kalium') or None
+            recording.discharge_natrium = request.form.get('discharge_natrium') or None
+            recording.discharge_kreatinin_gfr = request.form.get('discharge_kreatinin_gfr') or None
+            recording.discharge_harnstoff = request.form.get('discharge_harnstoff') or None
+            recording.discharge_hb = request.form.get('discharge_hb') or None
 
         # Voice samples (only update if a new file is uploaded)
         # Voice sample names are prefixed based on recording type
