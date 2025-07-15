@@ -122,7 +122,7 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Current Medication (complete list with dosage)</label>
-                                <textarea class="form-control" name="medication" style="height: 38px; resize: none;">{{ last_recording.medication if last_recording else '' }}</textarea>
+                                <textarea class="form-control" name="medication" style="height: 38px; resize: none;">{{ last_recording.medication if last_recording and last_recording.medication else '' }}</textarea>
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Comorbidities</label>
@@ -614,7 +614,7 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Medication adjustments (if relevant)</label>
-                                <textarea class="form-control" name="medication_changes" value="{{ last_recording.medication_changes if last_recording else '' }}" style="height: 38px; resize: none;"></textarea>
+                                <textarea class="form-control" name="medication_changes" style="height: 38px; resize: none;">{{ last_recording.medication_changes if last_recording and last_recording.medication_changes else '' }}</textarea>
                             </div>
 
                         </div>
@@ -744,34 +744,34 @@
                         <div class="row">
                              <div class="mb-3 col-md-6">
                                 <label>NT-proBNP</label>
-                                <input type="number" class="form-control" name="ntprobnp" step="0.01" min="0" value="{{ last_recording.ntprobnp if last_recording else '' }}">
+                                <input type="number" class="form-control" name="discharge_ntprobnp" step="0.01" min="0" value="{{ last_recording.discharge_ntprobnp if last_recording else '' }}">
                             </div>    
                             <div class="mb-3 col-md-6">
                                 <label>Potassium</label>
-                                <input type="number" class="form-control" name="kalium" step="0.01" min="0" value="{{ last_recording.kalium if last_recording else '' }}">
+                                <input type="number" class="form-control" name="discharge_kalium" step="0.01" min="0" value="{{ last_recording.discharge_kalium if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Sodium</label>
-                                <input type="number" class="form-control" name="natrium" step="0.01" min="0" value="{{ last_recording.natrium if last_recording else '' }}">
+                                <input type="number" class="form-control" name="discharge_natrium" step="0.01" min="0" value="{{ last_recording.discharge_natrium if last_recording else '' }}">
                             </div>                       
                             <div class="mb-3 col-md-6">
                                 <label>Creatinine / GFR</label>
-                                <input type="text" class="form-control" name="kreatinin_gfr" value="{{ last_recording.kreatinin_gfr if last_recording else '' }}">
+                                <input type="text" class="form-control" name="discharge_kreatinin_gfr" value="{{ last_recording.discharge_kreatinin_gfr if last_recording else '' }}">
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label>Urea</label>
-                                <input type="number" class="form-control" name="harnstoff" step="0.01" min="0" value="{{ last_recording.harnstoff if last_recording else '' }}">
+                                <input type="number" class="form-control" name="discharge_harnstoff" step="0.01" min="0" value="{{ last_recording.discharge_harnstoff if last_recording else '' }}">
                             </div>
                         
                         
                             <div class="mb-3 col-md-6">
                                 <label>Hemoglobin (Hb)</label>
-                                <input type="number" class="form-control" name="hb" step="0.01" min="0" value="{{ last_recording.hb if last_recording else '' }}">
+                                <input type="number" class="form-control" name="discharge_hb" step="0.01" min="0" value="{{ last_recording.discharge_hb if last_recording else '' }}">
                             </div>
                         </div>
                         <div class="row">
@@ -782,17 +782,29 @@
                 
                             <div class="mb-3 col-md-6">
                                 <label>Current Medication at Discharge</label>
-                                <textarea class="form-control" name="discharge_medication" value="{{ last_recording.discharge_medication if last_recording else '' }}" style="height: 38px; resize: none;">{{ last_recording.medication if last_recording else '' }}</textarea>
+                                <textarea class="form-control" name="discharge_medication" style="height: 38px; resize: none;">{{ last_recording.discharge_medication if last_recording and last_recording.discharge_medication else '' }}</textarea>
                             </div>
                         </div>
                         <div class="row">
                              <div class="mb-3 col-md-6">
                                 <label>Discharge Date</label>
-                                <input type="date" class="form-control" name="discharge_date" value="{{ last_recording.discharge_date if last_recording else '' }}">
+                                <input type="date" class="form-control" name="discharge_date" value="{{ last_recording.discharge_date.strftime('%Y-%m-%d') if last_recording and last_recording.discharge_date else '' }}">
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label>Estimated Dryweight (Doc)</label>
                                 <input type="number" class="form-control" name="estimated_dryweight" step="0.1" min="0" value="{{ last_recording.estimated_dryweight if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label>Abschluss Labor</label>
+                                <textarea class="form-control" name="abschluss_labor" style="height: 80px; resize: vertical;">{{ last_recording.abschluss_labor if last_recording and last_recording.abschluss_labor else '' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label for="hospitalizationDay" class="form-label">Hospitalization Day</label>
+                                <input type="number" class="form-control" id="hospitalizationDay" name="hospitalization_day" min="1" required value="{{ hospitalization_day if hospitalization_day else last_recording.hospitalization_day if last_recording else 1 }}">
                             </div>
                         </div>
                         <div class="row">

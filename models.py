@@ -71,6 +71,14 @@ class Recording(db.Model):
     discharge_medication = db.Column(db.String(2000), nullable=True)
     discharge_date = db.Column(db.Date, nullable=True)
     estimated_dryweight = db.Column(db.Float, nullable=True)
+    
+    # Discharge-specific lab values (separate from admission values)
+    discharge_ntprobnp = db.Column(db.Float, nullable=True)
+    discharge_kalium = db.Column(db.Float, nullable=True)
+    discharge_natrium = db.Column(db.Float, nullable=True)
+    discharge_kreatinin_gfr = db.Column(db.String(100), nullable=True)
+    discharge_harnstoff = db.Column(db.Float, nullable=True)
+    discharge_hb = db.Column(db.Float, nullable=True)
 
     # Voice sample (shared for all types)
     voice_sample_standardized = db.Column(db.LargeBinary, nullable=True)
