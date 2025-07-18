@@ -14,7 +14,13 @@ from functools import wraps
 # Create a Blueprint
 views = Blueprint('views', __name__)
 
-# Admin decorator
+@views.before_app_request
+def enforce_https_in_production():
+    # Nur umleiten, wenn nicht lokal entwickelt wird
+    if not request.is_secure and not request.host.startswith("127.0.0.1") and not request.host.startswith("localhost"):
+        url = request.url.replace("http://", "https://", 1)
+        return redirect(url, code=301)
+          
 def admin_required(f):
     """Decorator to require admin privileges"""
     @wraps(f)
