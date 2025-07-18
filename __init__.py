@@ -1,7 +1,10 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from models import db, User
+try:
+    from models import db, User
+except ImportError:
+    from .models import db, User
 import sys
 import os
 
