@@ -13,7 +13,7 @@ def create_app():
     app = Flask(__name__, instance_path='/var/www/webApp/webApp/instance')
 
     # Configure the database URI (replace with your database URI)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/www/webApp/webApp/instance/database.db'  # Absolute path for production  
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.secret_key = 'the random string'
 
@@ -34,8 +34,7 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    from views import views
-    from views import login_blueprint
+    from .views import views, login_blueprint
 
     # Register Blueprints
     app.register_blueprint(views)

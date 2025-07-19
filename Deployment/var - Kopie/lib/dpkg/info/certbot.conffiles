@@ -1,3 +1,0 @@
-/etc/cron.d/certbot
-/etc/letsencrypt/cli.ini
-/etc/logrotate.d/certbot

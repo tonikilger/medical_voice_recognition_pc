@@ -1,9 +1,0 @@
-/.
-/boot
-/boot/vmlinuz-6.8.0-60-generic
-/usr
-/usr/share
-/usr/share/doc
-/usr/share/doc/linux-image-6.8.0-60-generic
-/usr/share/doc/linux-image-6.8.0-60-generic/changelog.Debian.gz
-/usr/share/doc/linux-image-6.8.0-60-generic/copyright

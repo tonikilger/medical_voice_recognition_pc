@@ -1,6 +1,0 @@
-{
- "v1": {
-  "datasource": "DataSourceNoCloud [seed=/var/lib/cloud/seed/nocloud][dsmode=local]",
-  "errors": []
- }
-}
