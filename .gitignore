@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+database.db
+instance/
+.pytest_cache/
+.coverage
+.venv
+venv/
+.env
