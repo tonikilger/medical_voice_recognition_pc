@@ -10,7 +10,11 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def create_app():
-    app = Flask(__name__, instance_path='./instance')
+    # Get the absolute path to the webApp directory
+    webapp_dir = os.path.dirname(os.path.abspath(__file__))
+    instance_dir = os.path.join(webapp_dir, 'instance')
+    
+    app = Flask(__name__, instance_path=instance_dir)
 
     # Configure the database URI (replace with your database URI)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  
