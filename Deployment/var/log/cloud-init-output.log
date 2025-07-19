@@ -1,0 +1,85 @@
+Cloud-init v. 25.1.2-0ubuntu0~24.04.1 running 'init-local' at Wed, 16 Jul 2025 18:53:52 +0000. Up 4.39 seconds.
+2025-07-16 18:53:53,858 - lifecycle.py[DEPRECATED]: 'user' of type string is deprecated in 22.2 and scheduled to be removed in 27.2. Use 'users' list instead.
+Generating public/private rsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_rsa_key
+Your public key has been saved in /etc/ssh/ssh_host_rsa_key.pub
+The key fingerprint is:
+SHA256:Dkau2ZLi/sG5hr8e+u3okyY124fQEp9JpYlrWKrpL2M root@ubuntu
+The key's randomart image is:
++---[RSA 3072]----+
+|                 |
+|        .        |
+|     ..+         |
+|    +o+          |
+|   + *+oS        |
+|  o.BB=o         |
+| o.+XB...        |
+|oEoo*Bo .        |
+|ooB@X+o.         |
++----[SHA256]-----+
+Generating public/private ecdsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_ecdsa_key
+Your public key has been saved in /etc/ssh/ssh_host_ecdsa_key.pub
+The key fingerprint is:
+SHA256:9eUIPVBEmsd2Jf4emq7Y+5beF1ebxNRzpbY+RX9Qbps root@ubuntu
+The key's randomart image is:
++---[ECDSA 256]---+
+|          .++ . *|
+|           * . Oo|
+|          = * X *|
+|         . = B O=|
+|        S   o +EO|
+|             .o*+|
+|             o+ +|
+|          o .o...|
+|         . +*+ ..|
++----[SHA256]-----+
+Generating public/private ed25519 key pair.
+Your identification has been saved in /etc/ssh/ssh_host_ed25519_key
+Your public key has been saved in /etc/ssh/ssh_host_ed25519_key.pub
+The key fingerprint is:
+SHA256:hVjZ+e28AJI7/arjOhb3gtPOfBvE4j6QW8pEELl2dRM root@ubuntu
+The key's randomart image is:
++--[ED25519 256]--+
+|    .o  .oEo     |
+|    o  oo.=      |
+|     o...o.o .   |
+|    o o oo. . .  |
+|   . o .S+o. o   |
+|      =.=o. . o  |
+|     o X.o.. . . |
+|      O+= o.. .  |
+|     ..*B*oo     |
++----[SHA256]-----+
+Cloud-init v. 25.1.2-0ubuntu0~24.04.1 running 'init' at Wed, 16 Jul 2025 18:53:57 +0000. Up 9.23 seconds.
+ci-info: ++++++++++++++++++++++++++++++++++++++Net device info+++++++++++++++++++++++++++++++++++++++
+ci-info: +--------+------+---------------------------+-----------------+--------+-------------------+
+ci-info: | Device |  Up  |          Address          |       Mask      | Scope  |     Hw-Address    |
+ci-info: +--------+------+---------------------------+-----------------+--------+-------------------+
+ci-info: |  ens6  | True |       213.165.87.118      | 255.255.255.255 | global | 02:01:99:c5:2e:cb |
+ci-info: |  ens6  | True | fe80::1:99ff:fec5:2ecb/64 |        .        |  link  | 02:01:99:c5:2e:cb |
+ci-info: |   lo   | True |         127.0.0.1         |    255.0.0.0    |  host  |         .         |
+ci-info: |   lo   | True |          ::1/128          |        .        |  host  |         .         |
+ci-info: +--------+------+---------------------------+-----------------+--------+-------------------+
+ci-info: ++++++++++++++++++++++++++++++++Route IPv4 info++++++++++++++++++++++++++++++++
+ci-info: +-------+----------------+--------------+-----------------+-----------+-------+
+ci-info: | Route |  Destination   |   Gateway    |     Genmask     | Interface | Flags |
+ci-info: +-------+----------------+--------------+-----------------+-----------+-------+
+ci-info: |   0   |    0.0.0.0     | 213.165.87.1 |     0.0.0.0     |    ens6   |   UG  |
+ci-info: |   1   | 212.227.123.16 | 213.165.87.1 | 255.255.255.255 |    ens6   |  UGH  |
+ci-info: |   2   | 212.227.123.17 | 213.165.87.1 | 255.255.255.255 |    ens6   |  UGH  |
+ci-info: |   3   |  213.165.87.1  |   0.0.0.0    | 255.255.255.255 |    ens6   |   UH  |
+ci-info: +-------+----------------+--------------+-----------------+-----------+-------+
+ci-info: +++++++++++++++++++Route IPv6 info+++++++++++++++++++
+ci-info: +-------+-------------+---------+-----------+-------+
+ci-info: | Route | Destination | Gateway | Interface | Flags |
+ci-info: +-------+-------------+---------+-----------+-------+
+ci-info: |   0   |  fe80::/64  |    ::   |    ens6   |   U   |
+ci-info: |   2   |    local    |    ::   |    ens6   |   U   |
+ci-info: |   3   |  multicast  |    ::   |    ens6   |   U   |
+ci-info: +-------+-------------+---------+-----------+-------+
+Cloud-init v. 25.1.2-0ubuntu0~24.04.1 running 'modules:config' at Wed, 16 Jul 2025 18:53:57 +0000. Up 9.65 seconds.
+2025-07-16 18:53:57,990 - lifecycle.py[DEPRECATED]: Module has been renamed from cc_ubuntu_advantage to cc_ubuntu_pro. Update any references in /etc/cloud/cloud.cfg is deprecated in 24.1 and scheduled to be removed in 29.1.
+Cloud-init v. 25.1.2-0ubuntu0~24.04.1 running 'modules:final' at Wed, 16 Jul 2025 18:53:58 +0000. Up 10.19 seconds.
+2025-07-16 18:53:58,541 - lifecycle.py[DEPRECATED]: 'user' of type string is deprecated in 22.2 and scheduled to be removed in 27.2. Use 'users' list instead.
+Cloud-init v. 25.1.2-0ubuntu0~24.04.1 finished at Wed, 16 Jul 2025 18:53:58 +0000. Datasource DataSourceNoCloud [seed=/var/lib/cloud/seed/nocloud][dsmode=local].  Up 10.30 seconds

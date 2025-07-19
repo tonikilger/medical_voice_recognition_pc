@@ -1,0 +1,14 @@
+/.
+/usr
+/usr/lib
+/usr/lib/llvm-18
+/usr/lib/llvm-18/lib
+/usr/lib/llvm-18/lib/libclang-cpp.so.18.1
+/usr/lib/x86_64-linux-gnu
+/usr/share
+/usr/share/doc
+/usr/share/doc/libclang-cpp18
+/usr/share/doc/libclang-cpp18/copyright
+/usr/lib/x86_64-linux-gnu/libclang-cpp.so.18
+/usr/lib/x86_64-linux-gnu/libclang-cpp.so.18.1
+/usr/share/doc/libclang-cpp18/changelog.Debian.gz

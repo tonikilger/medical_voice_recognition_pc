@@ -1,0 +1,54 @@
+Template: certbot/remove_live_certs
+Type: boolean
+Default: true
+Description: You have unexpired certs; do you still want to purge?
+ The certbot configuration directory /etc/letsencrypt still contains
+ unexpired certificates that may be live on your system.  If you
+ choose this option, the purge will continue and delete those
+ certificates, potentially breaking services which depend on them.
+ .
+ If you have already installed different certificates in your
+ services, or you have confirmed you don't have any services depending
+ on these certificates, you should choose this option.  To cancel and
+ manually delete the /etc/letsencrypt directory, you should refuse
+ this option.
+Description-de.UTF-8: Sie haben Zertifikate, die noch nicht abgelaufen sind, möchten Sie dennoch vollständig löschen?
+ Das Certbot-Konfigurationsverzeichnis »/etc/letsencrypt« enthält noch Zertifikate, die noch nicht abgelaufen sind und auf Ihrem System genutzt werden könnten. Falls Sie diese Option auswählen, wird das vollständige Löschen fortgesetzt und diese Zertifikate löschen. Dadurch werden möglicherweise Dienste beschädigt, die von diesen Zertifikaten abhängen.
+ .
+ Falls Sie bereits andere Zertifikate auf Ihrem System installiert haben oder Sie überprüft haben, dass keine Dienste von diesen Zertifikaten abhängen, dann sollten Sie diese Option auswählen. Um abzubrechen und das Verzeichnis »/etc/letsencrypt« händisch zu löschen, sollten Sie diese Option ablehnen.
+Description-es.UTF-8: Tiene certificados no caducados; ¿Aún así desea purgarlos?
+ El directorio de configuración de certbot /etc/letsencrypt todavía contiene certificados no caducados que pueden estar activos en su sistema.  Si elige esta opción, la purga continuará y borrará esos certificados, pudiendo romper los servicios que dependen de ellos.
+ .
+ Si ya ha instalado diferentes certificados en sus servicios, o ha confirmado que no tiene ningún servicio que dependa de estos certificados, debe elegir esta opción.  Para cancelar y eliminar manualmente el directorio /etc/letsencrypt, debe rechazar esta opción.
+Description-fr.UTF-8: Vous avez des certificats qui n'ont pas encore expiré, voulez-vous quand même purger ?
+ Le répertoire de configuration de certbot /etc/letsencrypt contient encore des certificats en cours de validité qui peuvent être encore utilisés sur votre machine. Si vous choisissez cette option, la purge va se poursuivre et supprimera ces certificats, cassant éventuellement des services qui dépendent d'eux.
+ .
+ Si vous avez déjà installé divers certificats dans vos services, ou bien si vous avez confirmé que vous n'avez aucun service qui dépend de ces certificats, vous devriez choisir cette option. Pour annuler et supprimer manuellement le répertoire /etc/letsencrypt, vous devriez refuser cette option.
+Description-it.UTF-8: Sono presenti certificati non scaduti; eliminare comunque?
+ La directory di configurazione di certbot /etc/letsencrypt contiene ancora dei certificati non scaduti che potrebbero essere in uso nel sistema. Scegliendo questa opzione, la rimozione continuerà e questi certificati verranno cancellati, potenzialmente danneggiando servizi che dipendono da essi.
+ .
+ Se sono già stati installati altri certificati per i servizi, o se è stato verificato che non ci sono servizi che dipendono da questi certificati, bisognerebbe scegliere questa opzione. Per annullare e cancellare manualmente la directory /etc/letsencrypt, bisognerebbe rifiutare questa opzione.
+Description-nl.UTF-8: U heeft niet-verlopen certificaten; wilt u echt wissen?
+ De configuratiemap van certbot, /etc/letsencrypt, bevat nog niet-verlopen certificaten welke mogelijk op uw systeem leven. Indien u voor deze optie kiest, zal het wissen voortgaan en zullen deze certificaten verwijderd worden, hetgeen diensten die daarvan afhankelijk zijn, mogelijk onklaar zal maken.
+ .
+ Indien u in uw diensten reeds andere certificaten geïnstalleerd heeft, of indien u zich ervan vergewist heeft dat u geen diensten heeft die van deze certificaten afhangen, moet u voor deze optie kiezen. Om te annuleren en handmatig de map /etc/letsencrypt te verwijderen, moet u deze optie afwijzen.
+Description-pt.UTF-8: Você tem certificados não expirados; mesmo assim deseja purgar?
+ O directório de configuração do certbot /etc/letsencrypt ainda contem certificados não expirados que podem estar vivos no seu sistema. Se escolher esta opção, a purga irá continuar e apagar esses certificados, potencialmente afectando serviços que dependem deles.
+ .
+ Se você já instalou certificados diferentes nos seus serviços, ou já confirmou que que não tem nenhuns serviços a depender destes certificados, deve escolher esta opção. Para cancelar e apagar manualmente o directório /etc/letsencrypt directory, deve recusar esta opção.
+Description-pt_BR.UTF-8: Você tem certificados não expirados. Você ainda deseja expurgar?
+ O diretório de configuração /etc/letsencrypt ainda contém certificados não expirados que podem estar em uso no seu sistema. Se você escolher essa opção, o expurgo continuará e removerá esses certificados, potencialmente quebrando serviços que dependam deles.
+ .
+ Se você já instalou certificados diferentes em seus serviços, ou confirmou que não tem nenhum serviço dependendo desses certificados, você deve escolher essa opção. Para cancelar e remover manualmente o diretório /etc/letsencrypt, você deve recusar essa opção.
+Description-ro.UTF-8: Aveți certificate care nu au expirat încă; doriți să le ștergeți oricum?
+ Directorul de configurare al «certbot» „/etc/letsencrypt”, conține în continuare certificate neexpirate care pot fi active pe sistemul dumneavoastră. Dacă alegeți această opțiune, ștergerea va continua și va șterge acele certificate, putând cauza întreruperea serviciilor care depind de ele.
+ .
+ Dacă ați instalat deja certificate diferite pentru serviciile dvs. sau ați confirmat că nu aveți niciun serviciu ce depinde de aceste certificate, ar trebui să alegeți această opțiune. Pentru a anula și șterge manual directorul „/etc/letsencrypt”, ar trebui să refuzați această opțiune.
+Description-ru.UTF-8: У вас имеются сертификаты с неистёкшим сроком действия. Вы всё равно хотите их удалить?
+ Каталог настройки certbot, /etc/letsencrypt, всё ещё содержит сертификаты с неистёкшим сроком действия, которые могут использоваться вашей системой. Если вы выберете утвердительный вариант, то очистка будет продолжена, а эти сертификаты будут удалены, что может привести к поломке служб, зависящих от этих сертификатов.
+ .
+ Если вы уже установили другие сертификаты для ваших служб, либо вы уверены, что от указанных сертификатов не зависит ни одна служба, то вам следует выбрать утвердительный вариант. Для отмены и удаления каталога /etc/letsencrypt вручную следует отказаться от этого варианта.
+Description-vi.UTF-8: Bạn có các chứng nhận chưa hết hạn; bạn vẫn muốn thanh lọc?
+ Thư mục cấu hình certbot /etc/letsencrypt vẫn còn chứa chứng chỉ chưa hết hạn cái mà có thể vẫn còn đang được dùng trên hệ thống của bạn. Nếu bạn chọn tùy chọn này, việc thanh lọc sẽ tiếp tục và xóa các chứng chỉ đó, có khả năng đẫn đến đổ vỡ các dịch vụ phụ thuộc vào chúng.
+ .
+ Nếu bạn đã cài đặt các chứng chỉ khác nhau cho các dịch vụ của mình, hoặc bạn đã xác nhận rằng bạn không có bất kỳ dịch vụ nào phụ thuộc vào các chứng chỉ đó, bạn nên chọn tùy chọn này. Để hủy bỏ và xóa thủ công thư mục /etc/letsencrypt, bạn nên từ chối tùy chọn này.

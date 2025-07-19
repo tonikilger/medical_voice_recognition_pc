@@ -1,0 +1,15 @@
+88f280f52728dfe48cfc6dfa056017b4  usr/lib/python3/dist-packages/bcc-0.29.1.egg-info/PKG-INFO
+68b329da9893e34099c7d8ad5cb9c940  usr/lib/python3/dist-packages/bcc-0.29.1.egg-info/dependency_links.txt
+0c9ca7cda318a7f8e165477893ecf1f7  usr/lib/python3/dist-packages/bcc-0.29.1.egg-info/top_level.txt
+6dc292bf8f11e24499b9b2408036b6de  usr/lib/python3/dist-packages/bcc/__init__.py
+7c2d770c0b510698cd9afe498f0f353c  usr/lib/python3/dist-packages/bcc/containers.py
+6cbaa97b8a829705802f012abf3719c8  usr/lib/python3/dist-packages/bcc/disassembler.py
+1618407f28ab8d4407f6979203831b1d  usr/lib/python3/dist-packages/bcc/libbcc.py
+61356cba4dfc81338760de1056495ad3  usr/lib/python3/dist-packages/bcc/perf.py
+8dc6ec6624995aa88c6bee85c10527b5  usr/lib/python3/dist-packages/bcc/syscall.py
+fb08238281b554ec62b60a82939f4765  usr/lib/python3/dist-packages/bcc/table.py
+fbfc821d65d8577474ac444cdc387d2a  usr/lib/python3/dist-packages/bcc/tcp.py
+e27437022d56e6acac7aea8c28e41a0d  usr/lib/python3/dist-packages/bcc/usdt.py
+09aab9ebc8fc457b363ce443cfc8ae60  usr/lib/python3/dist-packages/bcc/utils.py
+5a6a8edb2852b4a2dec13f8c3b0c868e  usr/lib/python3/dist-packages/bcc/version.py
+e996496c3ee0dd5feff5c57c0af213d2  usr/share/doc/python3-bpfcc/copyright

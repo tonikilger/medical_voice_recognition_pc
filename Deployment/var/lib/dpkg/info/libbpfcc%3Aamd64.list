@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/lib
+/usr/lib/x86_64-linux-gnu
+/usr/lib/x86_64-linux-gnu/libbcc.so.0.29.1
+/usr/lib/x86_64-linux-gnu/libbcc_bpf.so.0.29.1
+/usr/share
+/usr/share/doc
+/usr/share/doc/libbpfcc
+/usr/share/doc/libbpfcc/FAQ.txt
+/usr/share/doc/libbpfcc/README.Debian
+/usr/share/doc/libbpfcc/README.md.gz
+/usr/share/doc/libbpfcc/changelog.Debian.gz
+/usr/share/doc/libbpfcc/copyright
+/usr/lib/x86_64-linux-gnu/libbcc.so.0
+/usr/lib/x86_64-linux-gnu/libbcc_bpf.so.0

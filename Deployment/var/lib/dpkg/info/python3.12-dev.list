@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/bin
+/usr/share
+/usr/share/doc
+/usr/share/doc/python3.12
+/usr/share/doc/python3.12/HISTORY.gz
+/usr/share/doc/python3.12/README.maintainers
+/usr/share/doc/python3.12/README.valgrind.gz
+/usr/share/doc/python3.12/pybench.log
+/usr/share/doc/python3.12/test_results
+/usr/share/man
+/usr/share/man/man1
+/usr/bin/python3.12-config
+/usr/share/doc/python3.12-dev
+/usr/share/man/man1/python3.12-config.1.gz

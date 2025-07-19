@@ -1,0 +1,17 @@
+c72246579c4437c07cebb86fbcbc6d90  usr/lib/python3/dist-packages/josepy-1.14.0.dist-info/INSTALLER
+0b46a7fa4235b2373b2bd846e8d67397  usr/lib/python3/dist-packages/josepy-1.14.0.dist-info/METADATA
+61111eb62e29548402696f564ff890ee  usr/lib/python3/dist-packages/josepy-1.14.0.dist-info/WHEEL
+917d2e55ced832a2885e0aa1d6fe11a2  usr/lib/python3/dist-packages/josepy-1.14.0.dist-info/entry_points.txt
+31bacf3fc70ce95646372e341525327c  usr/lib/python3/dist-packages/josepy/__init__.py
+4ce078613b8940f58453698fdb5e0e15  usr/lib/python3/dist-packages/josepy/b64.py
+ad0c8c53413933afb2b06b61dc337e51  usr/lib/python3/dist-packages/josepy/errors.py
+bee1952471ef36bdc248fd0931b9fbd6  usr/lib/python3/dist-packages/josepy/interfaces.py
+9bc1a1c6ab1e22349f754b9fa9792610  usr/lib/python3/dist-packages/josepy/json_util.py
+e588ec142e4ba99ab4c56ce996156bec  usr/lib/python3/dist-packages/josepy/jwa.py
+1eea27f0c0b4b7c5d50a733413665895  usr/lib/python3/dist-packages/josepy/jwk.py
+9da2614483b22d568138e04c0a375660  usr/lib/python3/dist-packages/josepy/jws.py
+5c2cc75ca82877a481603302aef603ee  usr/lib/python3/dist-packages/josepy/magic_typing.py
+d41d8cd98f00b204e9800998ecf8427e  usr/lib/python3/dist-packages/josepy/py.typed
+e8c332e2a21060e6d0dec8816c3e2637  usr/lib/python3/dist-packages/josepy/util.py
+84a0018cecf488cdb688623c54022c3d  usr/share/doc/python3-josepy/changelog.Debian.gz
+8c72be34840ba2f3ed5f3f1bdc055299  usr/share/doc/python3-josepy/copyright

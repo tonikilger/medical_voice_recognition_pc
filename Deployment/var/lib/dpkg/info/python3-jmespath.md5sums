@@ -1,0 +1,15 @@
+a804e8d13334d3d52b90a9f1fbc745f7  usr/lib/python3/dist-packages/jmespath-1.0.1.egg-info/PKG-INFO
+68b329da9893e34099c7d8ad5cb9c940  usr/lib/python3/dist-packages/jmespath-1.0.1.egg-info/dependency_links.txt
+a53a6f4e356a36d92a0fa887b25c4b9b  usr/lib/python3/dist-packages/jmespath-1.0.1.egg-info/top_level.txt
+26cdf71d27d3d68e0a12c1b22f2b1807  usr/lib/python3/dist-packages/jmespath/__init__.py
+a17f7ab258e885f7b22ebfcf04fe9da7  usr/lib/python3/dist-packages/jmespath/ast.py
+bc8cb287945e610e5621fce2f0f3e3a3  usr/lib/python3/dist-packages/jmespath/compat.py
+9cc57103db5caf0603d079b5b12bad6f  usr/lib/python3/dist-packages/jmespath/exceptions.py
+4e1bd84329c47f7f0d1928b1094b31f1  usr/lib/python3/dist-packages/jmespath/functions.py
+b03e0cbda083fd24c5b1d51d98f8fb11  usr/lib/python3/dist-packages/jmespath/lexer.py
+185b778327d73b10c2419316449a5d89  usr/lib/python3/dist-packages/jmespath/parser.py
+d5d7768ad4ab423098fc8d95ae766d6e  usr/lib/python3/dist-packages/jmespath/visitor.py
+0fc6256da8661cb5fb6cadbb5f83ce95  usr/share/doc/python3-jmespath/README.rst.gz
+3a3ec0af122258e21744ebafe0d4d017  usr/share/doc/python3-jmespath/changelog.Debian.gz
+2891075c7a1f07a2bab32bd87b4dd589  usr/share/doc/python3-jmespath/copyright
+6ed762e9b15e27e9fa3b521485e814e3  usr/share/doc/python3-jmespath/examples/jp.py

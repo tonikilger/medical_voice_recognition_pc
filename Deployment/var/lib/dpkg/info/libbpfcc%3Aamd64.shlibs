@@ -1,0 +1,2 @@
+libbcc 0 libbpfcc (>= 0.29.1+ds)
+libbcc_bpf 0 libbpfcc (>= 0.29.1+ds)

@@ -1,0 +1,44 @@
+WSGIApplicationGroup %{GLOBAL}
+WSGIDaemonProcess webApp_http2 python-path=/var/www/webApp/webApp
+WSGIProcessGroup webApp_http2
+WSGIScriptAlias / /var/www/webApp/webapp.wsgi
+
+<VirtualHost *:80>
+		ServerName med-voice-record.de
+		ServerAlias www.med-voice-record.de
+		ServerAdmin email@mywebsite.com
+    		# Main app directory
+    		<Directory /var/www/webApp/webApp/>
+			Require all granted
+    		</Directory>
+
+    		# Static files
+    		Alias /static /var/www/webApp/webApp/static
+    		<Directory /var/www/webApp/webApp/static/>
+			Require all granted
+    		</Directory>
+
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		LogLevel warn
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+<VirtualHost *:443>
+                ServerName med-voice-record.de
+                ServerAlias www.med-voice-record.de
+                ServerAdmin email@mywebsite.com
+                # Main app directory
+                <Directory /var/www/webApp/webApp/>
+                        Require all granted
+                </Directory>
+
+                # Static files
+                Alias /static /var/www/webApp/webApp/static
+                <Directory /var/www/webApp/webApp/static/>
+                        Require all granted
+                </Directory>
+
+                ErrorLog ${APACHE_LOG_DIR}/error.log
+                LogLevel warn
+                CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
