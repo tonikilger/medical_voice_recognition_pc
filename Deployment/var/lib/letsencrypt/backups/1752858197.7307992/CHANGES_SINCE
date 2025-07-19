@@ -1,7 +1,0 @@
--- Deployed ACME Certificate --
-Enabled socache_shmcb module in Apache
-Enabled ssl module in Apache
-(autosave)Changed vhost at /etc/apache2/sites-enabled/webApp.conf with addresses of *:443
-	SSLCertificateFile /etc/letsencrypt/live/med-voice-record.de/fullchain.pem
-	SSLCertificateKeyFile /etc/letsencrypt/live/med-voice-record.de/privkey.pem
-	SSLCertificateChainFile /etc/letsencrypt/live/med-voice-record.de/chain.pem

@@ -1,7 +1,0 @@
-6fb0597e9e9d6d9f1e0dee7a32b7c822  usr/lib/grub/x86_64-efi-signed/gcdx64.efi.signed
-df15d9a6acd0fa8797f958453afabd47  usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed
-94c7467f956700d44c5b4dcd3967535c  usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed
-19a1766ed15b7ac837f890dde26fc030  usr/lib/grub/x86_64-efi-signed/version
-b28a6b1e77dbde1e8477240ea194d0cc  usr/share/doc/grub-efi-amd64-signed/changelog.Debian.gz
-b28a6b1e77dbde1e8477240ea194d0cc  usr/share/doc/grub-efi-amd64-signed/changelog.gz
-dddd2c1614f8064a9ee879e4f8359055  usr/share/doc/grub-efi-amd64-signed/copyright

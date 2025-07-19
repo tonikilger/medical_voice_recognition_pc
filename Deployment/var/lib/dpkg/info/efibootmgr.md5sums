@@ -1,9 +1,0 @@
-fa60b8c1bde700a3aafd39cce593de29  bin/efibootdump
-75e73f6e794ed0bfab9ebffe1069a946  bin/efibootmgr
-387c555c50c595e946b1e9e574041ab8  usr/share/doc/efibootmgr/README.Debian
-b5260467710dd98189ba75b1fd95415b  usr/share/doc/efibootmgr/README.gz
-77b7ac4b0178da9434a258f226194ce3  usr/share/doc/efibootmgr/TODO
-e0023db08c393d6d452198d65fd5dbe0  usr/share/doc/efibootmgr/changelog.Debian.gz
-a62c775ff6ca8a7795d88ae876de5ce7  usr/share/doc/efibootmgr/copyright
-32420a0ead379441b7d0015b772729f6  usr/share/man/man8/efibootdump.8.gz
-a369d174e16611096531c4c4e6928bd8  usr/share/man/man8/efibootmgr.8.gz
