@@ -1,0 +1,1123 @@
+{% extends 'base.html' %}
+
+{% block title %}Record Patient{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <div class="container-fluid">
+            <h2>Record Patient</h2>
+            <form method="POST" action="/recording" enctype="multipart/form-data">
+                <!-- Start first part -->
+            
+                <div>
+                    <div class="row">
+                        <div class="mb-3 col-md-6">
+                            <label for="patientId" class="form-label">Patient ID</label>
+                            <input type="text" class="form-control" id="patientId" name="patient_id" value="{{ patient_id or '' }}" required>
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="recordingType" class="form-label">Recording Type</label>
+                            <select class="form-select" id="recordingType" name="recording_type">
+                                <option value="admission" {% if last_recording and last_recording.recording_type == 'admission' %}selected{% endif %}>Admission</option>
+                                <option value="daily" {% if last_recording and last_recording.recording_type == 'daily' %}selected{% endif %}>Daily</option>
+                                <option value="discharge" {% if last_recording and last_recording.recording_type == 'discharge' %}selected{% endif %}>Discharge</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Admission Fields -->
+                    <div id="admissionFields" style="display:none;">
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Alter</label>
+                                <input type="number" class="form-control" name="age">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Geschlecht</label>
+                                <select class="form-select" name="gender">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="m">Männlich</option>
+                                    <option value="f">Weiblich</option>
+                                    <option value="d">Divers</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Größe (cm)</label>
+                                <input type="number" class="form-control" name="height">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Diagnose / Grunderkrankung</label>
+                                <input type="text" class="form-control" name="diagnosis">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Aktuelle Medikation (komplette Liste mit Dosierung)</label>
+                                <textarea class="form-control" name="medication"></textarea>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Begleiterkrankungen</label>
+                                <input type="text" class="form-control" name="comorbidities">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Aufnahmedatum</label>
+                                <input type="date" class="form-control" name="admission_date">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>NT- pro BNP</label>
+                                <input type="number" class="form-control" name="ntprobnp">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Kalium</label>
+                                <input type="number" class="form-control" name="kalium">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Natrium</label>
+                                <input type="number" class="form-control" name="natrium">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Kreatinin / GFR</label>
+                                <input type="text" class="form-control" name="kreatinin_gfr">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Harnstoff</label>
+                                <input type="number" class="form-control" name="harnstoff">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Hb (Hämoglobin)</label>
+                                <input type="number" class="form-control" name="hb">
+                            </div>
+                            <div class="accordion mb-3" id="kccqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="kccqHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kccqCollapse" aria-expanded="false" aria-controls="kccqCollapse">
+                                    KCCQ Symptombogen
+                                </button>
+                                </h2>
+                                <div id="kccqCollapse" class="accordion-collapse collapse" aria-labelledby="kccqHeading" data-bs-parent="#kccqAccordion">
+                                <div class="accordion-body">
+
+                                    <!-- Frage 1: Körperliche Einschränkung -->
+                                    <label class="form-label fw-bold">1. In welchem Ausmaß hat Herzinsuffizienz Ihre Fähigkeit, folgende Tätigkeiten auszuführen, beeinträchtigt?</label>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Sich selbst ankleiden</label>
+                                        <select class="form-select" name="kccq1a">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Duschen / Baden</label>
+                                        <select class="form-select" name="kccq1b">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>100–200 m auf ebener Strecke gehen</label>
+                                        <select class="form-select" name="kccq1c">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Garten-/Hausarbeit, Einkaufstaschen tragen</label>
+                                        <select class="form-select" name="kccq1d">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Ohne Pause eine Treppe hochsteigen</label>
+                                        <select class="form-select" name="kccq1e">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Laufen/Joggen (z.B. Bus erreichen)</label>
+                                        <select class="form-select" name="kccq1f">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                        </select>
+                                    </div>
+                                    </div>
+
+                                    <!-- Frage 2 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">2. Haben sich Ihre Beschwerden im Vergleich zu vor 2 Wochen geändert?</label>
+                                    <select class="form-select" name="kccq2">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">viel schlechter</option>
+                                        <option value="2">etwas schlechter</option>
+                                        <option value="3">unverändert</option>
+                                        <option value="4">etwas besser</option>
+                                        <option value="5">viel besser</option>
+                                        <option value="6">keine Symptome</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 3 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">3. Wie oft Schwellungen morgens beim Aufwachen?</label>
+                                    <select class="form-select" name="kccq3">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">jeden Morgen</option>
+                                        <option value="2">3x/Woche oder öfter</option>
+                                        <option value="3">1-2x/Woche</option>
+                                        <option value="4">weniger als 1x/Woche</option>
+                                        <option value="5">niemals</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 4 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">4. Wie beschwerlich waren die Schwellungen?</label>
+                                    <select class="form-select" name="kccq4">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="6">keine Schwellungen</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 5 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">5. Wie oft hat zu schnelle Ermüdung Sie abgehalten?</label>
+                                    <select class="form-select" name="kccq5">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">ständig mehrmals am Tag</option>
+                                        <option value="2">mind. 1x/Tag</option>
+                                        <option value="3">3x/Woche oder öfter</option>
+                                        <option value="4">1-2x/Woche</option>
+                                        <option value="5">weniger als 1x/Woche</option>
+                                        <option value="6">niemals</option>
+                                        <option value="7">keine Ermüdung</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 6 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">6. Wie beschwerlich war Ihre Ermüdung?</label>
+                                    <select class="form-select" name="kccq6">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="6">keine Ermüdung</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 7 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">7. Wie oft hat Atemnot Sie abgehalten?</label>
+                                    <select class="form-select" name="kccq7">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">ständig mehrmals am Tag</option>
+                                        <option value="2">mind. 1x/Tag</option>
+                                        <option value="3">3x/Woche oder öfter</option>
+                                        <option value="4">1-2x/Woche</option>
+                                        <option value="5">weniger als 1x/Woche</option>
+                                        <option value="6">niemals</option>
+                                        <option value="7">keine Atemnot</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 8 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">8. Wie beschwerlich war Ihre Atemnot?</label>
+                                    <select class="form-select" name="kccq8">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="6">keine Atemnot</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 9 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">9. Wie oft mussten Sie wegen Atemnot erhöht schlafen?</label>
+                                    <select class="form-select" name="kccq9">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">jede Nacht</option>
+                                        <option value="2">3x/Woche oder öfter</option>
+                                        <option value="3">1-2x/Woche</option>
+                                        <option value="4">weniger als 1x/Woche</option>
+                                        <option value="5">niemals</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 10 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">10. Wie sicher sind Sie, was zu tun ist, wenn sich Ihre Symptome verschlechtern?</label>
+                                    <select class="form-select" name="kccq10">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">überhaupt nicht sicher</option>
+                                        <option value="2">nicht sehr sicher</option>
+                                        <option value="3">teilweise sicher</option>
+                                        <option value="4">ziemlich sicher</option>
+                                        <option value="5">vollkommen sicher</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 11 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">11. Wie gut verstehen Sie, was Sie selbst tun können?</label>
+                                    <select class="form-select" name="kccq11">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">überhaupt nicht</option>
+                                        <option value="2">nicht sehr gut</option>
+                                        <option value="3">teilweise</option>
+                                        <option value="4">größtenteils</option>
+                                        <option value="5">vollkommen</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 12 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">12. In welchem Ausmaß hat Ihre Herzinsuffizienz Ihre Lebensfreude beeinträchtigt?</label>
+                                    <select class="form-select" name="kccq12">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 13 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">13. Wie würden Sie sich fühlen, wenn Sie im jetzigen Zustand bleiben?</label>
+                                    <select class="form-select" name="kccq13">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">überhaupt nicht zufrieden</option>
+                                        <option value="2">größtenteils unzufrieden</option>
+                                        <option value="3">ziemlich zufrieden</option>
+                                        <option value="4">größtenteils zufrieden</option>
+                                        <option value="5">vollkommen zufrieden</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 14 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">14. Wie oft waren Sie entmutigt oder deprimiert?</label>
+                                    <select class="form-select" name="kccq14">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">ständig</option>
+                                        <option value="2">die meiste Zeit</option>
+                                        <option value="3">gelegentlich</option>
+                                        <option value="4">selten</option>
+                                        <option value="5">niemals</option>
+                                    </select>
+                                    </div>
+
+                                    <!-- Frage 15: Lebensweise -->
+                                    <label class="form-label fw-bold">15. In welchem Ausmaß beeinflusst Ihre Herzinsuffizienz Ihre Lebensweise?</label>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Hobbies/Freizeitaktivitäten</label>
+                                        <select class="form-select" name="kccq15a">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">nicht zutreffend</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Intime Beziehungen</label>
+                                        <select class="form-select" name="kccq15b">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">nicht zutreffend</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Besuche bei Familie/Freunden</label>
+                                        <select class="form-select" name="kccq15c">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">nicht zutreffend</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Arbeit/Hausarbeit</label>
+                                        <select class="form-select" name="kccq15d">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">extrem</option>
+                                        <option value="2">sehr</option>
+                                        <option value="3">mäßig</option>
+                                        <option value="4">etwas</option>
+                                        <option value="5">überhaupt nicht</option>
+                                        <option value="9">nicht zutreffend</option>
+                                        </select>
+                                    </div>
+                                    </div>
+
+                                    <!-- Frage 16 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">16. Wie sehr haben Sie das Gefühl, Ihre Symptome beeinflussen zu können?</label>
+                                    <select class="form-select" name="kccq16">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="1">überhaupt nicht</option>
+                                        <option value="2">nicht sehr</option>
+                                        <option value="3">teilweise</option>
+                                        <option value="4">ziemlich</option>
+                                        <option value="5">vollkommen</option>
+                                    </select>
+                                    </div>
+
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+  
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 ">
+                            <div class="card mb-3 ">
+                                <div class="card-body">
+                                <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                                    <i class="bi bi-mic-fill"></i> Start Recording
+                                </button>
+                                <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSample" name="voice_sample" style="display: none;" />
+                                </div>
+                            </div>
+
+                            </div>
+
+
+
+                        </div>
+                        <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label>Körpergewicht (Initialwert)</label>
+                                    <input type="number" class="form-control" name="initial_weight">
+                                </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Blutdruck (Initialwert)</label>
+                                <input type="text" class="form-control" name="initial_bp">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Fields -->
+                    <div id="dailyFields" style="display:none;">
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Gewicht</label>
+                                <input type="number" class="form-control" name="weight">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Blutdruck (systolisch/diastolisch)</label>
+                                <input type="text" class="form-control" name="bp">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                            <div class="card mb-3 ">
+                                <div class="card-body">
+                                <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                                    <i class="bi bi-mic-fill"></i> Start Recording
+                                </button>
+                                <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSample" name="voice_sample" style="display: none;" />
+                                </div>
+                            </div>
+
+
+                            </div>
+
+
+
+
+  
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Puls</label>
+                                <input type="number" class="form-control" name="pulse">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Medikamentenanpassungen (falls relevant)</label>
+                                <textarea class="form-control" name="medication_changes"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Kalium</label>
+                                <input type="number" class="form-control" name="kalium_daily">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Natrium</label>
+                                <input type="number" class="form-control" name="natrium_daily">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Kreatinin / GFR</label>
+                                <input type="text" class="form-control" name="kreatinin_gfr_daily">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Harnstoff</label>
+                                <input type="number" class="form-control" name="harnstoff_daily">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Hb</label>
+                                <input type="number" class="form-control" name="hb_daily">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>NT-proBNP</label>
+                                <input type="number" class="form-control" name="ntprobnp_daily">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Discharge Fields -->
+                    <div id="dischargeFields" style="display:none;">
+                        <div class="row">
+                             <div class="mb-3 col-md-6">
+                                <label>NT- pro BNP</label>
+                                <input type="number" class="form-control" name="ntprobnp">
+                            </div>    
+                            <div class="mb-3 col-md-6">
+                                <label>Kalium</label>
+                                <input type="number" class="form-control" name="kalium">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Natrium</label>
+                                <input type="number" class="form-control" name="natrium">
+                            </div>                       
+                            <div class="mb-3 col-md-6">
+                                <label>Kreatinin / GFR</label>
+                                <input type="text" class="form-control" name="kreatinin_gfr">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Harnstoff</label>
+                                <input type="number" class="form-control" name="harnstoff">
+                            </div>
+                        
+                        
+                            <div class="mb-3 col-md-6">
+                                <label>Hb (Hämoglobin)</label>
+                                <input type="number" class="form-control" name="hb">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Aktuelles Körpergewicht</label>
+                                <input type="number" class="form-control" name="current_weight">
+                            </div>
+                
+                            <div class="mb-3 col-md-6">
+                                <label>Aktuelle Medikation bei Entlassung</label>
+                                <textarea class="form-control" name="discharge_medication"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                            <div class="card mb-3 ">
+                                <div class="card-body">
+                                <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                                    <i class="bi bi-mic-fill"></i> Start Recording
+                                </button>
+                                <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSample" name="voice_sample" style="display: none;" />
+                                </div>
+                            </div> 
+
+                            </div>
+    
+                        </div>
+                        <div class="row">     
+                        <div class="accordion mb-3" id="kccqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="kccqHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kccqCollapse" aria-expanded="false" aria-controls="kccqCollapse">
+                                KCCQ Symptombogen
+                            </button>
+                            </h2>
+                            <div id="kccqCollapse" class="accordion-collapse collapse" aria-labelledby="kccqHeading" data-bs-parent="#kccqAccordion">
+                            <div class="accordion-body">
+
+                                <!-- Frage 1: Körperliche Einschränkung -->
+                                <label class="form-label fw-bold">1. In welchem Ausmaß hat Herzinsuffizienz Ihre Fähigkeit, folgende Tätigkeiten auszuführen, beeinträchtigt?</label>
+                                <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label>Sich selbst ankleiden</label>
+                                    <select class="form-select" name="kccq1a">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label>Duschen / Baden</label>
+                                    <select class="form-select" name="kccq1b">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label>100–200 m auf ebener Strecke gehen</label>
+                                    <select class="form-select" name="kccq1c">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label>Garten-/Hausarbeit, Einkaufstaschen tragen</label>
+                                    <select class="form-select" name="kccq1d">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label>Ohne Pause eine Treppe hochsteigen</label>
+                                    <select class="form-select" name="kccq1e">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label>Laufen/Joggen (z.B. Bus erreichen)</label>
+                                    <select class="form-select" name="kccq1f">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">aus anderen Gründen beeinträchtigt/nicht ausgeführt</option>
+                                    </select>
+                                </div>
+                                </div>
+
+                                <!-- Frage 2 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">2. Haben sich Ihre Beschwerden im Vergleich zu vor 2 Wochen geändert?</label>
+                                <select class="form-select" name="kccq2">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">viel schlechter</option>
+                                    <option value="2">etwas schlechter</option>
+                                    <option value="3">unverändert</option>
+                                    <option value="4">etwas besser</option>
+                                    <option value="5">viel besser</option>
+                                    <option value="6">keine Symptome</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 3 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">3. Wie oft Schwellungen morgens beim Aufwachen?</label>
+                                <select class="form-select" name="kccq3">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">jeden Morgen</option>
+                                    <option value="2">3x/Woche oder öfter</option>
+                                    <option value="3">1-2x/Woche</option>
+                                    <option value="4">weniger als 1x/Woche</option>
+                                    <option value="5">niemals</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 4 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">4. Wie beschwerlich waren die Schwellungen?</label>
+                                <select class="form-select" name="kccq4">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="6">keine Schwellungen</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 5 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">5. Wie oft hat zu schnelle Ermüdung Sie abgehalten?</label>
+                                <select class="form-select" name="kccq5">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">ständig mehrmals am Tag</option>
+                                    <option value="2">mind. 1x/Tag</option>
+                                    <option value="3">3x/Woche oder öfter</option>
+                                    <option value="4">1-2x/Woche</option>
+                                    <option value="5">weniger als 1x/Woche</option>
+                                    <option value="6">niemals</option>
+                                    <option value="7">keine Ermüdung</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 6 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">6. Wie beschwerlich war Ihre Ermüdung?</label>
+                                <select class="form-select" name="kccq6">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="6">keine Ermüdung</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 7 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">7. Wie oft hat Atemnot Sie abgehalten?</label>
+                                <select class="form-select" name="kccq7">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">ständig mehrmals am Tag</option>
+                                    <option value="2">mind. 1x/Tag</option>
+                                    <option value="3">3x/Woche oder öfter</option>
+                                    <option value="4">1-2x/Woche</option>
+                                    <option value="5">weniger als 1x/Woche</option>
+                                    <option value="6">niemals</option>
+                                    <option value="7">keine Atemnot</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 8 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">8. Wie beschwerlich war Ihre Atemnot?</label>
+                                <select class="form-select" name="kccq8">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="6">keine Atemnot</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 9 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">9. Wie oft mussten Sie wegen Atemnot erhöht schlafen?</label>
+                                <select class="form-select" name="kccq9">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">jede Nacht</option>
+                                    <option value="2">3x/Woche oder öfter</option>
+                                    <option value="3">1-2x/Woche</option>
+                                    <option value="4">weniger als 1x/Woche</option>
+                                    <option value="5">niemals</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 10 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">10. Wie sicher sind Sie, was zu tun ist, wenn sich Ihre Symptome verschlechtern?</label>
+                                <select class="form-select" name="kccq10">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">überhaupt nicht sicher</option>
+                                    <option value="2">nicht sehr sicher</option>
+                                    <option value="3">teilweise sicher</option>
+                                    <option value="4">ziemlich sicher</option>
+                                    <option value="5">vollkommen sicher</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 11 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">11. Wie gut verstehen Sie, was Sie selbst tun können?</label>
+                                <select class="form-select" name="kccq11">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">überhaupt nicht</option>
+                                    <option value="2">nicht sehr gut</option>
+                                    <option value="3">teilweise</option>
+                                    <option value="4">größtenteils</option>
+                                    <option value="5">vollkommen</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 12 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">12. In welchem Ausmaß hat Ihre Herzinsuffizienz Ihre Lebensfreude beeinträchtigt?</label>
+                                <select class="form-select" name="kccq12">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 13 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">13. Wie würden Sie sich fühlen, wenn Sie im jetzigen Zustand bleiben?</label>
+                                <select class="form-select" name="kccq13">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">überhaupt nicht zufrieden</option>
+                                    <option value="2">größtenteils unzufrieden</option>
+                                    <option value="3">ziemlich zufrieden</option>
+                                    <option value="4">größtenteils zufrieden</option>
+                                    <option value="5">vollkommen zufrieden</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 14 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">14. Wie oft waren Sie entmutigt oder deprimiert?</label>
+                                <select class="form-select" name="kccq14">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">ständig</option>
+                                    <option value="2">die meiste Zeit</option>
+                                    <option value="3">gelegentlich</option>
+                                    <option value="4">selten</option>
+                                    <option value="5">niemals</option>
+                                </select>
+                                </div>
+
+                                <!-- Frage 15: Lebensweise -->
+                                <label class="form-label fw-bold">15. In welchem Ausmaß beeinflusst Ihre Herzinsuffizienz Ihre Lebensweise?</label>
+                                <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label>Hobbies/Freizeitaktivitäten</label>
+                                    <select class="form-select" name="kccq15a">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">nicht zutreffend</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label>Intime Beziehungen</label>
+                                    <select class="form-select" name="kccq15b">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">nicht zutreffend</option>
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label>Besuche bei Familie/Freunden</label>
+                                    <select class="form-select" name="kccq15c">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">nicht zutreffend</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label>Arbeit/Hausarbeit</label>
+                                    <select class="form-select" name="kccq15d">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">extrem</option>
+                                    <option value="2">sehr</option>
+                                    <option value="3">mäßig</option>
+                                    <option value="4">etwas</option>
+                                    <option value="5">überhaupt nicht</option>
+                                    <option value="9">nicht zutreffend</option>
+                                    </select>
+                                </div>
+                                </div>
+
+                                <!-- Frage 16 -->
+                                <div class="mb-3">
+                                <label class="form-label fw-bold">16. Wie sehr haben Sie das Gefühl, Ihre Symptome beeinflussen zu können?</label>
+                                <select class="form-select" name="kccq16">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="1">überhaupt nicht</option>
+                                    <option value="2">nicht sehr</option>
+                                    <option value="3">teilweise</option>
+                                    <option value="4">ziemlich</option>
+                                    <option value="5">vollkommen</option>
+                                </select>
+                                </div>
+
+                            </div>
+                            </div>
+                        </div>
+                        </div>                                               
+                            <div class="mb-3 col-md-6">
+                                <label>Datum der Entlassung</label>
+                                <input type="date" class="form-control" name="discharge_date">
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- <div class="row">
+
+                        <div class="mb-3 col-md-6">
+                            <label for="hospitalizationDay" class="form-label">Hospitalization Day</label>
+                            <input type="number" class="form-control" id="hospitalizationDay" name="hospitalization_day" min="1" required value="{{ hospitalization_day if hospitalization_day else 1 }}">
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="weight" class="form-label">Weight</label>
+                            <input type="number" class="form-control" id="weight" name="weight" min="0" step="0.1" required value="{{ last_recording.weight if last_recording else '' }}">
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="row">
+
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="systolicBP" class="form-label">Systolic BP</label>
+                            <input type="number" class="form-control" id="systolicBP" name="systolic_bp" min="0" value="{{ last_recording.systolic if last_recording else '' }}">
+                        </div>
+                        <div class="mb-3 col-md-6" >
+                            <label for="diastolicBP" class="form-label">Diastolic BP</label>
+                            <input type="number" class="form-control" id="diastolicBP" name="diastolic_bp" value="{{ last_recording.diastolic if last_recording else '' }}">
+                        </div>
+
+
+
+
+                    </div>
+            
+            
+
+
+            
+            
+                </div>
+                     
+            
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                    <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                    <button type="button" class="btn btn-danger" id="recordVoiceBtn">
+                        <i class="bi bi-mic-fill"></i> Start Recording
+                    </button>
+                   <audio id="voicePlayback" controls class="mt-2" style="display: none;"></audio>
+                    <input type="file" id="voiceSample" name="voice_sample" style="display: none;" />
+                    </div>
+                </div>
+               
+                <div class="card mb-3">
+                    <div class="card-body">
+                    <h5 class="card-title">Voice Sample (story telling) </h5>
+                    <button type="button" class="btn btn-danger" id="recordCoughBtn">
+                        <i class="bi bi-mic-fill"></i> Start Recording
+                    </button>
+                    <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
+                    <input type="file" id="coughSample" name="nocturnal_cough_sample" style="display: none;" />
+                    </div>
+                </div>
+                
+    
+
+                <h3>Symptom Assessment</h3>
+                <div class="mb-3">
+                    <label for="breathingDifficulty" class="form-label">Breathing Difficulty (0-10)</label>
+                    <input type="range" class="form-range" id="breathingDifficulty" name="breathing_difficulty" min="0" max="10" step="1" oninput="breathingDifficultyValue.value = this.value" value="{{ last_recording.breathing_difficulty if last_recording else '' }}">
+                    <output id="breathingDifficultyValue">{{ last_recording.breathing_difficulty if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="chestPain" class="form-label">Chest Pain (0-10)</label>
+                    <input type="range" class="form-range" id="chestPain" name="chest_pain" min="0" max="10" step="1" oninput="chestPainValue.value = this.value" value="{{ last_recording.chest_pain if last_recording else '' }}">
+                    <output id="chestPainValue" >{{ last_recording.chest_pain if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="fatigueLevel" class="form-label">Fatigue Level (0-10)</label>
+                    <input type="range" class="form-range" id="fatigueLevel" name="fatigue_level" min="0" max="10" step="1" oninput="fatigueLevelValue.value = this.value" value="{{ last_recording.fatigue_level if last_recording else '' }}">
+                    <output id="fatigueLevelValue">{{ last_recording.fatigue_level if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="sleepQuality" class="form-label">Sleep Quality (0-10)</label>
+                    <input type="range" class="form-range" id="sleepQuality" name="sleep_quality" min="0" max="10" step="1" oninput="sleepQualityValue.value = this.value" value="{{ last_recording.sleep_quality if last_recording else '' }}">
+                    <output id="sleepQualityValue">{{ last_recording.sleep_quality if last_recording else '' }}</output>
+                </div>
+                <div class="mb-3">
+                    <label for="additionalNotes" class="form-label">Additional Notes</label>
+                    <textarea class="form-control additional_notes" id="additionalNotes" name="additional_notes" rows="3" placeholder="Any additional symptoms or concerns..."></textarea>
+                </div> -->
+                <button type="submit" class="btn btn-primary">Save Patient Data</button>
+            </form>
+
+
+
+
+
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFields() {
+    const type = document.getElementById('recordingType').value;
+    document.getElementById('admissionFields').style.display = (type === 'admission') ? '' : 'none';
+    document.getElementById('dailyFields').style.display = (type === 'daily') ? '' : 'none';
+    document.getElementById('dischargeFields').style.display = (type === 'discharge') ? '' : 'none';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        updateFields();
+        document.getElementById('recordingType').addEventListener('change', updateFields);
+    });
+    async function recordAudio(buttonId, audioId, inputId) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+  
+      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(blob);
+        const audioElement = document.getElementById(audioId);
+        audioElement.src = audioUrl;
+        audioElement.style.display = 'block';
+  
+        const fileInput = document.getElementById(inputId);
+        const file = new File([blob], `${inputId}.webm`, { type: 'audio/webm' });
+  
+        // Simulate file input population
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+      };
+  
+      recorder.start();
+      document.getElementById(buttonId).innerText = '🛑 Stop Recording';
+      document.getElementById(buttonId).onclick = () => {
+        recorder.stop();
+        stream.getTracks().forEach(track => track.stop());
+        document.getElementById(buttonId).innerText = '🎙 Start Recording';
+        document.getElementById(buttonId).onclick = () =>
+          recordAudio(buttonId, audioId, inputId);
+      };
+    }
+  
+    document.getElementById('recordVoiceBtn').onclick = () =>
+      recordAudio('recordVoiceBtn', 'voicePlayback', 'voiceSample');
+  
+    document.getElementById('recordCoughBtn').onclick = () =>
+      recordAudio('recordCoughBtn', 'coughPlayback', 'coughSample');
+  </script>
+ 
+  
+
+{% endblock %}

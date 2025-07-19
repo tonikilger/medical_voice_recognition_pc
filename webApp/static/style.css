@@ -1,0 +1,43 @@
+html, body {
+    height: 100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1;
+}
+
+
+.btn-dark{
+    --bs-btn-active-bg: #383C4B;
+ 
+
+}
+.btn-dark:hover{
+    background-color: #3f424490  !important;
+}
+
+.nav{
+    --bs-nav-link-color: gray;
+    --bs-nav-link-hover-color: black;
+
+}
+.additional_notes::placeholder{
+    color: rgb(153, 151, 151);
+}
+
+.card{
+    --bs-card-height: ;
+    border-color: lightgray 1px;
+
+}
+
+.equal-cols th,
+.equal-cols td {
+    width: 11%; /* 9 columns: 100/9 ≈ 11% */
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}

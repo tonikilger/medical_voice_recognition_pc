@@ -1,53 +1,35 @@
-# Deployment Instructions for Medical Voice Recognition PC
+# Medical Voice Recognition PC - Deployment Structure
 
-## Files for Apache/mod_wsgi Deployment
+This repository follows the deployment structure from the origin/fix branch for `/var/www/webApp/` deployment.
 
-### Key Files:
-- `webApp.py` - Main Flask application file 
-- `webApp.wsgi` - WSGI configuration file for Apache
-- `models.py` - Database models
-- `views.py` - Application routes and views
-- `requirements.txt` - Python dependencies
+## Structure:
+- `webApp/` - Main Flask application package containing:
+  - `__init__.py` - Flask app factory with SQLAlchemy context management
+  - `models.py` - Database models with Flask-Login User model
+  - `views.py` - Blueprint routes and view functions
+  - `templates/` - Jinja2 templates
+  - `static/` - CSS and static files
+  - `instance/` - Instance-specific files and database
+- `webapp.wsgi` - WSGI configuration file for Apache mod_wsgi
+- `test.py` - Local development server entry point
 
-### Deployment Steps:
+## Key Features:
+1. **Proper Flask-SQLAlchemy Context**: Database operations are performed within app context
+2. **Flexible Instance Path**: Automatically uses `/var/www/webApp/webApp/instance` in production, local path in development
+3. **Package Structure**: Clean Python package with proper imports
+4. **WSGI Compatibility**: Ready for Apache mod_wsgi deployment
 
-1. **Setup Server and Install Dependencies:**
-   ```bash
-   sudo apt update
-   sudo apt install apache2 libapache2-mod-wsgi-py3 python3-pip
-   sudo pip3 install -r requirements.txt
-   ```
+## Local Development:
+```bash
+python3 test.py
+```
 
-2. **Copy Files to Server:**
-   Copy all application files to `/var/www/webApp/`
+## Apache Deployment:
+1. Copy entire repository to `/var/www/webApp/`
+2. Configure Apache to use `webapp.wsgi`
+3. Ensure `/var/www/webApp/webApp/instance/` directory exists with proper permissions
 
-3. **Configure Apache Virtual Host:**
-   Create `/etc/apache2/sites-available/webApp.conf`:
-   ```apache
-   <VirtualHost *:80>
-       ServerName your-domain.com
-       DocumentRoot /var/www/webApp
-       WSGIDaemonProcess webapp python-path=/var/www/webApp
-       WSGIProcessGroup webapp
-       WSGIScriptAlias / /var/www/webApp/webApp.wsgi
-       <Directory /var/www/webApp>
-           WSGIApplicationGroup %{GLOBAL}
-           Require all granted
-       </Directory>
-   </VirtualHost>
-   ```
+## Database Migration:
+See `# Migration erstellen.txt` for Flask-Migrate commands.
 
-4. **Enable Site and Restart Apache:**
-   ```bash
-   sudo a2ensite webApp
-   sudo systemctl reload apache2
-   ```
-
-### Fixed Issues:
-- Flask-SQLAlchemy context initialization
-- Proper WSGI application factory pattern
-- Database table creation within app context
-- Blueprint registration
-
-### Database:
-The application uses SQLite by default (`database.db`). The database and tables are automatically created when the application starts.
+This structure resolves the Flask-SQLAlchemy context errors when deploying with Apache mod_wsgi.
