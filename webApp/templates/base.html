@@ -53,6 +53,7 @@
             padding: 8px 12px;
             margin: 2px;
             font-size: 14px;
+            white-space: nowrap;
         }
         
         /* Responsive adjustments */
@@ -63,12 +64,49 @@
             }
             
             .navbar-brand {
-                font-size: 1.1rem;
+                font-size: 0.9rem !important;
+                max-width: 35%;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
             
             .navbutton {
                 padding: 6px 8px;
-                font-size: 12px;
+                font-size: 0.7rem;
+                margin: 1px;
+            }
+            
+            /* Better flex layout for navbar */
+            .navbar .container-fluid {
+                flex-wrap: nowrap;
+                gap: 5px;
+            }
+            
+            .d-flex.flex-wrap {
+                max-width: 50%;
+                gap: 2px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar-brand {
+                font-size: 0.8rem !important;
+                max-width: 30%;
+            }
+            
+            .navbutton {
+                padding: 4px 6px;
+                font-size: 0.65rem;
+                margin: 0.5px;
+            }
+            
+            .d-flex.flex-wrap {
+                max-width: 45%;
+            }
+            
+            .btn-secondary.btn-sm {
+                font-size: 0.7rem;
+                padding: 4px 8px;
             }
         }
         
@@ -88,19 +126,21 @@
 </head>
 <body>
     <nav class="navbar" style="background-color: #131726; min-height: 8vh;" data-bs-theme="light">
-        <div class="container-fluid">
-          <a class="navbar-brand" style="color:white;">Medical Voice Recorder</a>
-          <div class="d-flex flex-wrap" style="max-width: 60%;">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+          <a class="navbar-brand text-white flex-shrink-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Medical Voice Recorder</a>
+          <div class="d-flex flex-wrap justify-content-center flex-shrink-1" style="gap: 2px;">
         <!-- Use <a> tags styled as buttons for navigation -->
             <a href="/dashboards" class="navbutton btn btn-dark {% if request.path == '/dashboards' %}active{% endif %}">Dashboard</a>
             <a href="/recording" class="navbutton btn btn-dark {% if request.path == '/recording' %}active{% endif %}">Record</a>
             <a href="/search" class="navbutton btn btn-dark {% if request.path == '/search' %}active{% endif %}">Search</a>
           </div>
+          <div class="flex-shrink-0">
           {% if current_user.is_authenticated %}
     <form action="{{ url_for('login.logout') }}" method="post" style="display:inline;">
         <button type="submit" class="btn btn-secondary btn-sm">Logout</button>
     </form>
 {% endif %}
+        </div>
         </div>
       </nav>
 

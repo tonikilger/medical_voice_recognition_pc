@@ -89,15 +89,142 @@ main {
         margin-bottom: 0.25rem;
     }
     
-    /* Navigation improvements */
+    /* Navigation improvements - Fix overlapping */
     .navbar-brand {
-        font-size: 1rem;
+        font-size: 0.9rem !important;
+        max-width: 35% !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     .navbutton {
-        padding: 8px 10px;
-        margin: 2px;
+        padding: 6px 8px !important;
+        margin: 1px !important;
+        font-size: 0.7rem !important;
+        min-width: auto !important;
+        flex-shrink: 1;
+    }
+    
+    /* Fix navigation container */
+    .d-flex.flex-wrap {
+        max-width: 50% !important;
+        gap: 2px;
+        flex-wrap: wrap !important;
+    }
+    
+    /* Dashboard export button fixes */
+    .d-flex.justify-content-between {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+    
+    .dropdown {
+        width: 100%;
+    }
+    
+    .dropdown .btn {
+        width: 100%;
+        justify-content: space-between;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Better tab navigation on mobile */
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .nav-tabs .nav-link {
         font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Card action buttons - prevent overflow */
+    .card-body .btn-group {
+        flex-wrap: wrap;
+        gap: 2px;
+    }
+    
+    .card-body .btn-sm {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        margin: 1px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small screens - iPhone SE size */
+    .navbar-brand {
+        font-size: 0.8rem !important;
+        max-width: 30% !important;
+    }
+    
+    .navbutton {
+        padding: 4px 6px !important;
+        font-size: 0.65rem !important;
+        margin: 0.5px !important;
+    }
+    
+    .d-flex.flex-wrap {
+        max-width: 45% !important;
+    }
+    
+    .table {
+        font-size: 0.7rem;
+    }
+    
+    .btn-sm {
+        min-height: 36px;
+        font-size: 12px;
+        padding: 2px 6px;
+    }
+    
+    /* Dashboard title on very small screens */
+    h2.mb-0 {
+        font-size: 1.3rem;
+    }
+    
+    /* Logout button optimization */
+    .btn-secondary.btn-sm {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+}
+
+/* Specific fixes for iOS Safari navbar */
+@media screen and (max-width: 767px) and (-webkit-min-device-pixel-ratio:0) {
+    .navbar {
+        padding: 0.25rem 0.5rem !important;
+        min-height: 50px !important;
+    }
+    
+    .container-fluid {
+        gap: 5px;
+        align-items: center;
+    }
+    
+    /* Ensure all navigation elements fit */
+    .navbar .container-fluid > * {
+        flex-shrink: 1;
+    }
+    
+    /* Stack export section on mobile */
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 15px;
+    }
+    
+    .d-flex.justify-content-between.align-items-center h2 {
+        text-align: center;
+        margin-bottom: 0;
+    }
+    
+    .d-flex.justify-content-between.align-items-center .dropdown,
+    .d-flex.justify-content-between.align-items-center small {
+        align-self: center;
     }
 }
 
