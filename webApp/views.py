@@ -31,16 +31,34 @@ def detect_audio_format(audio_data):
         return 'webm'
     
     header = audio_data[:12]
+    extended_header = audio_data[:20] if len(audio_data) >= 20 else header
+    
+    # WebM/Matroska format
     if b'matroska' in header.lower() or audio_data.startswith(b'\x1a\x45\xdf\xa3'):
         return 'webm'
+    # Ogg format
     elif header.startswith(b'OggS'):
         return 'ogg'
+    # MP3 format
     elif header.startswith(b'ID3') or header.startswith(b'\xff\xfb'):
         return 'mp3'
+    # WAV format
     elif header.startswith(b'RIFF') and b'WAVE' in header:
         return 'wav'
-    elif b'ftyp' in header:
-        return 'm4a'
+    # MP4/M4A/AAC format (iOS common formats)
+    elif b'ftyp' in header or header.startswith(b'\x00\x00\x00'):
+        # Check for specific MP4/M4A subtypes
+        if b'M4A ' in extended_header or b'mp42' in extended_header:
+            return 'm4a'
+        elif b'mp4' in extended_header.lower():
+            return 'mp4'
+        else:
+            return 'm4a'  # Default for iOS audio
+    # AAC format (raw AAC without container)
+    elif header.startswith(b'\xff\xf1') or header.startswith(b'\xff\xf9'):
+        return 'aac'
+    
+    # Default fallback
     return 'webm'
 
 def export_patient_data_for_ai(patient_id):

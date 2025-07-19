@@ -1059,41 +1059,138 @@
         }
     }
 
-    async function recordAudio(buttonId, audioId, inputId) {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      const chunks = [];
-  
-      recorder.ondataavailable = (e) => chunks.push(e.data);
-      recorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        const audioUrl = URL.createObjectURL(blob);
-        const audioElement = document.getElementById(audioId);
-        audioElement.src = audioUrl;
-        audioElement.style.display = 'block';
-  
-        const fileInput = document.getElementById(inputId);
-        const file = new File([blob], `${inputId}.webm`, { type: 'audio/webm' });
-  
-        // Simulate file input population
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
+    // iOS Safari compatibility detection
+    function isIOSSafari() {
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        return /iphone|ipad|ipod/.test(userAgent) && /safari/.test(userAgent) && !/chrome/.test(userAgent);
+    }
+
+    // Get supported MIME type for recording
+    function getSupportedMimeType() {
+        const mimeTypes = [
+            'audio/mp4',      // iOS Safari preferred
+            'audio/aac',      // iOS Safari fallback
+            'audio/webm',     // Other browsers
+            'audio/ogg',      // Firefox
+            'audio/wav'       // Fallback
+        ];
         
-        // Add delete button after recording
-        addDeleteButtonAfterRecording(buttonId, audioId, inputId);
-      };
-  
-      recorder.start();
-      const button = document.getElementById(buttonId);
-      button.innerHTML = '<i class="bi bi-stop-fill"></i> Stop Recording';
-      button.onclick = () => {
-        recorder.stop();
-        stream.getTracks().forEach(track => track.stop());
-        button.innerHTML = '<i class="bi bi-mic-fill"></i> Re-record';
-        button.onclick = () =>
-          recordAudio(buttonId, audioId, inputId);
-      };
+        for (const mimeType of mimeTypes) {
+            if (MediaRecorder.isTypeSupported(mimeType)) {
+                return mimeType;
+            }
+        }
+        return 'audio/webm'; // Default fallback
+    }
+
+    async function recordAudio(buttonId, audioId, inputId) {
+        try {
+            // iOS-specific constraints for better compatibility
+            const constraints = {
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                    sampleRate: 44100,
+                    channelCount: 1
+                }
+            };
+
+            // Request microphone permission
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            
+            // Get the best supported MIME type
+            const mimeType = getSupportedMimeType();
+            console.log('Using MIME type:', mimeType);
+            
+            // Create MediaRecorder with iOS-compatible options
+            const recorderOptions = {
+                mimeType: mimeType
+            };
+            
+            // Add bitrate for iOS if supported
+            if (isIOSSafari()) {
+                recorderOptions.audioBitsPerSecond = 128000; // 128 kbps for iOS
+            }
+            
+            const recorder = new MediaRecorder(stream, recorderOptions);
+            const chunks = [];
+      
+            recorder.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    chunks.push(e.data);
+                }
+            };
+            
+            recorder.onstop = async () => {
+                try {
+                    const blob = new Blob(chunks, { type: mimeType });
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audioElement = document.getElementById(audioId);
+                    audioElement.src = audioUrl;
+                    audioElement.style.display = 'block';
+          
+                    const fileInput = document.getElementById(inputId);
+                    // Use appropriate file extension based on MIME type
+                    const extension = mimeType.includes('mp4') ? 'mp4' : 
+                                    mimeType.includes('aac') ? 'aac' : 
+                                    mimeType.includes('webm') ? 'webm' : 'audio';
+                    const file = new File([blob], `${inputId}.${extension}`, { type: mimeType });
+          
+                    // Simulate file input population
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    fileInput.files = dataTransfer.files;
+                    
+                    // Add delete button after recording
+                    addDeleteButtonAfterRecording(buttonId, audioId, inputId);
+                } catch (error) {
+                    console.error('Error processing recording:', error);
+                    alert('Error processing recording. Please try again.');
+                }
+            };
+
+            recorder.onerror = (event) => {
+                console.error('MediaRecorder error:', event.error);
+                alert('Recording error: ' + event.error.message);
+            };
+      
+            recorder.start(1000); // Collect data every second for iOS compatibility
+            const button = document.getElementById(buttonId);
+            button.innerHTML = '<i class="bi bi-stop-fill"></i> Stop Recording';
+            button.disabled = false;
+            
+            button.onclick = () => {
+                try {
+                    recorder.stop();
+                    stream.getTracks().forEach(track => track.stop());
+                    button.innerHTML = '<i class="bi bi-mic-fill"></i> Re-record';
+                    button.onclick = () => recordAudio(buttonId, audioId, inputId);
+                } catch (error) {
+                    console.error('Error stopping recording:', error);
+                    stream.getTracks().forEach(track => track.stop());
+                    button.innerHTML = '<i class="bi bi-mic-fill"></i> Start Recording';
+                    button.onclick = () => recordAudio(buttonId, audioId, inputId);
+                }
+            };
+            
+        } catch (error) {
+            console.error('Error starting recording:', error);
+            const button = document.getElementById(buttonId);
+            
+            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                alert('Microphone access denied. Please allow microphone access in your browser settings and try again.');
+            } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+                alert('No microphone found. Please connect a microphone and try again.');
+            } else if (error.name === 'NotSupportedError') {
+                alert('Audio recording is not supported in this browser. Please try using Safari on iOS or Chrome/Firefox on desktop.');
+            } else {
+                alert('Error accessing microphone: ' + error.message + '\n\nFor iOS devices, please:\n1. Allow microphone access\n2. Use Safari browser\n3. Ensure you have a stable internet connection');
+            }
+            
+            button.innerHTML = '<i class="bi bi-mic-fill"></i> Start Recording';
+            button.disabled = false;
+        }
     }
     
     function addDeleteButtonAfterRecording(buttonId, audioId, inputId) {
@@ -1200,6 +1297,66 @@ $(document).ready(function() {
                 e.target.value = e.target.value.replace(/,/g, '.');
             }
         });
+    });
+
+    // iOS-specific initialization and checks
+    document.addEventListener('DOMContentLoaded', function() {
+        if (isIOSSafari()) {
+            console.log('iOS Safari detected - applying iOS-specific optimizations');
+            
+            // Add iOS-specific guidance message
+            const container = document.querySelector('.container-fluid');
+            if (container && !document.getElementById('ios-guidance')) {
+                const guidanceDiv = document.createElement('div');
+                guidanceDiv.id = 'ios-guidance';
+                guidanceDiv.className = 'alert alert-info alert-dismissible fade show mt-3';
+                guidanceDiv.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <div>
+                            <strong>iOS Device Detected:</strong> For best recording experience:
+                            <ul class="mb-0 mt-1">
+                                <li>Allow microphone access when prompted</li>
+                                <li>Keep the browser tab active during recording</li>
+                                <li>Ensure stable internet connection</li>
+                                <li>Use headphones to avoid feedback</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                container.insertBefore(guidanceDiv, container.firstChild);
+            }
+        }
+        
+        // Check for MediaRecorder support
+        if (!window.MediaRecorder) {
+            const container = document.querySelector('.container-fluid');
+            if (container) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger';
+                errorDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Recording Not Supported:</strong> Your browser doesn't support audio recording. 
+                    Please use a modern browser like Safari (iOS), Chrome, Firefox, or Edge.
+                `;
+                container.insertBefore(errorDiv, container.firstChild);
+            }
+        }
+        
+        // Pre-check microphone permissions for better UX
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    const audioInputs = devices.filter(device => device.kind === 'audioinput');
+                    if (audioInputs.length === 0) {
+                        console.warn('No audio input devices found');
+                    }
+                })
+                .catch(error => {
+                    console.warn('Could not enumerate devices:', error);
+                });
+        }
     });
 });
 </script>
