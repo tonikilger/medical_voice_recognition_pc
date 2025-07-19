@@ -2,11 +2,10 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
 
-from webApp.models import db, User
-
 import sys
 import os
 
+# Add current directory to path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def create_app():
@@ -24,6 +23,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.secret_key = 'the random string'
 
+    # Import models after app config but before init_app
+    from webApp.models import db, User
+    
     # Initialize extensions
     db.init_app(app)
     
@@ -35,22 +37,22 @@ def create_app():
     login_manager.login_view = "login.login"
     login_manager.init_app(app)
 
-    from webApp.models import User
-
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        with app.app_context():
+            return User.query.get(int(user_id))
 
-    # Create database tables within app context
-    with app.app_context():
-        db.create_all()
-
+    # Import views after all extensions are initialized
     from webApp.views import views
     from webApp.views import login_blueprint
 
     # Register Blueprints
     app.register_blueprint(views)
     app.register_blueprint(login_blueprint)
+
+    # Create database tables within app context
+    with app.app_context():
+        db.create_all()
 
     return app
 

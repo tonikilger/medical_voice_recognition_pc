@@ -92,21 +92,27 @@ class Recording(db.Model):
     @property
     def calculated_date(self):
         """Calculate the date based on admission date and hospitalization day"""
+        from flask import has_app_context
+        
         if self.recording_type == 'admission':
             return self.admission_date
         
         # For daily and discharge recordings, calculate from admission date
-        if self.hospitalization_day is not None:
-            # Find the admission record for this patient to get the admission date
-            admission_record = Recording.query.filter_by(
-                patient_id=self.patient_id,
-                recording_type='admission'
-            ).first()
-            
-            if admission_record and admission_record.admission_date:
-                # Calculate date by adding hospitalization_day - 1 days to admission date
-                # (Day 1 = admission date, Day 2 = admission date + 1, etc.)
-                return admission_record.admission_date + datetime.timedelta(days=self.hospitalization_day - 1)
+        if self.hospitalization_day is not None and has_app_context():
+            try:
+                # Find the admission record for this patient to get the admission date
+                admission_record = Recording.query.filter_by(
+                    patient_id=self.patient_id,
+                    recording_type='admission'
+                ).first()
+                
+                if admission_record and admission_record.admission_date:
+                    # Calculate date by adding hospitalization_day - 1 days to admission date
+                    # (Day 1 = admission date, Day 2 = admission date + 1, etc.)
+                    return admission_record.admission_date + datetime.timedelta(days=self.hospitalization_day - 1)
+            except Exception:
+                # If query fails, fall back to recorded date
+                pass
         
         # Fallback to the recorded date
         return self.date.date() if self.date else None
