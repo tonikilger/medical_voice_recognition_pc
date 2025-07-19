@@ -1,0 +1,12 @@
+/.
+/usr
+/usr/bin
+/usr/share
+/usr/share/doc
+/usr/share/man
+/usr/share/man/man1
+/usr/bin/pdb
+/usr/bin/python-config
+/usr/share/doc/python-dev-is-python3
+/usr/share/man/man1/pdb.1.gz
+/usr/share/man/man1/python-config.1.gz

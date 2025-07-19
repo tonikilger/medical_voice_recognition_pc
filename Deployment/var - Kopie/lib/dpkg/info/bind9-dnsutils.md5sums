@@ -1,0 +1,11 @@
+39f1ea0546893693a9145ddbd07b8c76  usr/bin/delv
+6ec66734ec766bc35979f482cdc975fc  usr/bin/dig
+b5b41202f26d489d0d4eac66fd292296  usr/bin/mdig
+869988da0e780fc8cb634c274e37d3a6  usr/bin/nslookup
+f1b5f400c904c762e1bb29d2c66ea0b8  usr/bin/nsupdate
+c4902d7f6fd40457f41ec8b26499e7a8  usr/share/doc/bind9-dnsutils/copyright
+ae3d8dde6442cdc6f0f1ba052743161d  usr/share/man/man1/delv.1.gz
+9a656a03930b317e9ce96f7621c3a0e5  usr/share/man/man1/dig.1.gz
+d4f4815b252de9bfb674d6023e046504  usr/share/man/man1/mdig.1.gz
+3a50f9542474c70985024c44064e272d  usr/share/man/man1/nslookup.1.gz
+a25e12ccf69bdc974eddf1ac768092cc  usr/share/man/man1/nsupdate.1.gz

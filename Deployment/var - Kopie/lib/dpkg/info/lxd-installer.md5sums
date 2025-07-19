@@ -1,0 +1,7 @@
+3e47c4cda7d34ce21a3aa93d9d749ff9  sbin/lxc
+3e47c4cda7d34ce21a3aa93d9d749ff9  sbin/lxd
+3cbc84163ad6eba7ebdde112491fd1a7  usr/lib/systemd/system/lxd-installer.socket
+08b9c084981378d70c147c6b5c993971  usr/lib/systemd/system/lxd-installer@.service
+27a20c7bb05463e255b6ef52db4ee008  usr/share/doc/lxd-installer/changelog.gz
+221d95bcdd381fbaf3b5116f7cf2c846  usr/share/doc/lxd-installer/copyright
+5ed349edcdb8a1e5959efe6a1a633052  usr/share/lxd-installer/lxd-installer-service

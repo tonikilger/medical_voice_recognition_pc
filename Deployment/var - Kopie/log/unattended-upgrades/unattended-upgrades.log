@@ -1,0 +1,40 @@
+2025-07-16 19:34:37,211 INFO Starting unattended upgrades script
+2025-07-16 19:34:37,211 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-16 19:34:37,211 INFO Initial blacklist: 
+2025-07-16 19:34:37,211 INFO Initial whitelist (not strict): 
+2025-07-16 19:34:37,951 INFO No packages found that can be upgraded unattended and no pending auto-removals
+2025-07-16 20:48:53,588 INFO Starting unattended upgrades script
+2025-07-16 20:48:53,588 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-16 20:48:53,588 INFO Initial blacklist: 
+2025-07-16 20:48:53,588 INFO Initial whitelist (not strict): 
+2025-07-17 06:48:49,545 INFO Starting unattended upgrades script
+2025-07-17 06:48:49,545 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-17 06:48:49,545 INFO Initial blacklist: 
+2025-07-17 06:48:49,545 INFO Initial whitelist (not strict): 
+2025-07-17 06:48:50,284 INFO No packages found that can be upgraded unattended and no pending auto-removals
+2025-07-17 10:17:55,731 INFO Starting unattended upgrades script
+2025-07-17 10:17:55,731 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-17 10:17:55,731 INFO Initial blacklist: 
+2025-07-17 10:17:55,731 INFO Initial whitelist (not strict): 
+2025-07-18 04:47:44,339 INFO Starting unattended upgrades script
+2025-07-18 04:47:44,340 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-18 04:47:44,340 INFO Initial blacklist: 
+2025-07-18 04:47:44,340 INFO Initial whitelist (not strict): 
+2025-07-18 06:21:08,601 INFO Starting unattended upgrades script
+2025-07-18 06:21:08,602 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-18 06:21:08,602 INFO Initial blacklist: 
+2025-07-18 06:21:08,602 INFO Initial whitelist (not strict): 
+2025-07-18 06:21:11,334 INFO Packages that will be upgraded: linux-headers-generic linux-headers-virtual linux-image-virtual linux-libc-dev linux-tools-common linux-virtual
+2025-07-18 06:21:11,335 INFO Writing dpkg log to /var/log/unattended-upgrades/unattended-upgrades-dpkg.log
+2025-07-18 06:21:26,442 INFO All upgrades installed
+2025-07-18 06:21:38,973 INFO Packages that were successfully auto-removed: linux-headers-6.8.0-63 linux-headers-6.8.0-63-generic linux-image-6.8.0-63-generic linux-modules-6.8.0-63-generic linux-tools-6.8.0-63 linux-tools-6.8.0-63-generic
+2025-07-18 06:21:38,974 INFO Packages that are kept back: 
+2025-07-19 06:56:38,596 INFO Starting unattended upgrades script
+2025-07-19 06:56:38,597 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-19 06:56:38,597 INFO Initial blacklist: 
+2025-07-19 06:56:38,597 INFO Initial whitelist (not strict): 
+2025-07-19 06:56:39,402 INFO No packages found that can be upgraded unattended and no pending auto-removals
+2025-07-19 10:56:44,348 INFO Starting unattended upgrades script
+2025-07-19 10:56:44,348 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security
+2025-07-19 10:56:44,348 INFO Initial blacklist: 
+2025-07-19 10:56:44,348 INFO Initial whitelist (not strict): 

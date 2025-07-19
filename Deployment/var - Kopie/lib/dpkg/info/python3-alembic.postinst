@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ] ; then
+	update-alternatives --quiet --remove alembic /usr/bin/python3-alembic
+fi
+
+
+# Automatically added by dh_python3
+if command -v py3compile >/dev/null 2>&1; then
+	py3compile -p python3-alembic 
+fi
+if command -v pypy3compile >/dev/null 2>&1; then
+	pypy3compile -p python3-alembic  || true
+fi
+
+# End automatically added section
+
+
+exit 0

@@ -1,0 +1,14 @@
+a2e3a19c3d8827d85d5524394f474b4e  usr/lib/python3/dist-packages/itsdangerous-2.1.2.egg-info/PKG-INFO
+68b329da9893e34099c7d8ad5cb9c940  usr/lib/python3/dist-packages/itsdangerous-2.1.2.egg-info/dependency_links.txt
+d2e2c901c30c63e920338ca14c698e6e  usr/lib/python3/dist-packages/itsdangerous-2.1.2.egg-info/top_level.txt
+3d7132b71dac11837a5b6d86822c3a89  usr/lib/python3/dist-packages/itsdangerous/__init__.py
+2b32bc83b863257c4c9e8d74448256a4  usr/lib/python3/dist-packages/itsdangerous/_json.py
+2dcc09b1bad975a2f3581643f28bba7b  usr/lib/python3/dist-packages/itsdangerous/encoding.py
+0d6885dbb14f78fe2a3518c6f495214e  usr/lib/python3/dist-packages/itsdangerous/exc.py
+d41d8cd98f00b204e9800998ecf8427e  usr/lib/python3/dist-packages/itsdangerous/py.typed
+1f532984777fc49e1fea8a554bc2b7a6  usr/lib/python3/dist-packages/itsdangerous/serializer.py
+11e7aa120f76f7a21992d451ad251203  usr/lib/python3/dist-packages/itsdangerous/signer.py
+e4adb804fefb2935c63115eaf9fa54f3  usr/lib/python3/dist-packages/itsdangerous/timed.py
+39d5a45ebf31e788cdfa70b767e67e1d  usr/lib/python3/dist-packages/itsdangerous/url_safe.py
+4932869fc56d1c9daad770d698606ff4  usr/share/doc/python3-itsdangerous/changelog.Debian.gz
+28799dc670b62d5588410581b1fd2daa  usr/share/doc/python3-itsdangerous/copyright

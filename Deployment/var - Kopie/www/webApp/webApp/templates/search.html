@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Patient{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Search Patient</h2>
+<p class="text-muted mb-3">Enter a patient ID to search for records.</p>
+<form method="GET" action="/search">
+    <div class="input-group mb-4">
+        <input type="number" class="form-control" id="searchQuery" name="query" placeholder="Enter Patient ID" value="{{ query }}" min="0">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search"></i> Search
+        </button>
+    </div>
+</form>
+
+{% if patient %}
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">Patient ID: <span class="patient-id-header">{{ patient.id }}</span></h4>
+        </div>
+        <div class="card-body">
+            <!-- Mobile-friendly tabs for different record types -->
+            <ul class="nav nav-tabs mb-3" id="recordTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="admission-tab" data-bs-toggle="tab" data-bs-target="#admission" type="button" role="tab">Admission</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab">Daily</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="discharge-tab" data-bs-toggle="tab" data-bs-target="#discharge" type="button" role="tab">Discharge</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="weight-chart-tab" data-bs-toggle="tab" data-bs-target="#weight-chart" type="button" role="tab">Weight Chart</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="recordTabsContent">
+                <!-- Admission Records -->
+                <div class="tab-pane fade show active" id="admission" role="tabpanel">
+                    <h5 class="mb-3">Admission Records</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="font-size: 0.8rem;">ID</th>
+                                    <th style="font-size: 0.8rem;">Day</th>
+                                    <th style="font-size: 0.8rem;">Date</th>
+                                    <th style="font-size: 0.8rem;">Age</th>
+                                    <th style="font-size: 0.8rem;">Gender</th>
+                                    <th style="font-size: 0.8rem;">Height</th>
+                                    <th style="font-size: 0.8rem;">Diagnosis</th>
+                                    <th style="font-size: 0.8rem;">KCCQ Score</th>
+                                    <th style="font-size: 0.8rem;">Actions</th>
+                                </tr>
+        </thead>
+        <tbody>                            {% for record in records if record.recording_type == 'admission' %}
+                <tr>
+                    <td>{{ record.patient_id }}</td>
+                    <td>{{ record.hospitalization_day }}</td>
+                    <td>{{ record.calculated_date.strftime('%d.%m.%Y') if record.calculated_date else '' }}</td>
+                    <td>{{ record.age }}</td>
+                    <td>{{ record.gender }}</td>
+                    <td>{{ record.height }}</td>
+                    <td>{{ record.diagnosis }}</td>
+                    <td>{{ record.score }}</td>
+                    <td>
+                        <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    </div>
+
+    <!-- Daily Records -->
+    <div class="tab-pane fade" id="daily" role="tabpanel">
+        <h5 class="mb-3">Daily Records</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="font-size: 0.8rem;">ID</th>
+                        <th style="font-size: 0.8rem;">Type</th>
+                        <th style="font-size: 0.8rem;">Day</th>
+                        <th style="font-size: 0.8rem;">Date</th>
+                        <th style="font-size: 0.8rem;">Weight</th>
+                        <th style="font-size: 0.8rem;">BP</th>
+                        <th style="font-size: 0.8rem;">Pulse</th>
+                        <th style="font-size: 0.8rem;">Medication Changes</th>
+                        <th style="font-size: 0.8rem;">Kalium</th>
+                        <th style="font-size: 0.8rem;">Natrium</th>
+                        <th style="font-size: 0.8rem;">Kreatinin/GFR</th>
+                        <th style="font-size: 0.8rem;">Harnstoff</th>
+                        <th style="font-size: 0.8rem;">Hb</th>
+                        <th style="font-size: 0.8rem;">NTproBNP</th>
+                        <th style="font-size: 0.8rem;">Voice Sample</th>
+                        <th style="font-size: 0.8rem;">Voice Story</th>
+                        <th style="font-size: 0.8rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records if record.recording_type == 'daily' %}
+                        <tr>
+                            <td>{{ record.patient_id }}</td>
+                            <td>{{ record.recording_type|capitalize }}</td>
+                            <td>{{ record.hospitalization_day }}</td>
+                            <td>{{ record.calculated_date.strftime('%d.%m.%Y') if record.calculated_date else '' }}</td>
+                            <td>{{ record.weight }}</td>
+                            <td>{{ record.bp }}</td>
+                            <td>{{ record.pulse }}</td>
+                            <td>{{ record.medication_changes }}</td>
+                            <td>{{ record.kalium_daily }}</td>
+                            <td>{{ record.natrium_daily }}</td>
+                            <td>{{ record.kreatinin_gfr_daily }}</td>
+                            <td>{{ record.harnstoff_daily }}</td>
+                            <td>{{ record.hb_daily }}</td>
+                            <td>{{ record.ntprobnp_daily }}</td>
+                            <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
+                            <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
+                            <td>
+                                <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Discharge Records -->
+    <div class="tab-pane fade" id="discharge" role="tabpanel">
+        <h5 class="mb-3">Discharge Records</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th style="font-size: 0.8rem;">ID</th>
+                        <th style="font-size: 0.8rem;">Type</th>
+                        <th style="font-size: 0.8rem;">Day</th>
+                        <th style="font-size: 0.8rem;">Date</th>
+                        <th style="font-size: 0.8rem;">Current Weight</th>
+                        <th style="font-size: 0.8rem;">Discharge Date</th>
+                        <th style="font-size: 0.8rem;">Discharge Medication</th>
+                        <th style="font-size: 0.8rem;">KCCQ Discharge</th>
+                        <th style="font-size: 0.8rem;">Voice Sample</th>
+                        <th style="font-size: 0.8rem;">Voice Story</th>
+                        <th style="font-size: 0.8rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records if record.recording_type == 'discharge' %}
+                        <tr>
+                            <td>{{ record.patient_id }}</td>
+                            <td>{{ record.recording_type|capitalize }}</td>
+                            <td>{{ record.hospitalization_day }}</td>
+                            <td>{{ record.calculated_date.strftime('%d.%m.%Y') if record.calculated_date else '' }}</td>
+                            <td>{{ record.current_weight }}</td>
+                            <td>{{ record.discharge_date.strftime('%d.%m.%Y') if record.discharge_date else '' }}</td>
+                            <td>{{ record.discharge_medication }}</td>
+                            <td>{{ record.kccq_discharge }}</td>
+                            <td>{% if record.voice_sample_standardized %}Ja{% else %}Nein{% endif %}</td>
+                            <td>{% if record.voice_sample_storytelling %}Ja{% else %}Nein{% endif %}</td>
+                            <td>
+                                <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Weight Chart -->
+    <div class="tab-pane fade" id="weight-chart" role="tabpanel">
+        <h5 class="mb-3">Weight Progression Chart</h5>
+        
+        <!-- Legend -->
+        <div class="mb-3">
+            <small class="text-muted">
+                <span class="badge" style="background-color: #28a745; margin-right: 10px;">●</span> Admission Weight
+                <span class="badge" style="background-color: #007bff; margin-right: 10px;">●</span> Daily Weight
+                <span class="badge" style="background-color: #dc3545; margin-right: 10px;">●</span> Discharge Weight
+            </small>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <div style="position: relative; height: 400px; width: 100%;">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prepare weight data for chart
+            const chartData = [];
+            
+            {% for record in records %}
+                {% if record.recording_type == 'admission' and record.initial_weight %}
+                    chartData.push({
+                        day: {{ record.hospitalization_day }},
+                        weight: {{ record.initial_weight }},
+                        type: 'admission'
+                    });
+                {% elif record.recording_type == 'daily' and record.weight %}
+                    chartData.push({
+                        day: {{ record.hospitalization_day }},
+                        weight: {{ record.weight }},
+                        type: 'daily'
+                    });
+                {% elif record.recording_type == 'discharge' and record.current_weight %}
+                    chartData.push({
+                        day: {{ record.hospitalization_day }},
+                        weight: {{ record.current_weight }},
+                        type: 'discharge'
+                    });
+                {% endif %}
+            {% endfor %}
+            
+            // Sort by day
+            chartData.sort((a, b) => a.day - b.day);
+            
+            const labels = chartData.map(item => {
+                if (item.type === 'admission') return `Admission (Day ${item.day})`;
+                if (item.type === 'discharge') return `Discharge (Day ${item.day})`;
+                return `Day ${item.day}`;
+            });
+            
+            const weights = chartData.map(item => item.weight);
+            
+            // Create point colors based on type
+            const pointColors = chartData.map(item => {
+                if (item.type === 'admission') return '#28a745'; // Green for admission
+                if (item.type === 'discharge') return '#dc3545'; // Red for discharge
+                return '#007bff'; // Blue for daily
+            });
+            
+            const pointBorderColors = chartData.map(item => {
+                if (item.type === 'admission') return '#1e7e34';
+                if (item.type === 'discharge') return '#c82333';
+                return '#0056b3';
+            });
+            
+            // Create chart
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: weights,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: pointBorderColors,
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Weight Progression - Patient {{ patient.id }}'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Weight (kg)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Hospitalization Period'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% elif query %}
+    <p class="text-danger">No patient found with ID {{ query }}.</p>
+{% endif %}
+
+{% endblock %}
