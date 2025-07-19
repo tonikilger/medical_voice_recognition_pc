@@ -27,6 +27,7 @@ instance/*.db
 
 # Virtual environment
 venv/
+test_venv/
 ENV/
 env/
 .venv/
