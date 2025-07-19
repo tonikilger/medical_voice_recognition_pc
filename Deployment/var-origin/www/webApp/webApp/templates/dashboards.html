@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <div class="container-fluid px-0">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">Medical Data Collection</h2>
+                {% if current_user.is_admin %}
+                <div class="dropdown">
+                    <button class="btn btn-success dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-download"></i> Admin Export
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('views.export_all_patients_ai_data') }}">
+                            <i class="fas fa-users"></i> All Patients Dataset (ZIP)
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Per-Patient Export</h6></li>
+                        <li><small class="dropdown-item-text text-muted">Use individual patient buttons below</small></li>
+                    </ul>
+                </div>
+                {% else %}
+                <small class="text-muted">Logged in as: {{ current_user.username }} (Admin: {{ current_user.is_admin }})</small>
+                {% endif %}
+            </div>
+            <ul class="nav nav-tabs" id="dataTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-patients-tab" data-bs-toggle="tab" data-bs-target="#all-patients" type="button" role="tab" aria-controls="all-patients" aria-selected="true">All Patients</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="complete-records-tab" data-bs-toggle="tab" data-bs-target="#complete-records" type="button" role="tab" aria-controls="complete-records" aria-selected="false">Complete</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="incomplete-records-tab" data-bs-toggle="tab" data-bs-target="#incomplete-records" type="button" role="tab" aria-controls="incomplete-records" aria-selected="false">Incomplete</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="dataTabsContent">
+                <div class="tab-pane fade show active" id="all-patients" role="tabpanel" aria-labelledby="all-patients-tab">
+                    <div class="row g-3 mt-2">
+                    {% for patient in patients %}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            {% set records = recordings_by_patient.get(patient.id, []) %}
+                            <div class="card border-light h-100" style="box-shadow: 1px 1px 1px lightgray;">
+                                <div class="card-header border-light">
+                                    <h5 class="mb-1">Patient ID <span class="patient-id">{{ patient.id }}</span></h5>
+                                    <small class="text-muted">{{ records | length }} recording{{ 's' if records | length != 1 else '' }}</small>
+                                </div>
+                                <div class="card-body p-2" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th class="p-1" style="font-size: 0.8rem;">Type</th>
+                                                    <th class="p-1" style="font-size: 0.8rem;">Day</th>
+                                                    <th class="p-1" style="font-size: 0.8rem;">Score</th>
+                                                    <th class="p-1" style="font-size: 0.8rem;">Weight</th>
+                                                    <th class="p-1" style="font-size: 0.8rem;">Estimated Dryweight</th>
+                                                    <th class="p-1" style="font-size: 0.8rem;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for record in records %}
+                                                    <tr>
+                                                        <td>{{ record.recording_type|capitalize }}</td>
+                                                        <td>{{ record.hospitalization_day }}</td>
+                                                        {% if record.recording_type == "admission" %}
+                                                            <td>{{ record.score }}</td>
+                                                        {% else %}
+                                                            <td></td>
+                                                        {% endif %}
+                                                        <td>
+                                                            {% if record.recording_type == 'admission' %}
+                                                                {{ record.initial_weight }}
+                                                            {% elif record.recording_type == 'daily' %}
+                                                                {{ record.weight }}
+                                                            {% elif record.recording_type == 'discharge' %}
+                                                                {{ record.current_weight }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ record.estimated_dryweight }}</td>
+                                                        <td>
+                                                            <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
+                                                            <form method="POST" action="{{ url_for('views.delete_recording', recording_id=record.id) }}" style="display:inline;">
+                                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Wirklich löschen?');">Delete</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <a href="/recording?patient_id={{ patient.id }}" class="btn btn-dark">
+                                            Add Recording
+                                        </a>
+                                        {% if current_user.is_admin %}
+                                        <div class="btn-group mt-2" role="group">
+                                            <a href="{{ url_for('views.export_patient_ai_data', patient_id=patient.id) }}" 
+                                               class="btn btn-sm btn-outline-success" title="Export AI Dataset">
+                                                <i class="fas fa-download"></i> AI Dataset
+                                            </a>
+                                            <a href="{{ url_for('views.export_patient_csv', patient_id=patient.id) }}" 
+                                               class="btn btn-sm btn-outline-info" title="Export CSV">
+                                                <i class="fas fa-file-csv"></i> CSV
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                <!-- Complete Records Tab -->
+                <div class="tab-pane fade" id="complete-records" role="tabpanel" aria-labelledby="complete-records-tab">
+                    {% for patient in patients %}
+                        {% set records = complete_records_by_patient.get(patient.id, []) %}
+                        {% if records %}
+                            <div class="card border-light mt-3" style="box-shadow: 1px 1px 1px lightgray;">
+                                <div class="card-header border-light d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h4>Patient ID <span class="patient-id">{{ patient.id }}</span></h4>
+                                        <div class="text-muted">{{ records | length }} complete recording(s)</div>
+                                    </div>
+                                    {% if current_user.is_admin %}
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('views.export_patient_ai_data', patient_id=patient.id) }}" 
+                                           class="btn btn-sm btn-outline-success" title="Export AI Dataset">
+                                            <i class="fas fa-download"></i> AI Dataset
+                                        </a>
+                                        <a href="{{ url_for('views.export_patient_csv', patient_id=patient.id) }}" 
+                                           class="btn btn-sm btn-outline-info" title="Export CSV">
+                                            <i class="fas fa-file-csv"></i> CSV
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm text-center" style="white-space: nowrap; font-size: 0.75rem;">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Day</th>
+                                                <th>Weight</th>
+                                                <th>NT-proBNP</th>
+                                                <th>Kalium</th>
+                                                <th>Natrium</th>
+                                                <th>Kreatinin/GFR</th>
+                                                <th>Harnstoff</th>
+                                                <th>Hb</th>
+                                                <th>Initial Weight</th>
+                                                <th>Initial BP</th>
+                                                <th>Puls</th>
+                                                <th>Medikamentenänderung</th>
+                                                <th>Discharge Weight</th>
+                                                <th>Discharge Medication</th>
+                                                <th>KCCQ</th>
+                                                <th>KCCQ Discharge</th>
+                                                <th>Admission Date</th>
+                                                <th>Discharge Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for record in records %}
+                                                <tr>
+                                                    <td>{{ record.recording_type|capitalize }}</td>
+                                                    <td>{{ record.hospitalization_day }}</td>
+                                                    <td>
+                                                        {% if record.recording_type == 'admission' %}
+                                                            {{ record.initial_weight }}
+                                                        {% elif record.recording_type == 'daily' %}
+                                                            {{ record.weight }}
+                                                        {% elif record.recording_type == 'discharge' %}
+                                                            {{ record.current_weight }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ record.ntprobnp or record.ntprobnp_daily }}</td>
+                                                    <td>{{ record.kalium or record.kalium_daily }}</td>
+                                                    <td>{{ record.natrium or record.natrium_daily }}</td>
+                                                    <td>{{ record.kreatinin_gfr or record.kreatinin_gfr_daily }}</td>
+                                                    <td>{{ record.harnstoff or record.harnstoff_daily }}</td>
+                                                    <td>{{ record.hb or record.hb_daily }}</td>
+                                                    <td>{{ record.initial_weight }}</td>
+                                                    <td>{{ record.initial_bp }}</td>
+                                                    <td>{{ record.pulse }}</td>
+                                                    <td>{{ record.medication_changes }}</td>
+                                                    <td>{{ record.current_weight }}</td>
+                                                    <td>{{ record.discharge_medication }}</td>
+                                                    <td>{{ record.kccq }}</td>
+                                                    <td>{{ record.kccq_discharge }}</td>
+                                                    <td>{{ record.admission_date }}</td>
+                                                    <td>{{ record.discharge_date }}</td>
+                                                    <td>
+                                                        <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
+                                                        <form method="POST" action="{{ url_for('views.delete_recording', recording_id=record.id) }}" style="display:inline;">
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Wirklich löschen?');">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Incomplete Records Tab -->
+                <div class="tab-pane fade" id="incomplete-records" role="tabpanel" aria-labelledby="incomplete-records-tab">
+                    {% for patient in patients %}
+                        {% set records = incomplete_records_by_patient.get(patient.id, []) %}
+                        {% if records %}
+                            <div class="card border-light mt-3" style="box-shadow: 1px 1px 1px lightgray;">
+                                <div class="card-header border-light d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h4>Patient ID <span class="patient-id">{{ patient.id }}</span></h4>
+                                        <div class="text-muted">{{ records | length }} incomplete recording(s)</div>
+                                    </div>
+                                    {% if current_user.is_admin %}
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('views.export_patient_ai_data', patient_id=patient.id) }}" 
+                                           class="btn btn-sm btn-outline-success" title="Export AI Dataset">
+                                            <i class="fas fa-download"></i> AI Dataset
+                                        </a>
+                                        <a href="{{ url_for('views.export_patient_csv', patient_id=patient.id) }}" 
+                                           class="btn btn-sm btn-outline-info" title="Export CSV">
+                                            <i class="fas fa-file-csv"></i> CSV
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm text-center" style="white-space: nowrap; font-size: 0.75rem;">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Day</th>
+                                                <th>Weight</th>
+                                                <th>NT-proBNP</th>
+                                                <th>Kalium</th>
+                                                <th>Natrium</th>
+                                                <th>Kreatinin/GFR</th>
+                                                <th>Harnstoff</th>
+                                                <th>Hb</th>
+                                                <th>Initial Weight</th>
+                                                <th>Initial BP</th>
+                                                <th>Puls</th>
+                                                <th>Medikamentenänderung</th>
+                                                <th>Discharge Weight</th>
+                                                <th>Discharge Medication</th>
+                                                <th>KCCQ</th>
+                                                <th>KCCQ Discharge</th>
+                                                <th>Admission Date</th>
+                                                <th>Discharge Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for record in records %}
+                                                <tr>
+                                                    <td>{{ record.recording_type|capitalize }}</td>
+                                                    <td>{{ record.hospitalization_day }}</td>
+                                                    <td>
+                                                        {% if record.recording_type == 'admission' %}
+                                                            {{ record.initial_weight }}
+                                                        {% elif record.recording_type == 'daily' %}
+                                                            {{ record.weight }}
+                                                        {% elif record.recording_type == 'discharge' %}
+                                                            {{ record.current_weight }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ record.ntprobnp or record.ntprobnp_daily }}</td>
+                                                    <td>{{ record.kalium or record.kalium_daily }}</td>
+                                                    <td>{{ record.natrium or record.natrium_daily }}</td>
+                                                    <td>{{ record.kreatinin_gfr or record.kreatinin_gfr_daily }}</td>
+                                                    <td>{{ record.harnstoff or record.harnstoff_daily }}</td>
+                                                    <td>{{ record.hb or record.hb_daily }}</td>
+                                                    <td>{{ record.initial_weight }}</td>
+                                                    <td>{{ record.initial_bp }}</td>
+                                                    <td>{{ record.pulse }}</td>
+                                                    <td>{{ record.medication_changes }}</td>
+                                                    <td>{{ record.current_weight }}</td>
+                                                    <td>{{ record.discharge_medication }}</td>
+                                                    <td>{{ record.kccq }}</td>
+                                                    <td>{{ record.kccq_discharge }}</td>
+                                                    <td>{{ record.admission_date }}</td>
+                                                    <td>{{ record.discharge_date }}</td>
+                                                    <td>
+                                                        <a href="{{ url_for('views.edit_recording', recording_id=record.id) }}" class="btn btn-sm btn-primary me-1">Edit</a>
+                                                        <form method="POST" action="{{ url_for('views.delete_recording', recording_id=record.id) }}" style="display:inline;">
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Wirklich löschen?');">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

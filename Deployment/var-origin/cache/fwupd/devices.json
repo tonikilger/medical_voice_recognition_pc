@@ -1,0 +1,75 @@
+{
+  "Devices" : [
+    {
+      "Name" : "AMD EPYC-Milan Processor",
+      "DeviceId" : "4bde70ba4e39b28f9eab1628f9dd6e6244c03027",
+      "InstanceIds" : [
+        "CPUID\\PRO_0&FAM_19&MOD_01",
+        "CPUID\\PRO_0&FAM_19&MOD_01&STP_1"
+      ],
+      "Guid" : [
+        "94dafde8-adf3-5325-8317-75df3d0f403a",
+        "16f4eef0-25ba-5cc5-87bc-8b462af82d14"
+      ],
+      "Plugin" : "cpu",
+      "Flags" : [
+        "internal",
+        "registered"
+      ],
+      "Vendor" : "Advanced Micro Devices, Inc.",
+      "Version" : "0x01000065",
+      "VersionFormat" : "hex",
+      "VersionRaw" : 16777317,
+      "Icons" : [
+        "computer"
+      ],
+      "Created" : 1752926969
+    },
+    {
+      "Name" : "QXL paravirtual graphic card (QEMU Virtual Machine)",
+      "DeviceId" : "5792b48846ce271fab11c4a545f7a3df0d36e00a",
+      "InstanceIds" : [
+        "PCI\\VEN_1B36&DEV_0100",
+        "PCI\\VEN_1B36&DEV_0100&SUBSYS_1AF41100"
+      ],
+      "Guid" : [
+        "48108f63-5e54-5627-b89c-73a36a9c49ae",
+        "608095ab-7bb8-5998-ac2c-3fad3cdc2f4f"
+      ],
+      "Plugin" : "optionrom",
+      "Flags" : [
+        "internal",
+        "registered",
+        "can-verify",
+        "can-verify-image"
+      ],
+      "Vendor" : "Red Hat, Inc.",
+      "VendorId" : "PCI:0x1B36",
+      "Version" : "05",
+      "VersionFormat" : "plain",
+      "Created" : 1752926969
+    },
+    {
+      "Name" : "Virtio network device",
+      "DeviceId" : "a6bc4f6fbf4177e576ffe4f65e4d525c377c39b1",
+      "InstanceIds" : [
+        "PCI\\VEN_1AF4&DEV_1000",
+        "PCI\\VEN_1AF4&DEV_1000&SUBSYS_1AF40001"
+      ],
+      "Guid" : [
+        "21c85fac-5270-576f-a84e-04969f8cf75a",
+        "b93ef629-0df1-5505-9fee-6992b8b9abd8"
+      ],
+      "Plugin" : "optionrom",
+      "Flags" : [
+        "internal",
+        "registered",
+        "can-verify",
+        "can-verify-image"
+      ],
+      "Vendor" : "Red Hat, Inc.",
+      "VendorId" : "PCI:0x1AF4",
+      "Created" : 1752926969
+    }
+  ]
+}

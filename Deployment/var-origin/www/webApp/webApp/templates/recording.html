@@ -1,0 +1,1209 @@
+{% extends 'base.html' %}
+
+{% block title %}Record Patient{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <div class="container-fluid px-0">
+            <h2 class="mb-4">Record Patient</h2>
+            <form method="POST" action="{% if last_recording %}{{ url_for('views.edit_recording', recording_id=last_recording.id) }}{% else %}{{ url_for('views.recording') }}{% endif %}" enctype="multipart/form-data">
+                <!-- Start first part -->
+            
+                <div>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label for="patientId" class="form-label">Patient ID</label>
+                            <input type="text" class="form-control" id="patientId" name="patient_id" value="{{ patient_id or '' }}" required>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="recordingType" class="form-label">Recording Type</label>
+                            <select class="form-select" id="recordingType" name="recording_type">
+                                <option value="admission" {% if last_recording and last_recording.recording_type == 'admission' %}selected{% endif %}>Admission</option>
+                                <option value="daily" {% if last_recording and last_recording.recording_type == 'daily' %}selected{% endif %}>Daily</option>
+                                <option value="discharge" {% if last_recording and last_recording.recording_type == 'discharge' %}selected{% endif %}>Discharge</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Admission Fields -->
+                <div>
+                    <div id="admissionFields" style="display:none;">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Age</label>
+                                <input type="number" class="form-control" name="age" value="{{ last_recording.age if last_recording else '' }}">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Gender</label>
+                                <select class="form-select" name="gender">
+                                    <option value="">Please select</option>
+                                    <option value="m"{% if last_recording and last_recording.gender == 'm' %}selected{% endif %}>Male</option>
+                                    <option value="f"{% if last_recording and last_recording.gender == 'f' %}selected{% endif %}>Female</option>
+                                    <option value="d"{% if last_recording and last_recording.gender == 'd' %}selected{% endif %}>Diverse</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label>Height (cm)</label>
+                                <input type="number" class="form-control" name="height" step="0.1" min="0" value="{{ last_recording.height if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Diagnosis / Underlying Disease</label>
+                                <select class="form-select" id="diagnosis" name="diagnosis" multiple>
+                                    {% set selected_diagnoses = (last_recording.diagnosis.split(', ') if last_recording and last_recording.diagnosis else []) %}
+                                    <!-- ...diagnosis options unchanged... -->
+                                    {% for option in [
+                                        'Heart failure with severely reduced ejection fraction (EF < 30%)',
+                                        'Heart failure with moderately reduced ejection fraction (EF 30–40%)',
+                                        'Heart failure with mildly reduced ejection fraction (EF 41–49%)',
+                                        'Heart failure with preserved ejection fraction (HFpEF, EF ≥ 50%)',
+                                        'Acute right heart failure',
+                                        'Chronic right heart failure',
+                                        'Ischemic cardiomyopathy',
+                                        'Dilated cardiomyopathy (non-ischemic)',
+                                        'Hypertrophic cardiomyopathy',
+                                        'Restrictive cardiomyopathy',
+                                        'Peripartum cardiomyopathy',
+                                        'Tachycardia-induced cardiomyopathy',
+                                        'Inflammatory cardiomyopathy (e.g. myocarditis)',
+                                        'Amyloid cardiomyopathy',
+                                        'Unclear cardiomyopathy',
+                                        'Acute coronary syndrome (STEMI, NSTEMI)',
+                                        'Chronic coronary syndrome / stable CAD',
+                                        'Atrial fibrillation',
+                                        'Atrial flutter',
+                                        'Other tachycardic supraventricular arrhythmias',
+                                        'Other bradycardic arrhythmias (e.g. SSS, AV block)',
+                                        'Ventricular tachycardias',
+                                        'Severe aortic valve stenosis',
+                                        'Severe aortic valve insufficiency',
+                                        'Severe mitral valve insufficiency',
+                                        'Severe mitral valve stenosis',
+                                        'Severe tricuspid valve insufficiency',
+                                        'Severe tricuspid valve stenosis',
+                                        'Severe pulmonary valve stenosis',
+                                        'Severe pulmonary valve insufficiency',
+                                        'Status post transfemoral aortic valve replacement',
+                                        'Status post aortic valve valvuloplasty',
+                                        'Status post biological aortic valve replacement',
+                                        'Status post mechanical aortic valve replacement',
+                                        'Status post biological mitral valve replacement',
+                                        'Status post mechanical mitral valve replacement',
+                                        'Other valve intervention',
+                                        'Pericardial effusion',
+                                        'Constrictive pericarditis',
+                                        'Pulmonary hypertension',
+                                        'Cor pulmonale',
+                                        'Chronic kidney disease',
+                                        'Acute kidney injury',
+                                        'Nephrotic syndrome',
+                                        'Liver cirrhosis',
+                                        'Acute hepatitis / acute liver failure',
+                                        'Other ascites',
+                                        'Myxedema',
+                                        'Hyperaldosteronism',
+                                        'Cushing syndrome',
+                                        'Rheumatoid arthritis with cardiac involvement',
+                                        'Spondyloarthritis with cardiac involvement',
+                                        'Collagenosis with cardiac involvement',
+                                        'Vasculitis with cardiac involvement',
+                                        'Inflammatory myopathies with cardiac involvement',
+                                        'Granulomatous inflammation with cardiac involvement',
+                                        'Malignancies with cardiac / paraneoplastic involvement'
+                                    ] %}
+                                        <option value="{{ option }}" {% if option in selected_diagnoses %}selected{% endif %}>{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Current Medication (complete list with dosage)</label>
+                                <textarea class="form-control" name="medication" style="height: 38px; resize: none;">{{ last_recording.medication if last_recording and last_recording.medication else '' }}</textarea>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Comorbidities</label>
+                                <input type="text" class="form-control" name="comorbidities" value="{{ last_recording.comorbidities if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Admission Date</label>
+                                <input type="date" class="form-control" name="admission_date"
+                                       value="{{ last_recording.admission_date.strftime('%Y-%m-%d') if last_recording and last_recording.admission_date else datetime.datetime.now().strftime('%Y-%m-%d') }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>NT- pro BNP</label>
+                                <input type="number" class="form-control" name="ntprobnp" value="{{ last_recording.ntprobnp if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Potassium</label>
+                                <input type="number" class="form-control" name="kalium" step="0.01" min="0" value="{{ last_recording.kalium if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Sodium</label>
+                                <input type="number" class="form-control" name="natrium" step="0.01" min="0" value="{{ last_recording.natrium if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Creatinine / GFR</label>
+                                <input type="text" class="form-control" name="kreatinin_gfr" value="{{ last_recording.kreatinin_gfr if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Urea</label>
+                                <input type="number" class="form-control" name="harnstoff" step="0.01" min="0" value="{{ last_recording.harnstoff if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Body Weight (initial value)</label>
+                                <input type="number" class="form-control" name="initial_weight" step="0.1" min="0" value="{{ last_recording.initial_weight if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Blood Pressure (initial value)</label>
+                                <input type="text" class="form-control" name="initial_bp" value="{{ last_recording.initial_bp if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Hemoglobin (Hb)</label>
+                                <input type="number" class="form-control" name="hb" step="0.01" min="0" value="{{ last_recording.hb if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_standardized %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'standardized')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordVoiceBtnAdmission">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="voicePlaybackAdmission" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="voiceSampleAdmission" name="admission_voice_sample_standardized" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (story telling)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_storytelling %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'storytelling')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordCoughBtn">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="coughPlayback" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="coughSample" name="admission_voice_sample_storytelling" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (vocal)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_vocal %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'vocal')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordVocalBtn">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="vocalPlayback" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="vocalSample" name="admission_voice_sample_vocal" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                </div>
+                            </div>      
+                        </div>
+                        {% if (last_recording and (last_recording.recording_type == 'admission' or last_recording.recording_type == 'discharge')) or (not last_recording and (request.form.get('recording_type', 'admission') in ['admission', 'discharge'])) %}
+                        <div class="row">
+                        <div class="accordion mb-3" id="kccqAccordion" style="display: none;">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="kccqHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kccqCollapse" aria-expanded="false" aria-controls="kccqCollapse">
+                                    KCCQ Symptom Questionnaire
+                                </button>
+                                </h2>
+                                <div id="kccqCollapse" class="accordion-collapse collapse" aria-labelledby="kccqHeading" data-bs-parent="#kccqAccordion">
+                                <div class="accordion-body">
+                                    {# ...KCCQ questions unchanged... #}
+                                    <!-- KCCQ questions inlined here -->
+                                    <!-- Question 1: Physical Limitation -->
+                                    <label class="form-label fw-bold">1. To what extent has heart failure limited your ability to perform the following activities?</label>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Dressing yourself</label>
+                                        <select class="form-select" name="kccq1a">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1a == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1a == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1a == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1a == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1a == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1a == 9 %} selected{% endif %}>Limited for other reasons/not performed</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Showering / Bathing</label>
+                                        <select class="form-select" name="kccq1b">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1b == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1b == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1b == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1b == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1b == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1b == 9 %} selected{% endif %}>Limited for other reasons/not performed</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Walking 100–200 meters on level ground</label>
+                                        <select class="form-select" name="kccq1c">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1c == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1c == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1c == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1c == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1c == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1c == 9 %} selected{% endif %}>Limited for other reasons/not performed</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Gardening/housework, carrying shopping bags</label>
+                                        <select class="form-select" name="kccq1d">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1d == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1d == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1d == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1d == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1d == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1d == 9 %} selected{% endif %}>Limited for other reasons/not performed</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Climbing a flight of stairs without stopping</label>
+                                        <select class="form-select" name="kccq1e">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1e == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1e == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1e == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1e == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1e == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1e == 9 %} selected{% endif %}>Limited for other reasons/not performed</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Running/jogging (e.g., to catch a bus)</label>
+                                        <select class="form-select" name="kccq1f">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq1f == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq1f == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq1f == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq1f == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq1f == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq1f == 9 %} selected{% endif %}>Limited for other reasons/not performed</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <!-- Question 2 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">2. Have your symptoms changed compared to 2 weeks ago?</label>
+                                    <select class="form-select" name="kccq2">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq2 == 1 %} selected{% endif %}>Much worse</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq2 == 2 %} selected{% endif %}>Slightly worse</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq2 == 3 %} selected{% endif %}>No change</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq2 == 4 %} selected{% endif %}>Slightly better</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq2 == 5 %} selected{% endif %}>Much better</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq2 == 6 %} selected{% endif %}>No symptoms</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 3 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">3. How often have you had swelling in the morning upon waking?</label>
+                                    <select class="form-select" name="kccq3">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq3 == 1 %} selected{% endif %}>Every morning</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq3 == 2 %} selected{% endif %}>3x/week or more</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq3 == 3 %} selected{% endif %}>1-2x/week</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq3 == 4 %} selected{% endif %}>Less than 1x/week</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq3 == 5 %} selected{% endif %}>Never</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 4 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">4. How bothersome was the swelling?</label>
+                                    <select class="form-select" name="kccq4">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq4 == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq4 == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq4 == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq4 == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq4 == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq4 == 6 %} selected{% endif %}>No swelling</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 5 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">5. How often has fatigue prevented you from doing what you wanted?</label>
+                                    <select class="form-select" name="kccq5">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq5 == 1 %} selected{% endif %}>Several times a day</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq5 == 2 %} selected{% endif %}>At least once a day</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq5 == 3 %} selected{% endif %}>3x/week or more</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq5 == 4 %} selected{% endif %}>1-2x/week</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq5 == 5 %} selected{% endif %}>Less than 1x/week</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq5 == 6 %} selected{% endif %}>Never</option>
+                                        <option value="7"{% if last_recording and last_recording.kccq5 == 7 %} selected{% endif %}>No fatigue</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 6 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">6. How bothersome was your fatigue?</label>
+                                    <select class="form-select" name="kccq6">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq6 == 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq6 == 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq6 == 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq6 == 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq6 == 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq6 == 6 %} selected{% endif %}>No fatigue</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 7 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">7. How often has shortness of breath prevented you from doing what you wanted?</label>
+                                    <select class="form-select" name="kccq7">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq7 == 1 %} selected{% endif %}>Several times a day</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq7 == 2 %} selected{% endif %}>At least once a day</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq7 == 3 %} selected{% endif %}>3x/week or more</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq7 == 4 %} selected{% endif %}>1-2x/week</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq7 == 5 %} selected{% endif %}>Less than 1x/week</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq7 == 6 %} selected{% endif %}>Never</option>
+                                        <option value="7"{% if last_recording and last_recording.kccq7 == 7 %} selected{% endif %}>No shortness of breath</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 8 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">8. How bothersome was your shortness of breath?</label>
+                                    <select class="form-select" name="kccq8">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq8== 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq8== 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq8== 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq8== 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq8== 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="6"{% if last_recording and last_recording.kccq8== 6 %} selected{% endif %}>No shortness of breath</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 9 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">9. How often did you have to sleep with your head elevated due to shortness of breath?</label>
+                                    <select class="form-select" name="kccq9">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq9== 1 %} selected{% endif %}>Every night</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq9== 2 %} selected{% endif %}>3x/week or more</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq9== 3 %} selected{% endif %}>1-2x/week</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq9== 4 %} selected{% endif %}>Less than 1x/week</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq9== 5 %} selected{% endif %}>Never</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 10 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">10. How confident are you about what to do if your symptoms worsen?</label>
+                                    <select class="form-select" name="kccq10">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq10== 1 %} selected{% endif %}>Not at all confident</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq10== 2 %} selected{% endif %}>Not very confident</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq10== 3 %} selected{% endif %}>Somewhat confident</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq10== 4 %} selected{% endif %}>Quite confident</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq10== 5 %} selected{% endif %}>Completely confident</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 11 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">11. How well do you understand what you can do yourself to manage your condition?</label>
+                                    <select class="form-select" name="kccq11">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq11== 1 %} selected{% endif %}>Not at all</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq11== 2 %} selected{% endif %}>Not very well</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq11== 3 %} selected{% endif %}>Somewhat</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq11== 4 %} selected{% endif %}>Mostly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq11== 5 %} selected{% endif %}>Completely</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 12 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">12. To what extent has your heart failure affected your enjoyment of life?</label>
+                                    <select class="form-select" name="kccq12">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq12== 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq12== 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq12== 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq12== 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq12== 5 %} selected{% endif %}>Not at all</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 13 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">13. How would you feel if you were to remain in your current state?</label>
+                                    <select class="form-select" name="kccq13">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq13== 1 %} selected{% endif %}>Not at all satisfied</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq13== 2 %} selected{% endif %}>Mostly dissatisfied</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq13== 3 %} selected{% endif %}>Quite satisfied</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq13== 4 %} selected{% endif %}>Mostly satisfied</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq13== 5 %} selected{% endif %}>Completely satisfied</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 14 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">14. How often have you felt discouraged or depressed?</label>
+                                    <select class="form-select" name="kccq14">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq14== 1 %} selected{% endif %}>All the time</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq14== 2 %} selected{% endif %}>Most of the time</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq14== 3 %} selected{% endif %}>Occasionally</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq14== 4 %} selected{% endif %}>Rarely</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq14== 5 %} selected{% endif %}>Never</option>
+                                    </select>
+                                    </div>
+                                    <!-- Question 15: Lifestyle -->
+                                    <label class="form-label fw-bold">15. To what extent does your heart failure affect your lifestyle?</label>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Hobbies/leisure activities</label>
+                                        <select class="form-select" name="kccq15a">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15a== 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15a== 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15a== 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15a== 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15a== 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15a== 9 %} selected{% endif %}>Not applicable</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Intimate relationships</label>
+                                        <select class="form-select" name="kccq15b">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15b== 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15b== 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15b== 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15b== 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15b== 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15b== 9 %} selected{% endif %}>Not applicable</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="mb-3 col-md-6">
+                                        <label>Visits with family/friends</label>
+                                        <select class="form-select" name="kccq15c">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15c== 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15c== 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15c== 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15c== 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15c== 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15c== 9 %} selected{% endif %}>Not applicable</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label>Work/housework</label>
+                                        <select class="form-select" name="kccq15d">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq15d== 1 %} selected{% endif %}>Extremely</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq15d== 2 %} selected{% endif %}>Very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq15d== 3 %} selected{% endif %}>Moderately</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq15d== 4 %} selected{% endif %}>Slightly</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq15d== 5 %} selected{% endif %}>Not at all</option>
+                                        <option value="9"{% if last_recording and last_recording.kccq15d== 9 %} selected{% endif %}>Not applicable</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <!-- Question 16 -->
+                                    <div class="mb-3">
+                                    <label class="form-label fw-bold">16. How much do you feel you can influence your symptoms?</label>
+                                    <select class="form-select" name="kccq16">
+                                        <option value="">Please select</option>
+                                        <option value="1"{% if last_recording and last_recording.kccq16== 1 %} selected{% endif %}>Not at all</option>
+                                        <option value="2"{% if last_recording and last_recording.kccq16== 2 %} selected{% endif %}>Not very much</option>
+                                        <option value="3"{% if last_recording and last_recording.kccq16== 3 %} selected{% endif %}>Somewhat</option>
+                                        <option value="4"{% if last_recording and last_recording.kccq16== 4 %} selected{% endif %}>Quite a bit</option>
+                                        <option value="5"{% if last_recording and last_recording.kccq16== 5 %} selected{% endif %}>Completely</option>
+                                    </select>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Daily Fields -->
+                    <div id="dailyFields" style="display:none;">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> <strong>Recording Date:</strong> This will be automatically calculated based on the admission date and hospitalization day.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Weight</label>
+                                <input type="number" class="form-control" name="weight" step="0.1" min="0" value="{{ last_recording.weight if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Blood Pressure (systolic/diastolic)</label>
+                                <input type="text" class="form-control" name="bp" value="{{ last_recording.bp if last_recording else '' }}">
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Pulse</label>
+                                <input type="number" class="form-control" name="pulse" value="{{ last_recording.pulse if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Medication adjustments (if relevant)</label>
+                                <textarea class="form-control" name="medication_changes" style="height: 38px; resize: none;">{{ last_recording.medication_changes if last_recording and last_recording.medication_changes else '' }}</textarea>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Potassium</label>
+                                <input type="number" class="form-control" name="kalium_daily" step="0.01" min="0" value="{{ last_recording.kalium_daily if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Sodium</label>
+                                <input type="number" class="form-control" name="natrium_daily" step="0.01" min="0" value="{{ last_recording.natrium_daily if last_recording else '' }}">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Creatinine / GFR</label>
+                                <input type="text" class="form-control" name="kreatinin_gfr_daily" value="{{ last_recording.kreatinin_gfr_daily if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Urea</label>
+                                <input type="number" class="form-control" name="harnstoff_daily" step="0.01" min="0" value="{{ last_recording.harnstoff_daily if last_recording else '' }}">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Hemoglobin (Hb)</label>
+                                <input type="number" class="form-control" name="hb_daily" step="0.01" min="0" value="{{ last_recording.hb_daily if last_recording else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>NT-proBNP</label>
+                                <input type="number" class="form-control" name="ntprobnp_daily" step="0.01" min="0" value="{{ last_recording.ntprobnp_daily if last_recording else '' }}">
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                            <div class="card mb-3 ">
+                                <div class="card-body">
+                                <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                
+                                {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'daily' %}
+                                <div class="mb-2">
+                                    <audio controls class="form-control">
+                                        <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'standardized')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                                {% endif %}
+                                
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtnDaily">
+                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
+                                </button>
+                                <audio id="voicePlaybackDaily" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSampleDaily" name="daily_voice_sample_standardized" style="display: none;" />
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="mb-3 col-md-4 ">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (story telling)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'daily' %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'storytelling')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordCoughBtnDaily">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="coughPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="coughSampleDaily" name="daily_voice_sample_storytelling" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (vocal)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'daily' %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'vocal')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordVocalBtnDaily">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'daily' %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="vocalPlaybackDaily" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="vocalSampleDaily" name="daily_voice_sample_vocal" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>      
+                        </div>
+                    </div>
+
+                    <!-- Discharge Fields -->
+                    <div id="dischargeFields" style="display:none;">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> <strong>Recording Date:</strong> This will be automatically calculated based on the admission date and hospitalization day.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                             <div class="mb-3 col-md-6">
+                                <label>NT-proBNP</label>
+                                <input type="number" class="form-control" name="discharge_ntprobnp" step="0.01" min="0" value="{{ last_recording.discharge_ntprobnp if last_recording else '' }}">
+                            </div>    
+                            <div class="mb-3 col-md-6">
+                                <label>Potassium</label>
+                                <input type="number" class="form-control" name="discharge_kalium" step="0.01" min="0" value="{{ last_recording.discharge_kalium if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Sodium</label>
+                                <input type="number" class="form-control" name="discharge_natrium" step="0.01" min="0" value="{{ last_recording.discharge_natrium if last_recording else '' }}">
+                            </div>                       
+                            <div class="mb-3 col-md-6">
+                                <label>Creatinine / GFR</label>
+                                <input type="text" class="form-control" name="discharge_kreatinin_gfr" value="{{ last_recording.discharge_kreatinin_gfr if last_recording else '' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Urea</label>
+                                <input type="number" class="form-control" name="discharge_harnstoff" step="0.01" min="0" value="{{ last_recording.discharge_harnstoff if last_recording else '' }}">
+                            </div>
+                        
+                        
+                            <div class="mb-3 col-md-6">
+                                <label>Hemoglobin (Hb)</label>
+                                <input type="number" class="form-control" name="discharge_hb" step="0.01" min="0" value="{{ last_recording.discharge_hb if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label>Current Body Weight</label>
+                                <input type="number" class="form-control" name="current_weight" step="0.1" min="0" value="{{ last_recording.current_weight if last_recording else '' }}">
+                            </div>
+                
+                            <div class="mb-3 col-md-6">
+                                <label>Current Medication at Discharge</label>
+                                <textarea class="form-control" name="discharge_medication" style="height: 38px; resize: none;">{{ last_recording.discharge_medication if last_recording and last_recording.discharge_medication else '' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                             <div class="mb-3 col-md-6">
+                                <label>Discharge Date</label>
+                                <input type="date" class="form-control" name="discharge_date" value="{{ last_recording.discharge_date.strftime('%Y-%m-%d') if last_recording and last_recording.discharge_date else '' }}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label>Estimated Dryweight (Doc)</label>
+                                <input type="number" class="form-control" name="estimated_dryweight" step="0.1" min="0" value="{{ last_recording.estimated_dryweight if last_recording else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label>Abschluss Labor</label>
+                                <textarea class="form-control" name="abschluss_labor" style="height: 80px; resize: vertical;">{{ last_recording.abschluss_labor if last_recording and last_recording.abschluss_labor else '' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label for="hospitalizationDay" class="form-label">Hospitalization Day</label>
+                                <input type="number" class="form-control" id="hospitalizationDay" name="hospitalization_day" min="1" required value="{{ hospitalization_day if hospitalization_day else last_recording.hospitalization_day if last_recording else 1 }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                            <div class="card mb-3 ">
+                                <div class="card-body">
+                                <h5 class="card-title">Voice Sample (standardized sentence) </h5>
+                                
+                                {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'discharge' %}
+                                <div class="mb-2">
+                                    <audio controls class="form-control">
+                                        <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='standardized') }}" type="audio/webm">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                    <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'standardized')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </div>
+                                {% endif %}
+                                
+                                <button type="button" class="btn btn-danger" id="recordVoiceBtnDischarge">
+                                    <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_standardized and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
+                                </button>
+                                <audio id="voicePlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
+                                <input type="file" id="voiceSampleDischarge" name="discharge_voice_sample_standardized" style="display: none;" />
+                                </div>
+                            </div> 
+
+                            </div>
+    
+
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (story telling)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'discharge' %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='storytelling') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'storytelling')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordCoughBtnDischarge">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_storytelling and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="coughPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="coughSampleDischarge" name="discharge_voice_sample_storytelling" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 col-md-4">
+                                <div class="card mb-3 ">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Voice Sample (vocal)</h5>
+                                        
+                                        {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'discharge' %}
+                                        <div class="mb-2">
+                                            <audio controls class="form-control">
+                                                <source src="{{ url_for('views.get_voice_sample', recording_id=last_recording.id, sample_type='vocal') }}" type="audio/webm">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="deleteVoiceSample({{ last_recording.id }}, 'vocal')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-danger" id="recordVocalBtnDischarge">
+                                            <i class="bi bi-mic-fill"></i> {% if last_recording and last_recording.voice_sample_vocal and last_recording.recording_type == 'discharge' %}Re-record{% else %}Start Recording{% endif %}
+                                        </button>
+                                        <audio id="vocalPlaybackDischarge" controls class="mt-2" style="display: none;"></audio>
+                                        <input type="file" id="vocalSampleDischarge" name="discharge_voice_sample_vocal" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>      
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- <div class="row">
+
+                        <div class="mb-3 col-md-6">
+                            <label for="hospitalizationDay" class="form-label">Hospitalization Day</label>
+                            <input type="number" class="form-control" id="hospitalizationDay" name="hospitalization_day" min="1" required value="{{ hospitalization_day if hospitalization_day else 1 }}">
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="weight" class="form-label">Weight</label>
+                            <input type="number" class="form-control" id="weight" name="weight" min="0" step="0.1" required value="{{ last_recording.weight if last_recording else '' }}">
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="row">
+
+                        
+                        <div class="mb-3 col-md-6">
+                            <label for="systolicBP" class="form-label">Systolic BP</label>
+                            <input type="number" class="form-control" id="systolicBP" name="systolic_bp" min="0" value="{{ last_recording.systolic if last_recording else '' }}">
+                        </div>
+                        <div class="mb-3 col-md-6" >
+                            <label for="diastolicBP" class="form-label">Diastolic BP</label>
+                            <input type="number" class="form-control" id="diastolicBP" name="diastolic_bp" value="{{ last_recording.diastolic if last_recording else '' }}">
+                        </div>
+
+
+
+
+                    </div>
+            
+            
+
+
+            
+            
+                </div>
+                     
+            
+
+                <h3>Symptom Assessment</h3>
+                <div class="mb-3">
+                    <label for="breathingDifficulty" class="form-label">Breathing Difficulty (0-10)</label>
+                    <input type="range" class="form-range" id="breathingDifficulty" name="breathing_difficulty" min="0" max="10" step="1" oninput="breathingDifficultyValue.value = this.value" value="{{ last_recording.breathing_difficulty if last_recording else '' }}">
+                    <output id="breathingDifficultyValue">{{ last_recording.breathing_difficulty if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="chestPain" class="form-label">Chest Pain (0-10)</label>
+                    <input type="range" class="form-range" id="chestPain" name="chest_pain" min="0" max="10" step="1" oninput="chestPainValue.value = this.value" value="{{ last_recording.chest_pain if last_recording else '' }}">
+                    <output id="chestPainValue" >{{ last_recording.chest_pain if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="fatigueLevel" class="form-label">Fatigue Level (0-10)</label>
+                    <input type="range" class="form-range" id="fatigueLevel" name="fatigue_level" min="0" max="10" step="1" oninput="fatigueLevelValue.value = this.value" value="{{ last_recording.fatigue_level if last_recording else '' }}">
+                    <output id="fatigueLevelValue">{{ last_recording.fatigue_level if last_recording else '' }}</output>
+                    </div>
+                    <div class="mb-3">
+                    <label for="sleepQuality" class="form-label">Sleep Quality (0-10)</label>
+                    <input type="range" class="form-range" id="sleepQuality" name="sleep_quality" min="0" max="10" step="1" oninput="sleepQualityValue.value = this.value" value="{{ last_recording.sleep_quality if last_recording else '' }}">
+                    <output id="sleepQualityValue">{{ last_recording.sleep_quality if last_recording else '' }}</output>
+                </div>
+                <div class="mb-3">
+                    <label for="additionalNotes" class="form-label">Additional Notes</label>
+                    <textarea class="form-control additional_notes" id="additionalNotes" name="additional_notes" rows="3" placeholder="Any additional symptoms or concerns..."></textarea>
+                </div> -->
+                <button type="submit" class="btn btn-primary">Save Patient Data</button>
+            </form>
+
+
+
+
+
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFields() {
+    const type = document.getElementById('recordingType').value;
+    document.getElementById('admissionFields').style.display = (type === 'admission') ? '' : 'none';
+    document.getElementById('dailyFields').style.display = (type === 'daily') ? '' : 'none';
+    document.getElementById('dischargeFields').style.display = (type === 'discharge') ? '' : 'none';
+    
+    // Show KCCQ section only for admission and discharge recordings
+    const kccqSection = document.getElementById('kccqAccordion');
+    if (kccqSection) {
+        kccqSection.style.display = (type === 'admission' || type === 'discharge') ? '' : 'none';
+    }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        updateFields();
+        document.getElementById('recordingType').addEventListener('change', updateFields);
+        
+        // Voice recording button setup
+        setupVoiceRecordingButtons();
+    });
+
+    function setupVoiceRecordingButtons() {
+        // Admission recording buttons
+        const admissionVoiceBtn = document.getElementById('recordVoiceBtnAdmission');
+        if (admissionVoiceBtn) {
+            admissionVoiceBtn.onclick = () =>
+                recordAudio('recordVoiceBtnAdmission', 'voicePlaybackAdmission', 'voiceSampleAdmission');
+        }
+      
+        const admissionCoughBtn = document.getElementById('recordCoughBtn');
+        if (admissionCoughBtn) {
+            admissionCoughBtn.onclick = () =>
+                recordAudio('recordCoughBtn', 'coughPlayback', 'coughSample');
+        }
+
+        const admissionVocalBtn = document.getElementById('recordVocalBtn');
+        if (admissionVocalBtn) {
+            admissionVocalBtn.onclick = () =>
+                recordAudio('recordVocalBtn', 'vocalPlayback', 'vocalSample');
+        }
+
+        // Daily recording buttons
+        const dailyVoiceBtn = document.getElementById('recordVoiceBtnDaily');
+        if (dailyVoiceBtn) {
+            dailyVoiceBtn.onclick = () =>
+                recordAudio('recordVoiceBtnDaily', 'voicePlaybackDaily', 'voiceSampleDaily');
+        }
+      
+        const dailyCoughBtn = document.getElementById('recordCoughBtnDaily');
+        if (dailyCoughBtn) {
+            dailyCoughBtn.onclick = () =>
+                recordAudio('recordCoughBtnDaily', 'coughPlaybackDaily', 'coughSampleDaily');
+        }
+
+        const dailyVocalBtn = document.getElementById('recordVocalBtnDaily');
+        if (dailyVocalBtn) {
+            dailyVocalBtn.onclick = () =>
+                recordAudio('recordVocalBtnDaily', 'vocalPlaybackDaily', 'vocalSampleDaily');
+        }
+
+        // Discharge recording buttons
+        const dischargeVoiceBtn = document.getElementById('recordVoiceBtnDischarge');
+        if (dischargeVoiceBtn) {
+            dischargeVoiceBtn.onclick = () =>
+                recordAudio('recordVoiceBtnDischarge', 'voicePlaybackDischarge', 'voiceSampleDischarge');
+        }
+      
+        const dischargeCoughBtn = document.getElementById('recordCoughBtnDischarge');
+        if (dischargeCoughBtn) {
+            dischargeCoughBtn.onclick = () =>
+                recordAudio('recordCoughBtnDischarge', 'coughPlaybackDischarge', 'coughSampleDischarge');
+        }
+
+        const dischargeVocalBtnFinal = document.getElementById('recordVocalBtnDischarge');
+        if (dischargeVocalBtnFinal) {
+            dischargeVocalBtnFinal.onclick = () =>
+                recordAudio('recordVocalBtnDischarge', 'vocalPlaybackDischarge', 'vocalSampleDischarge');
+        }
+
+        const dischargeVocalBtn = document.getElementById('recordVocalBtnDischarge');
+        if (dischargeVocalBtn) {
+            dischargeVocalBtn.onclick = () =>
+                recordAudio('recordVocalBtnDischarge', 'vocalPlaybackDischarge', 'vocalSampleDischarge');
+        }
+    }
+
+    async function recordAudio(buttonId, audioId, inputId) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+  
+      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(blob);
+        const audioElement = document.getElementById(audioId);
+        audioElement.src = audioUrl;
+        audioElement.style.display = 'block';
+  
+        const fileInput = document.getElementById(inputId);
+        const file = new File([blob], `${inputId}.webm`, { type: 'audio/webm' });
+  
+        // Simulate file input population
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+        
+        // Add delete button after recording
+        addDeleteButtonAfterRecording(buttonId, audioId, inputId);
+      };
+  
+      recorder.start();
+      const button = document.getElementById(buttonId);
+      button.innerHTML = '<i class="bi bi-stop-fill"></i> Stop Recording';
+      button.onclick = () => {
+        recorder.stop();
+        stream.getTracks().forEach(track => track.stop());
+        button.innerHTML = '<i class="bi bi-mic-fill"></i> Re-record';
+        button.onclick = () =>
+          recordAudio(buttonId, audioId, inputId);
+      };
+    }
+    
+    function addDeleteButtonAfterRecording(buttonId, audioId, inputId) {
+        const audioElement = document.getElementById(audioId);
+        const button = document.getElementById(buttonId);
+        
+        // Update button text to "Re-record"
+        button.innerHTML = '<i class="bi bi-mic-fill"></i> Re-record';
+        
+        // Check if delete button already exists
+        const existingDeleteContainer = audioElement.parentNode.querySelector('.new-recording-controls');
+        if (existingDeleteContainer) {
+            existingDeleteContainer.remove();
+        }
+        
+        // Create delete button container
+        const deleteContainer = document.createElement('div');
+        deleteContainer.className = 'new-recording-controls mt-2';
+        deleteContainer.innerHTML = `
+            <button type="button" class="btn btn-sm btn-outline-danger me-2" onclick="deleteNewRecording('${buttonId}', '${audioId}', '${inputId}')">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+            <small class="text-muted">Note: Save the form to permanently store this recording</small>
+        `;
+        
+        // Insert after audio element
+        audioElement.parentNode.insertBefore(deleteContainer, audioElement.nextSibling);
+    }
+    
+    function deleteNewRecording(buttonId, audioId, inputId) {
+        if (confirm('Are you sure you want to delete this recording?')) {
+            const audioElement = document.getElementById(audioId);
+            const fileInput = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            
+            // Clear the audio element
+            audioElement.src = '';
+            audioElement.style.display = 'none';
+            
+            // Clear the file input
+            fileInput.value = '';
+            
+            // Remove delete button container
+            const deleteContainer = audioElement.parentNode.querySelector('.new-recording-controls');
+            if (deleteContainer) {
+                deleteContainer.remove();
+            }
+            
+            // Reset button text and functionality
+            button.innerHTML = '<i class="bi bi-mic-fill"></i> Start Recording';
+            button.onclick = () => recordAudio(buttonId, audioId, inputId);
+        }
+    }
+
+    // Function to delete voice samples
+    function deleteVoiceSample(recordingId, sampleType) {
+        if (confirm('Are you sure you want to delete this voice sample?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delete_voice_sample/${recordingId}/${sampleType}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // Make the functions globally available
+    window.deleteVoiceSample = deleteVoiceSample;
+    window.deleteNewRecording = deleteNewRecording;
+  </script>
+  <script>
+$(document).ready(function() {
+    function updateDiagnosisHeight() {
+        var $select = $('#diagnosis');
+        var $container = $select.next('.select2-container');
+        var selected = $select.select2('data');
+        if (selected.length <= 1) {
+            $container.find('.select2-selection--multiple').addClass('single-height');
+        } else {
+            $container.find('.select2-selection--multiple').removeClass('single-height');
+        }
+    }
+
+    $('#diagnosis').select2({
+        theme: 'bootstrap4',
+        tags: true,
+        allowClear: true,
+        width: '100%',
+        matcher: function(params, data) {
+            if ($.trim(params.term) === '') return data;
+            if (typeof data.text === 'undefined') return null;
+            if (data.text.toLowerCase().startsWith(params.term.toLowerCase())) return data;
+            return null;
+        }
+    }).on('change', updateDiagnosisHeight);
+
+    // Initial setzen nach dem Laden
+    updateDiagnosisHeight();
+
+    // Ensure decimal separator is always a dot (American format)
+    document.querySelectorAll('input[type="number"]').forEach(function(input) {
+        input.addEventListener('input', function(e) {
+            // Replace comma with dot for decimal values
+            if (e.target.value.includes(',')) {
+                e.target.value = e.target.value.replace(/,/g, '.');
+            }
+        });
+    });
+});
+</script>
+ 
+  
+
+{% endblock %}

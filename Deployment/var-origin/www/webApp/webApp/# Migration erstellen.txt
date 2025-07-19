@@ -1,0 +1,8 @@
+# Migration erstellen
+python -m flask --app test.py db migrate -m "name"
+
+# Migration ausführen  
+python -m flask --app test.py db upgrade
+
+# Zurücksetzen
+python -m flask --app test.py db downgrade

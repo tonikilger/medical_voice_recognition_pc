@@ -1,0 +1,29 @@
+suite: noble-backports
+component: main
+arch: amd64
+
+
+name: libreoffice-calc
+version: 4:24.8.5-0ubuntu0.24.10.1~bpo24.04.1
+commands: localc
+
+name: libreoffice-common
+version: 4:24.8.5-0ubuntu0.24.10.1~bpo24.04.1
+commands: libreoffice,loffice,lofromtemplate,soffice,unopkg
+
+name: libreoffice-draw
+version: 4:24.8.5-0ubuntu0.24.10.1~bpo24.04.1
+commands: lodraw
+
+name: libreoffice-impress
+version: 4:24.8.5-0ubuntu0.24.10.1~bpo24.04.1
+commands: loimpress
+
+name: libreoffice-math
+version: 4:24.8.5-0ubuntu0.24.10.1~bpo24.04.1
+commands: lomath
+
+name: libreoffice-writer
+version: 4:24.8.5-0ubuntu0.24.10.1~bpo24.04.1
+commands: loweb,lowriter
+

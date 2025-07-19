@@ -1,0 +1,14 @@
+/.
+/usr
+/usr/lib
+/usr/lib/python3
+/usr/lib/python3/dist-packages
+/usr/lib/python3/dist-packages/sqlalchemy
+/usr/lib/python3/dist-packages/sqlalchemy/cimmutabledict.cpython-312-x86_64-linux-gnu.so
+/usr/lib/python3/dist-packages/sqlalchemy/cprocessors.cpython-312-x86_64-linux-gnu.so
+/usr/lib/python3/dist-packages/sqlalchemy/cresultproxy.cpython-312-x86_64-linux-gnu.so
+/usr/share
+/usr/share/doc
+/usr/share/doc/python3-sqlalchemy-ext
+/usr/share/doc/python3-sqlalchemy-ext/changelog.Debian.gz
+/usr/share/doc/python3-sqlalchemy-ext/copyright
